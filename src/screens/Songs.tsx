@@ -36,6 +36,7 @@ const SongsScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text></Text>
       {hgSongs.map((song) => {
         return renderSongInfo(song);
       })}

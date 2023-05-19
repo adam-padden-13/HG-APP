@@ -1,32 +1,44 @@
 import { useEffect, useState } from "react";
 import { Button, Text, View, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
-import { Sound } from "expo-av/build/Audio";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { storage } from "../../firebaseConfig";
+import { getDownloadURL, ref } from "firebase/storage";
+
+const player = new Audio.Sound();
 
 const SongScreen = ({ navigation, route }) => {
   const { song } = route.params;
-  const [sound, setSound] = useState<Sound>();
+  const [songIsLoaded, setSongIsLoaded] = useState(false);
 
-  console.log(song.title);
+  const audioRef = ref(storage, "audio");
+  const callingNightRef = ref(audioRef, "/calling_on_the_night.m4a");
 
-  const player = new Audio.Sound();
+  const getSong = async () => {
+    await getDownloadURL(callingNightRef).then((convertedURL) => {
+      loadSound(convertedURL);
+    });
+  };
+
+  async function loadSound(url: string) {
+    // Load the sound
+    await player
+      .loadAsync({
+        uri: url,
+      })
+      .then((res) => {
+        if (res.isLoaded) setSongIsLoaded(true);
+      })
+      .catch(() => {
+        alert("error loading song");
+      });
+  }
 
   useEffect(() => {
-    console.log("HIT")
-    async function loadSound() {
-      // Load the sound
-      await player.loadAsync({
-        uri: "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3",
-      });
-    }
-
+    getSong();
     async function unloadSound() {
       // cleanup
       await player.unloadAsync();
     }
-
-    loadSound();
 
     return () => {
       unloadSound();
@@ -48,74 +60,30 @@ const SongScreen = ({ navigation, route }) => {
     await player.stopAsync();
   }
 
-  async function playSound() {
-    if (song.number === 1) {
-      const { sound } = await Audio.Sound.createAsync(
-        require("../../assets/audio/calling.wav")
-      );
-      console.log(sound);
-      setSound(sound);
-
-      console.log("Playing Sound");
-      await sound.playAsync();
-    }
-    if (song.number === 2) {
-      const { sound } = await Audio.Sound.createAsync(
-        require("../../assets/audio/eke.wav")
-      );
-      console.log(sound);
-      setSound(sound);
-
-      console.log("Playing Sound");
-      await sound.playAsync();
-    }
-    if (song.number === 3) {
-      const { sound } = await Audio.Sound.createAsync(
-        require("../../assets/audio/sake_run.mp3")
-      );
-      console.log(sound);
-      setSound(sound);
-
-      console.log("Playing Sound");
-      await sound.playAsync();
-    }
-  }
-
-  async function stopSound() {
-    await sound.stopAsync();
-  }
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          console.log("Unloading Sound");
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text> {song.title}</Text>
-      <Button title={"Play Song"} onPress={playSound} />
-      <Button title={"Stop Song"} onPress={stopSound} />
       <>
-    <View style={styles.container}>
-      <Button title="Play Sound" onPress={onPlay} />
-    </View>
         <View style={styles.container}>
-      <Button title="Stop Sound" onPress={onStop} />
+          <Button
+            title={songIsLoaded ? "Play Song" : "Song is Loading..."}
+            onPress={onPlay}
+            disabled={!songIsLoaded}
+          />
+        </View>
+        <View style={styles.container}>
+          <Button title="Stop Song" onPress={onStop} />
+        </View>
+      </>
     </View>
-    </>
-    </View>
-    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
+    justifyContent: "center",
+    backgroundColor: "#ecf0f1",
     padding: 10,
   },
 });
