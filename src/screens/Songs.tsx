@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
-import { Button, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Song } from "../models/Song";
-const SongsScreen = ({ navigation }) => {
-  const hgSongs: Song[] = [
-    {
-      title: "Calling On the Night",
-      number: 1,
-    },
-    { title: "Everyone Knows Everything", number: 2 },
-    { title: "Trouble", number: 3 },
-  ];
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 
-  const renderSongInfo = (song: Song) => {
+const SongsScreen = ({ navigation }) => {
+  const [songs, setSongs] = useState<Song[]>([]);
+
+  const getData = async () => {
+    const querySnapshot = await getDocs(collection(db, "songs"));
+    const songsToPush: Song[] = [];
+    console.log("!!!query", querySnapshot);
+    querySnapshot.forEach((song) => {
+      console.log("song", song.data());
+      songsToPush.push(song.data() as Song);
+    });
+
+    setSongs(songsToPush);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const renderSongInfo = (song: string) => {
     return (
       <>
         <Pressable
@@ -27,7 +39,7 @@ const SongsScreen = ({ navigation }) => {
             })
           }
         >
-          <Text>{song.title} </Text>
+          <Text>{song} </Text>
         </Pressable>
         <View style={{ marginBottom: 12 }} />
       </>
@@ -36,9 +48,8 @@ const SongsScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text></Text>
-      {hgSongs.map((song) => {
-        return renderSongInfo(song);
+      {songs.map((song) => {
+        return renderSongInfo(song.title);
       })}
     </View>
   );

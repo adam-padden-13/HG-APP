@@ -3,15 +3,17 @@ import { Button, Text, View, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
 import { storage } from "../../firebaseConfig";
 import { getDownloadURL, ref } from "firebase/storage";
+import { removeSpaces } from "../utilities/stringUtilities";
 
 const player = new Audio.Sound();
 
 const SongScreen = ({ navigation, route }) => {
   const { song } = route.params;
   const [songIsLoaded, setSongIsLoaded] = useState(false);
+  const audioFileTitle: string = removeSpaces(song);
 
   const audioRef = ref(storage, "audio");
-  const callingNightRef = ref(audioRef, "/calling_on_the_night.m4a");
+  const callingNightRef = ref(audioRef, `/${audioFileTitle}.m4a`);
 
   const getSong = async () => {
     await getDownloadURL(callingNightRef).then((convertedURL) => {

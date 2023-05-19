@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SongScreen from "../screens/Song";
-import SongsScreen from "../screens/Songs.tsx";
+import SongsScreen from "../screens/Songs"
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +15,7 @@ const SongsStackNavigator = () => {
       <Stack.Screen
         name="SongScreen"
         component={SongScreen}
-        options={({ route }) => ({ title: route.params.song.title })}
+        options={({ route }) => ({ title: route.params.song })}
       />
     </Stack.Navigator>
   );
