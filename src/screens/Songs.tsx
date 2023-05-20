@@ -23,7 +23,7 @@ const SongsScreen = ({ navigation }) => {
     getData();
   }, []);
 
-  const renderSongInfo = (song: string) => {
+  const renderSongInfo = (song: Song) => {
     return (
       <>
         <Pressable
@@ -39,7 +39,7 @@ const SongsScreen = ({ navigation }) => {
             })
           }
         >
-          <Text>{song} </Text>
+          <Text>{song.title} </Text>
         </Pressable>
         <View style={{ marginBottom: 12 }} />
       </>
@@ -49,7 +49,7 @@ const SongsScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       {songs.map((song) => {
-        return renderSongInfo(song.title);
+        return renderSongInfo(song);
       })}
     </View>
   );

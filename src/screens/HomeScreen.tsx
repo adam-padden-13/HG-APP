@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+} from "react-native";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
@@ -35,19 +42,26 @@ const HomeScreen = ({ navigation }) => {
   const getData = async () => {
     const querySnapshot = await getDocs(collection(db, "users"));
     querySnapshot.forEach((doc) => {
-      console.log(doc.data().born)
-      // console.log(`${doc.id} => ${doc.data()}`);
+      console.log(doc.data().born);
     });
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Handgrenades</Text>
-      <Button title={"Upload Collection"} onPress={() => uploadCollection()} />
-      <Button title={"Upload Document"} onPress={() => uploadDocument()} />
-      <Button title={"Get Document"} onPress={() => getData()} />
+    <View style={{ alignItems: "center" }}>
+
+
+      <Image
+        source={require("../../assets/hg_triangle.png")}
+        style={styles.logo}
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  logo: {
+    marginTop: 180,
+  },
+});
 
 export default HomeScreen;

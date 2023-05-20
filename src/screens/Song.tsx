@@ -4,13 +4,16 @@ import { Audio } from "expo-av";
 import { storage } from "../../firebaseConfig";
 import { getDownloadURL, ref } from "firebase/storage";
 import { removeSpaces } from "../utilities/stringUtilities";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/SongsStackNavigator";
 
 const player = new Audio.Sound();
+type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
 
-const SongScreen = ({ navigation, route }) => {
+const SongScreen = ({ navigation, route }: Props) => {
   const { song } = route.params;
   const [songIsLoaded, setSongIsLoaded] = useState(false);
-  const audioFileTitle: string = removeSpaces(song);
+  const audioFileTitle: string = removeSpaces(song.title);
 
   const audioRef = ref(storage, "audio");
   const callingNightRef = ref(audioRef, `/${audioFileTitle}.m4a`);

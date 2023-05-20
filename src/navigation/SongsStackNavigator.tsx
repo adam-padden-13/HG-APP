@@ -1,8 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SongScreen from "../screens/Song";
-import SongsScreen from "../screens/Songs"
+import SongsScreen from "../screens/Songs";
+import { Song } from "../models/Song";
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  SongsScreen: undefined;
+  SongScreen: { song: Song };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const SongsStackNavigator = () => {
   return (
@@ -10,12 +16,12 @@ const SongsStackNavigator = () => {
       <Stack.Screen
         name="SongsScreen"
         component={SongsScreen}
-        options={{ title: "Songs" }}
+        options={{ title: "Songs", headerShown: false }}
       />
       <Stack.Screen
         name="SongScreen"
         component={SongScreen}
-        options={({ route }) => ({ title: route.params.song })}
+        options={({ route }) => ({ title: route.params.song.title })}
       />
     </Stack.Navigator>
   );
