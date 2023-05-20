@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Song } from "../models/Song";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
@@ -25,7 +25,7 @@ const SongsScreen = ({ navigation }) => {
 
   const renderSongInfo = (song: Song) => {
     return (
-      <>
+      <View>
         <Pressable
           style={{
             height: 40,
@@ -42,12 +42,12 @@ const SongsScreen = ({ navigation }) => {
           <NormalText>{song.title}</NormalText>
         </Pressable>
         <View style={{ marginBottom: 12 }} />
-      </>
+      </View>
     );
   };
 
   return (
-    <ScrollView contentContainerStyle={{ marginTop: 60, marginHorizontal: 10 }}>
+    <ScrollView contentContainerStyle={styles.container}>
       <HeaderText>Songs</HeaderText>
       <Spacer />
       <View>
@@ -58,5 +58,19 @@ const SongsScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
+
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 60,
+    marginHorizontal: 36,
+    flex: 1,
+  },
+  goBack: {
+    position: "absolute",
+    top: 0,
+    left: 10,
+  },
+});
 
 export default SongsScreen;

@@ -16,6 +16,7 @@ import { RootStackParamList } from "../navigation/SongsStackNavigator";
 import { HeaderText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { Icon } from "@rneui/themed";
+import GoBack from "../components/GoBack";
 
 const player = new Audio.Sound();
 type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
@@ -82,9 +83,7 @@ const SongScreen = ({ navigation, route }: Props) => {
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.goBack} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-left" type="feather" size={40} />
-      </Pressable>
+      <GoBack navigation={navigation} />
       <Spacer />
       <HeaderText> {song.title}</HeaderText>
       <Spacer />
@@ -111,11 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
-  },
-  goBack: {
-    position: "absolute",
-    top: 0,
-    left: 10,
   },
 });
 
