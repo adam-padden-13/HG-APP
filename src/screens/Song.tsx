@@ -1,17 +1,35 @@
 import { useEffect, useState } from "react";
-import { Button, Text, View, StyleSheet } from "react-native";
+import {
+  Button,
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import { Audio } from "expo-av";
 import { storage } from "../../firebaseConfig";
 import { getDownloadURL, ref } from "firebase/storage";
+import { removeSpaces } from "../utilities/stringUtilities";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/SongsStackNavigator";
+import { HeaderText } from "../theme/theme";
+import Spacer from "../components/Spacer";
+import { Icon } from "@rneui/themed";
+import GoBack from "../components/GoBack";
+import Player from "../components/Player";
 
 const player = new Audio.Sound();
+type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
 
-const SongScreen = ({ navigation, route }) => {
+const SongScreen = ({ navigation, route }: Props) => {
   const { song } = route.params;
   const [songIsLoaded, setSongIsLoaded] = useState(false);
+  const [songIsPlaying, setSongisPlaying] = useState(false);
+  const audioFileTitle: string = removeSpaces(song.title);
 
   const audioRef = ref(storage, "audio");
-  const callingNightRef = ref(audioRef, "/calling_on_the_night.m4a");
+  const callingNightRef = ref(audioRef, `/${audioFileTitle}.m4a`);
 
   const getSong = async () => {
     await getDownloadURL(callingNightRef).then((convertedURL) => {
@@ -58,33 +76,47 @@ const SongScreen = ({ navigation, route }) => {
   async function onStop() {
     console.log("stop");
     await player.stopAsync();
+    setSongisPlaying(false);
   }
 
+  async function onPause() {
+    console.log("pause");
+    await player.pauseAsync();
+  }
+
+  player._onPlaybackStatusUpdate = (playbackStatus) => {
+    if (playbackStatus.isLoaded) {
+      if (playbackStatus.isPlaying) {
+        setSongisPlaying(true);
+      }
+      console.log("!!!", playbackStatus)
+      console.log(playbackStatus.positionMillis)
+    }
+  };
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text> {song.title}</Text>
-      <>
-        <View style={styles.container}>
-          <Button
-            title={songIsLoaded ? "Play Song" : "Song is Loading..."}
-            onPress={onPlay}
-            disabled={!songIsLoaded}
-          />
-        </View>
-        <View style={styles.container}>
-          <Button title="Stop Song" onPress={onStop} />
-        </View>
-      </>
+    <View style={styles.container}>
+      <GoBack navigation={navigation} />
+      <Spacer />
+      <HeaderText> {song.title}</HeaderText>
+      <Spacer />
+      <Player
+        onPlay={onPlay}
+        onPause={onPause}
+        onStop={onStop}
+        songIsLoaded={!songIsLoaded}
+        isPlaying={songIsPlaying}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginTop: 60,
     justifyContent: "center",
-    backgroundColor: "#ecf0f1",
-    padding: 10,
+    alignItems: "center",
+    flex: 1,
   },
 });
 
