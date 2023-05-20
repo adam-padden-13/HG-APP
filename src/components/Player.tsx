@@ -1,42 +1,114 @@
 import { Text, View, Pressable, StyleSheet } from "react-native";
+import { Audio } from "expo-av";
+import { storage } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
 import Spacer from "./Spacer";
 import { NormalText } from "../theme/theme";
 import PlayerSlider from "./PlayerSlider";
+import { getDownloadURL, ref } from "firebase/storage";
+import { removeSpaces } from "../utilities/stringUtilities";
+import { useEffect, useState } from "react";
+import { Song } from "../models/Song";
+
+const player = new Audio.Sound();
 
 interface PlayerProps {
-  onPlay: () => void;
-  onPause: () => void;
-  onStop: () => void;
-  songIsLoaded: boolean;
-  isPlaying: boolean;
+  song: Song;
 }
+const Player = ({ song }: PlayerProps) => {
+  const [songIsLoaded, setSongIsLoaded] = useState(false);
+  const [songIsPlaying, setSongisPlaying] = useState(false);
+  const [songIsPaused, setSongisPaused] = useState(false);
 
-const Player = ({
-  onPlay,
-  onPause,
-  onStop,
-  songIsLoaded,
-  isPlaying,
-}: PlayerProps) => {
+  const audioFileTitle: string = removeSpaces(song.title);
+  const audioRef = ref(storage, "audio");
+  const callingNightRef = ref(audioRef, `/${audioFileTitle}.m4a`);
+
+  const getSong = async () => {
+    await getDownloadURL(callingNightRef).then((convertedURL) => {
+      loadSound(convertedURL);
+    });
+  };
+
+  async function loadSound(url: string) {
+    // Load the sound
+    await player
+      .loadAsync({
+        uri: url,
+      })
+      .then((res) => {
+        console.log("@@@", res);
+        if (res.isLoaded) setSongIsLoaded(true);
+      })
+      .catch(() => {
+        alert("error loading song");
+      });
+  }
+
+  useEffect(() => {
+    getSong();
+    async function unloadSound() {
+      // cleanup
+      await player.unloadAsync();
+    }
+
+    return () => {
+      unloadSound();
+    };
+  }, []);
+
+  async function onPlay() {
+    try {
+      await player.playAsync();
+      console.log(" Your sound is playing!");
+    } catch (error) {
+      // An error occurred!
+      console.log(error);
+    }
+  }
+
+  async function onStop() {
+    console.log("stop");
+    await player.stopAsync();
+    setSongisPaused(false)
+    setSongisPlaying(false);
+  }
+
+  async function onPause() {
+    console.log("pause");
+    await player.pauseAsync();
+    setSongisPlaying(false);
+    setSongisPaused(true);
+  }
+
+  player._onPlaybackStatusUpdate = (playbackStatus) => {
+    if (playbackStatus.isLoaded) {
+      if (playbackStatus.isPlaying) {
+        setSongisPaused(false)
+        setSongisPlaying(true);
+      }
+      // console.log("!!!", playbackStatus);
+      // console.log(playbackStatus.positionMillis);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.buttons}>
-        <Pressable onPress={onPlay} disabled={songIsLoaded}>
+        <Pressable onPress={onPlay} disabled={!songIsLoaded}>
           <Icon
             name="play-circle"
             type="feather"
             size={60}
-            color={songIsLoaded ? "grey" : isPlaying ? "green" : "black"}
+            color={!songIsLoaded ? "grey" : songIsPlaying ? "green" : "black"}
           />
         </Pressable>
         <Spacer width={20} />
-        <Pressable onPress={onPause}>
+        <Pressable onPress={onPause} disabled={!songIsPlaying} >
           <Icon
             name="pause-circle"
             type="feather"
             size={60}
-            color={songIsLoaded ? "grey" : "black"}
+            color={!songIsLoaded ? "grey" : songIsPaused ? "red" : "black"}
           />
         </Pressable>
         <Spacer width={20} />
@@ -45,12 +117,12 @@ const Player = ({
             name="stop-circle"
             type="feather"
             size={60}
-            color={songIsLoaded ? "grey" : "black"}
+            color={!songIsLoaded ? "grey" : "black"}
           />
         </Pressable>
       </View>
       <PlayerSlider />
-      {songIsLoaded && <NormalText>Player is loading...</NormalText>}
+      {!songIsLoaded && <NormalText>Player is loading...</NormalText>}
     </View>
   );
 };
