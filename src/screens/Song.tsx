@@ -89,6 +89,8 @@ const SongScreen = ({ navigation, route }: Props) => {
       if (playbackStatus.isPlaying) {
         setSongisPlaying(true);
       }
+      console.log("!!!", playbackStatus)
+      console.log(playbackStatus.positionMillis)
     }
   };
 

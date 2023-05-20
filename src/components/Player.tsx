@@ -2,6 +2,7 @@ import { Text, View, Pressable, StyleSheet } from "react-native";
 import { Icon } from "@rneui/themed";
 import Spacer from "./Spacer";
 import { NormalText } from "../theme/theme";
+import PlayerSlider from "./PlayerSlider";
 
 interface PlayerProps {
   onPlay: () => void;
@@ -48,7 +49,7 @@ const Player = ({
           />
         </Pressable>
       </View>
-      <Spacer height={10} />
+      <PlayerSlider />
       {songIsLoaded && <NormalText>Player is loading...</NormalText>}
     </View>
   );
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: "row",
   },
-  container: { alignItems: "center" },
+  container: { alignItems: "center", width: "80%" },
 });
 
 export default Player;
