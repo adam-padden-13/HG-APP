@@ -3,6 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import { Song } from "../models/Song";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import { NormalText } from "../theme/theme";
 
 const SongsScreen = ({ navigation }) => {
   const [songs, setSongs] = useState<Song[]>([]);
@@ -10,9 +11,7 @@ const SongsScreen = ({ navigation }) => {
   const getData = async () => {
     const querySnapshot = await getDocs(collection(db, "songs"));
     const songsToPush: Song[] = [];
-    console.log("!!!query", querySnapshot);
     querySnapshot.forEach((song) => {
-      console.log("song", song.data());
       songsToPush.push(song.data() as Song);
     });
 
@@ -39,7 +38,7 @@ const SongsScreen = ({ navigation }) => {
             })
           }
         >
-          <Text>{song.title} </Text>
+          <NormalText>{song.title}</NormalText>
         </Pressable>
         <View style={{ marginBottom: 12 }} />
       </>
