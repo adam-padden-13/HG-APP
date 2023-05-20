@@ -10,6 +10,10 @@ export const usetheme = createTheme({
   mode: "light",
 });
 
+export const HeaderText = (props) => (
+  <Text {...props} style={{ fontFamily: "MarcellusRegular", color: "black", fontSize: "32px" }} />
+);
+
 export const NormalText = (props) => (
-  <Text {...props} style={{ fontFamily: "MarcellusRegular", color: "black" }} />
+  <Text {...props} style={{ fontFamily: "MarcellusRegular", color: "black", fontSize: "16px" }} />
 );

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { Song } from "../models/Song";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
-import { NormalText } from "../theme/theme";
+import { HeaderText, NormalText } from "../theme/theme";
+import Spacer from "../components/Spacer";
 
 const SongsScreen = ({ navigation }) => {
   const [songs, setSongs] = useState<Song[]>([]);
@@ -46,11 +47,15 @@ const SongsScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      {songs.map((song) => {
-        return renderSongInfo(song);
-      })}
-    </View>
+    <ScrollView contentContainerStyle={{ marginTop: 60, marginHorizontal: 10 }}>
+      <HeaderText>Songs</HeaderText>
+      <Spacer />
+      <View>
+        {songs.map((song) => {
+          return renderSongInfo(song);
+        })}
+      </View>
+    </ScrollView>
   );
 };
 
