@@ -17,6 +17,7 @@ import { HeaderText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { Icon } from "@rneui/themed";
 import GoBack from "../components/GoBack";
+import Player from "../components/Player";
 
 const player = new Audio.Sound();
 type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
@@ -24,6 +25,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
 const SongScreen = ({ navigation, route }: Props) => {
   const { song } = route.params;
   const [songIsLoaded, setSongIsLoaded] = useState(false);
+  const [songIsPlaying, setSongisPlaying] = useState(false);
   const audioFileTitle: string = removeSpaces(song.title);
 
   const audioRef = ref(storage, "audio");
@@ -74,6 +76,7 @@ const SongScreen = ({ navigation, route }: Props) => {
   async function onStop() {
     console.log("stop");
     await player.stopAsync();
+    setSongisPlaying(false);
   }
 
   async function onPause() {
@@ -81,25 +84,27 @@ const SongScreen = ({ navigation, route }: Props) => {
     await player.pauseAsync();
   }
 
+  player._onPlaybackStatusUpdate = (playbackStatus) => {
+    if (playbackStatus.isLoaded) {
+      if (playbackStatus.isPlaying) {
+        setSongisPlaying(true);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <GoBack navigation={navigation} />
       <Spacer />
       <HeaderText> {song.title}</HeaderText>
       <Spacer />
-      <View style={{ flexDirection: "row" }}>
-        <Pressable onPress={onPlay} disabled={!songIsLoaded}>
-          <Icon name="play-circle" type="feather" size={60} />
-        </Pressable>
-        <Spacer width={20} />
-        <Pressable onPress={onPause}>
-          <Icon name="pause-circle" type="feather" size={60} />
-        </Pressable>
-        <Spacer width={20} />
-        <Pressable onPress={onStop}>
-          <Icon name="stop-circle" type="feather" size={60} />
-        </Pressable>
-      </View>
+      <Player
+        onPlay={onPlay}
+        onPause={onPause}
+        onStop={onStop}
+        songIsLoaded={!songIsLoaded}
+        isPlaying={songIsPlaying}
+      />
     </View>
   );
 };
