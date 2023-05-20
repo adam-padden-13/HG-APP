@@ -21,7 +21,10 @@ const SongsStackNavigator = () => {
       <Stack.Screen
         name="SongScreen"
         component={SongScreen}
-        options={({ route }) => ({ title: route.params.song.title })}
+        options={({ route }) => ({
+          title: route.params.song.title,
+          headerShown: false,
+        })}
       />
     </Stack.Navigator>
   );

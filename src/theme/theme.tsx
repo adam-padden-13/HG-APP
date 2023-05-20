@@ -11,9 +11,9 @@ export const usetheme = createTheme({
 });
 
 export const HeaderText = (props) => (
-  <Text {...props} style={{ fontFamily: "MarcellusRegular", color: "black", fontSize: "32px" }} />
+  <Text {...props} style={{ fontFamily: "MarcellusRegular", color: "black", fontSize: 32 }} />
 );
 
 export const NormalText = (props) => (
-  <Text {...props} style={{ fontFamily: "MarcellusRegular", color: "black", fontSize: "16px" }} />
+  <Text {...props} style={{ fontFamily: "MarcellusRegular", color: "black", fontSize: 16 }} />
 );

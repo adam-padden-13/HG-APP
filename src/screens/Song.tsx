@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
-import { Button, Text, View, StyleSheet } from "react-native";
+import {
+  Button,
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import { Audio } from "expo-av";
 import { storage } from "../../firebaseConfig";
 import { getDownloadURL, ref } from "firebase/storage";
 import { removeSpaces } from "../utilities/stringUtilities";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/SongsStackNavigator";
+import { HeaderText } from "../theme/theme";
+import Spacer from "../components/Spacer";
+import { Icon } from "@rneui/themed";
 
 const player = new Audio.Sound();
 type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
@@ -65,31 +75,47 @@ const SongScreen = ({ navigation, route }: Props) => {
     await player.stopAsync();
   }
 
+  async function onPause() {
+    console.log("pause");
+    await player.pauseAsync();
+  }
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text> {song.title}</Text>
-      <>
-        <View style={styles.container}>
-          <Button
-            title={songIsLoaded ? "Play Song" : "Song is Loading..."}
-            onPress={onPlay}
-            disabled={!songIsLoaded}
-          />
-        </View>
-        <View style={styles.container}>
-          <Button title="Stop Song" onPress={onStop} />
-        </View>
-      </>
+    <View style={styles.container}>
+      <Pressable style={styles.goBack} onPress={() => navigation.goBack()}>
+        <Icon name="arrow-left" type="feather" size={40} />
+      </Pressable>
+      <Spacer />
+      <HeaderText> {song.title}</HeaderText>
+      <Spacer />
+      <View style={{ flexDirection: "row" }}>
+        <Pressable onPress={onPlay} disabled={!songIsLoaded}>
+          <Icon name="play-circle" type="feather" size={60} />
+        </Pressable>
+        <Spacer width={20} />
+        <Pressable onPress={onPause}>
+          <Icon name="pause-circle" type="feather" size={60} />
+        </Pressable>
+        <Spacer width={20} />
+        <Pressable onPress={onStop}>
+          <Icon name="stop-circle" type="feather" size={60} />
+        </Pressable>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginTop: 60,
     justifyContent: "center",
-    backgroundColor: "#ecf0f1",
-    padding: 10,
+    alignItems: "center",
+    flex: 1,
+  },
+  goBack: {
+    position: "absolute",
+    top: 0,
+    left: 10,
   },
 });
 
