@@ -2,9 +2,18 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Slider, Text, Icon } from "@rneui/themed";
 
-const PlayerSlider = () => {
+interface PlayerSliderProps {
+  songDuration: number;
+  currentPlayback: number;
+  updateCurrentPlayback: (value: number) => void;
+}
+
+const PlayerSlider = ({
+  songDuration,
+  currentPlayback,
+  updateCurrentPlayback,
+}: PlayerSliderProps) => {
   const [value, setValue] = useState(0);
-  const [vertValue, setVertValue] = useState(0);
 
   const interpolate = (start: number, end: number) => {
     let k = (value - 0) / 10; // 0 =>min  && 10 => MAX
@@ -22,9 +31,9 @@ const PlayerSlider = () => {
     <>
       <View style={[styles.contentView]}>
         <Slider
-          value={value}
-          onValueChange={setValue}
-          maximumValue={10}
+          value={currentPlayback}
+          onValueChange={(changeValue) => updateCurrentPlayback(changeValue)}
+          maximumValue={songDuration}
           minimumValue={0}
           step={1}
           allowTouchTrack
@@ -35,7 +44,7 @@ const PlayerSlider = () => {
               <Icon
                 name="heartbeat"
                 type="font-awesome"
-                size={20}
+                size={10}
                 reverse
                 containerStyle={{ bottom: 20, right: 20 }}
                 color={color()}

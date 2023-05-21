@@ -19,6 +19,8 @@ const Player = ({ song }: PlayerProps) => {
   const [songIsLoaded, setSongIsLoaded] = useState(false);
   const [songIsPlaying, setSongisPlaying] = useState(false);
   const [songIsPaused, setSongisPaused] = useState(false);
+  const [songDuration, setSongDuration] = useState(0);
+  const [currentPlayback, setCurrentPlayback] = useState(0);
 
   const audioFileTitle: string = removeSpaces(song.title);
   const audioRef = ref(storage, "audio");
@@ -37,8 +39,10 @@ const Player = ({ song }: PlayerProps) => {
         uri: url,
       })
       .then((res) => {
-        console.log("@@@", res);
-        if (res.isLoaded) setSongIsLoaded(true);
+        if (res.isLoaded) {
+          setSongIsLoaded(true);
+          setSongDuration(res.durationMillis);
+        }
       })
       .catch(() => {
         alert("error loading song");
@@ -60,7 +64,6 @@ const Player = ({ song }: PlayerProps) => {
   async function onPlay() {
     try {
       await player.playAsync();
-      console.log(" Your sound is playing!");
     } catch (error) {
       // An error occurred!
       console.log(error);
@@ -68,14 +71,12 @@ const Player = ({ song }: PlayerProps) => {
   }
 
   async function onStop() {
-    console.log("stop");
     await player.stopAsync();
-    setSongisPaused(false)
     setSongisPlaying(false);
+    setSongisPaused(false);
   }
 
   async function onPause() {
-    console.log("pause");
     await player.pauseAsync();
     setSongisPlaying(false);
     setSongisPaused(true);
@@ -84,11 +85,10 @@ const Player = ({ song }: PlayerProps) => {
   player._onPlaybackStatusUpdate = (playbackStatus) => {
     if (playbackStatus.isLoaded) {
       if (playbackStatus.isPlaying) {
-        setSongisPaused(false)
         setSongisPlaying(true);
+        setSongisPaused(false);
+        setCurrentPlayback(playbackStatus.positionMillis);
       }
-      // console.log("!!!", playbackStatus);
-      // console.log(playbackStatus.positionMillis);
     }
   };
   return (
@@ -103,7 +103,7 @@ const Player = ({ song }: PlayerProps) => {
           />
         </Pressable>
         <Spacer width={20} />
-        <Pressable onPress={onPause} disabled={!songIsPlaying} >
+        <Pressable onPress={onPause} disabled={!songIsPlaying}>
           <Icon
             name="pause-circle"
             type="feather"
@@ -121,7 +121,11 @@ const Player = ({ song }: PlayerProps) => {
           />
         </Pressable>
       </View>
-      <PlayerSlider />
+      <PlayerSlider
+        songDuration={songDuration}
+        currentPlayback={currentPlayback}
+        updateCurrentPlayback={(updatedTime) => player.setPositionAsync(updatedTime)}
+      />
       {!songIsLoaded && <NormalText>Player is loading...</NormalText>}
     </View>
   );
