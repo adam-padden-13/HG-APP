@@ -6,9 +6,11 @@ import {
   View,
   Image,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import { Icon } from "@rneui/themed";
 
 const HomeScreen = ({ navigation }) => {
   const uploadCollection = async () => {
@@ -47,8 +49,16 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ alignItems: "center" }}>
-
+    <View style={{}}>
+      <Pressable>
+        <Icon
+          name="user-circle"
+          type="font-awesome"
+          size={40}
+          color="black"
+          style={styles.userIcon}
+        />
+      </Pressable>
 
       <Image
         source={require("../../assets/hg_triangle.png")}
@@ -60,7 +70,13 @@ const HomeScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   logo: {
-    marginTop: 180,
+    marginTop: 120,
+    alignSelf: "center",
+  },
+  userIcon: {
+    marginRight: 20,
+    alignSelf: "flex-end",
+    marginTop: 50,
   },
 });
 

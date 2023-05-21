@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./src/screens/HomeScreen";
@@ -9,6 +9,7 @@ import { Icon } from "@rneui/themed";
 import { ThemeProvider } from "@rneui/themed";
 import { usetheme } from "./src/theme/theme";
 import { useFonts } from "expo-font";
+import Header from "./src/components/Header";
 
 const BottomTab = createBottomTabNavigator();
 
