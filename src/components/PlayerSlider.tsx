@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Slider, Text, Icon } from "@rneui/themed";
+import { NormalText } from "../theme/theme";
+import { convertMilliToMinutes } from "../utilities/stringUtilities";
 
 interface PlayerSliderProps {
   songDuration: number;
@@ -15,17 +17,6 @@ const PlayerSlider = ({
 }: PlayerSliderProps) => {
   const [value, setValue] = useState(0);
 
-  const interpolate = (start: number, end: number) => {
-    let k = (value - 0) / 10; // 0 =>min  && 10 => MAX
-    return Math.ceil((1 - k) * start + k * end) % 256;
-  };
-
-  const color = () => {
-    let r = interpolate(255, 0);
-    let g = interpolate(0, 255);
-    let b = interpolate(0, 0);
-    return `rgb(${r},${g},${b})`;
-  };
 
   return (
     <>
@@ -37,22 +28,29 @@ const PlayerSlider = ({
           minimumValue={0}
           step={1}
           allowTouchTrack
-          trackStyle={{ height: 5, backgroundColor: "transparent" }}
-          thumbStyle={{ height: 20, width: 20, backgroundColor: "transparent" }}
+          trackStyle={{ height: 4, backgroundColor: "transparent" }}
+          thumbStyle={{ height: 4, width: 4, backgroundColor: "transparent" }}
           thumbProps={{
             children: (
               <Icon
-                name="heartbeat"
+                name="circle"
                 type="font-awesome"
-                size={10}
+                size={4}
                 reverse
-                containerStyle={{ bottom: 20, right: 20 }}
-                color={color()}
+                containerStyle={{ bottom: 12, right: 16 }}
+                color={'red'}
               />
             ),
           }}
         />
-        <Text style={{ paddingTop: 20 }}>Value: {value}</Text>
+        <View style={styles.timeContainer}>
+          <NormalText style={{ borderWidth: 1 }}>
+            {convertMilliToMinutes(currentPlayback)}
+          </NormalText>
+          <NormalText style={{ borderWidth: 1 }}>
+            {convertMilliToMinutes(songDuration)}
+          </NormalText>
+        </View>
       </View>
     </>
   );
@@ -71,6 +69,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingVertical: 5,
     marginBottom: 10,
+  },
+  timeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: -10,
+    marginHorizontal: 4
   },
 });
 

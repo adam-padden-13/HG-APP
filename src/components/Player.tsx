@@ -91,6 +91,7 @@ const Player = ({ song }: PlayerProps) => {
       }
     }
   };
+  
   return (
     <View style={styles.container}>
       <View style={styles.buttons}>
@@ -124,7 +125,9 @@ const Player = ({ song }: PlayerProps) => {
       <PlayerSlider
         songDuration={songDuration}
         currentPlayback={currentPlayback}
-        updateCurrentPlayback={(updatedTime) => player.setPositionAsync(updatedTime)}
+        updateCurrentPlayback={(updatedTime) =>
+          player.setPositionAsync(updatedTime)
+        }
       />
       {!songIsLoaded && <NormalText>Player is loading...</NormalText>}
     </View>
