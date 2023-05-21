@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "guitar-chords",
-    "slug": "guitar-chords",
+    "name": "hg-app",
+    "slug": "hg-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
