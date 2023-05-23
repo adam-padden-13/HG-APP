@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Button,
   StyleSheet,
   Text,
   View,
@@ -11,46 +10,49 @@ import {
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
+import LoginModal from "../components/LoginModal";
 
 const HomeScreen = ({ navigation }) => {
-  const uploadCollection = async () => {
-    try {
-      const docRef = await addDoc(collection(db, "users"), {
-        first: "Ada",
-        last: "Lovelace",
-        born: 1815,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  };
+  const [showModal, setShowModal] = useState(false);
 
-  const uploadDocument = async () => {
-    try {
-      const docRef = await addDoc(collection(db, "users"), {
-        first: "Alan",
-        middle: "Mathison",
-        last: "Turing",
-        born: 1912,
-      });
+  // const uploadCollection = async () => {
+  //   try {
+  //     const docRef = await addDoc(collection(db, "users"), {
+  //       first: "Ada",
+  //       last: "Lovelace",
+  //       born: 1815,
+  //     });
+  //     console.log("Document written with ID: ", docRef.id);
+  //   } catch (e) {
+  //     console.error("Error adding document: ", e);
+  //   }
+  // };
 
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  };
+  // const uploadDocument = async () => {
+  //   try {
+  //     const docRef = await addDoc(collection(db, "users"), {
+  //       first: "Alan",
+  //       middle: "Mathison",
+  //       last: "Turing",
+  //       born: 1912,
+  //     });
 
-  const getData = async () => {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data().born);
-    });
-  };
+  //     console.log("Document written with ID: ", docRef.id);
+  //   } catch (e) {
+  //     console.error("Error adding document: ", e);
+  //   }
+  // };
+
+  // const getData = async () => {
+  //   const querySnapshot = await getDocs(collection(db, "users"));
+  //   querySnapshot.forEach((doc) => {
+  //     console.log(doc.data().born);
+  //   });
+  // };
 
   return (
     <View style={{}}>
-      <Pressable>
+      <Pressable onPress={() => setShowModal(true)}>
         <Icon
           name="user-circle"
           type="font-awesome"
@@ -64,6 +66,7 @@ const HomeScreen = ({ navigation }) => {
         source={require("../../assets/hg_triangle.png")}
         style={styles.logo}
       />
+      <LoginModal showModal={showModal} hideModal={() => setShowModal(false)} />
     </View>
   );
 };
