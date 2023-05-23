@@ -11,6 +11,12 @@ import { Icon } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useState } from "react";
+import { auth } from "../../firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from "firebase/auth";
 
 interface LoginModalProps {
   showModal: boolean;
@@ -18,7 +24,7 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
-  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [changeButtonColor, setChangeButtonColor] = useState(false);
 
@@ -75,8 +81,41 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
     },
   });
 
-  const handleSubmit = () => {
-    alert(`the user name is ${userName} and the password is ${password}`);
+  const handleCreateNewUser = () => {
+    // alert(`the user name is ${userName} and the password is ${password}`);
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        alert("SIGNED IN");
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const handleLogin = () => {
+    // alert(`the user name is ${userName} and the password is ${password}`);
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        alert("SIGNED IN");
+        const user = userCredential.user;
+        console.log(user);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const handleSignout = () => {
+    // alert(`the user name is ${userName} and the password is ${password}`);
+    signOut(auth)
+      .then((res) => {
+        alert(res);
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
   return (
@@ -106,8 +145,8 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
           <TextInput
             style={styles.input}
             placeholder="Username"
-            value={userName}
-            onChangeText={setUserName}
+            value={email}
+            onChangeText={setEmail}
           />
           <Spacer />
           <TextInput
@@ -121,9 +160,25 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
             style={styles.submitButton}
             onPressIn={() => setChangeButtonColor(true)}
             onPressOut={() => setChangeButtonColor(false)}
-            onPress={() => handleSubmit()}
+            onPress={() => handleCreateNewUser()}
           >
             <NormalText>Submit</NormalText>
+          </Pressable>
+          <Pressable
+            style={styles.submitButton}
+            onPressIn={() => setChangeButtonColor(true)}
+            onPressOut={() => setChangeButtonColor(false)}
+            onPress={() => handleLogin()}
+          >
+            <NormalText>Login</NormalText>
+          </Pressable>
+          <Pressable
+            style={styles.submitButton}
+            onPressIn={() => setChangeButtonColor(true)}
+            onPressOut={() => setChangeButtonColor(false)}
+            onPress={() => handleSignout()}
+          >
+            <NormalText>Signout</NormalText>
           </Pressable>
         </View>
       </View>
