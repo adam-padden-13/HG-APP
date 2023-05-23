@@ -11,6 +11,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
 import LoginModal from "../components/LoginModal";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
@@ -51,35 +52,39 @@ const HomeScreen = ({ navigation }) => {
   // };
 
   return (
-    <View style={{}}>
-      <Pressable onPress={() => setShowModal(true)}>
-        <Icon
-          name="user-circle"
-          type="font-awesome"
-          size={40}
-          color="black"
-          style={styles.userIcon}
-        />
-      </Pressable>
+    <SafeAreaView>
+      <View style={{}}>
+        <Pressable onPress={() => setShowModal(true)}>
+          <Icon
+            name="user-circle"
+            type="font-awesome"
+            size={40}
+            color="black"
+            style={styles.userIcon}
+          />
+        </Pressable>
 
-      <Image
-        source={require("../../assets/hg_triangle.png")}
-        style={styles.logo}
-      />
-      <LoginModal showModal={showModal} hideModal={() => setShowModal(false)} />
-    </View>
+        <Image
+          source={require("../../assets/hg_triangle.png")}
+          style={styles.logo}
+        />
+        <LoginModal
+          showModal={showModal}
+          hideModal={() => setShowModal(false)}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   logo: {
-    marginTop: 120,
+    marginTop: 100,
     alignSelf: "center",
   },
   userIcon: {
     marginRight: 20,
     alignSelf: "flex-end",
-    marginTop: 50,
   },
 });
 
