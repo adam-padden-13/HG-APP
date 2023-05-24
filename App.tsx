@@ -10,6 +10,7 @@ import { ThemeProvider } from "@rneui/themed";
 import { usetheme } from "./src/theme/theme";
 import { useFonts } from "expo-font";
 import Header from "./src/components/Header";
+import TakeOutScreen from "./src/screens/TakeOutScreen";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -44,6 +45,17 @@ export default function App() {
               title: "Songs",
               headerShown: false,
               tabBarIcon: () => <Icon name="music" type="feather" />,
+            }}
+          />
+          <BottomTab.Screen
+            name="Takeout"
+            component={TakeOutScreen}
+            options={{
+              title: "Our Favorite Takeout",
+              headerShown: false,
+              tabBarIcon: () => (
+                <Icon name="food-hot-dog" type="material-community" />
+              ),
             }}
           />
         </BottomTab.Navigator>
