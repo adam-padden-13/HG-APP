@@ -12,9 +12,13 @@ import { db } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
 import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { auth } from "../../firebaseConfig";
+import {
+  signOut,
+} from "firebase/auth";
 
 const HomeScreen = ({ navigation }) => {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
 
   // const uploadCollection = async () => {
   //   try {
@@ -51,19 +55,40 @@ const HomeScreen = ({ navigation }) => {
   //   });
   // };
 
+  const handleSignout = () => {
+    // alert(`the user name is ${userName} and the password is ${password}`);
+    signOut(auth)
+      .then((res) => {
+        alert(res);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
   return (
     <SafeAreaView>
       <View style={{}}>
-        <Pressable onPress={() => setShowModal(true)}>
-          <Icon
-            name="user-circle"
-            type="font-awesome"
-            size={40}
-            color="black"
-            style={styles.userIcon}
-          />
-        </Pressable>
-
+        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+          <Pressable onPress={() => setShowModal(true)}>
+            <Icon
+              name="user-circle"
+              type="font-awesome"
+              size={40}
+              color="black"
+              style={styles.userIcon}
+            />
+          </Pressable>
+          <Pressable onPress={() => handleSignout()}>
+            <Icon
+              name="logout"
+              type="ant-design"
+              size={40}
+              color="black"
+              style={styles.userIcon}
+            />
+          </Pressable>
+        </View>
         <Image
           source={require("../../assets/hg_triangle.png")}
           style={styles.logo}

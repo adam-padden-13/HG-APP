@@ -1,46 +1,47 @@
 import {
   View,
-  Text,
   Pressable,
   StyleSheet,
   Modal,
   TextInput,
-  Button,
 } from "react-native";
 import { Icon } from "@rneui/themed";
-import { HeaderText, NormalText } from "../theme/theme";
+import { HeaderText, LinkText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useState } from "react";
 import { auth } from "../../firebaseConfig";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
 } from "firebase/auth";
 
 interface LoginModalProps {
   showModal: boolean;
   hideModal: () => void;
 }
+enum AuthType {
+  login = "Login",
+  createAccount = "Create Account",
+}
 
 const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [changeButtonColor, setChangeButtonColor] = useState(false);
+  const [authType, setAuthType] = useState<AuthType>(AuthType.login);
 
   const styles = StyleSheet.create({
     centeredView: {
       flex: 1,
-      justifyContent: "center",
       alignItems: "center",
-      marginTop: 22,
+      marginTop: 100,
     },
     modalView: {
       margin: 20,
       backgroundColor: "white",
       borderRadius: 20,
       paddingHorizontal: 40,
-      paddingVertical: 40,
+      paddingVertical: 30,
       alignItems: "center",
       shadowColor: "#000",
       shadowOffset: {
@@ -78,14 +79,21 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
       borderRadius: 10,
       padding: 10,
       backgroundColor: changeButtonColor ? "grey" : "white",
+      marginHorizontal: 8,
+    },
+    buttonContainer: {
+      flexDirection: "row",
+    },
+    headerView: {
+      alignItems: "center",
+      textAlign: "center",
     },
   });
 
   const handleCreateNewUser = () => {
-    // alert(`the user name is ${userName} and the password is ${password}`);
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        alert("SIGNED IN");
+        alert("Account created!");
         const user = userCredential.user;
         console.log(user);
       })
@@ -95,23 +103,12 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   };
 
   const handleLogin = () => {
-    // alert(`the user name is ${userName} and the password is ${password}`);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         alert("SIGNED IN");
         const user = userCredential.user;
         console.log(user);
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  };
-
-  const handleSignout = () => {
-    // alert(`the user name is ${userName} and the password is ${password}`);
-    signOut(auth)
-      .then((res) => {
-        alert(res);
+        hideModal()
       })
       .catch((error) => {
         alert(error);
@@ -128,7 +125,13 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
       <View style={styles.centeredView}>
         <Pressable
           onPress={hideModal}
-          style={{ alignSelf: "flex-end", right: 60, top: 68, zIndex: 1 }}
+          style={{
+            alignSelf: "flex-end",
+            right: 60,
+            top: 68,
+            zIndex: 1,
+            margin: 0,
+          }}
         >
           <Icon
             name="closecircle"
@@ -139,16 +142,30 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
           />
         </Pressable>
         <View style={styles.modalView}>
-          <HeaderText>Login</HeaderText>
+          {authType === AuthType.login ? (
+            <View style={styles.headerView}>
+              <HeaderText>Login</HeaderText>
+              <NormalText>or</NormalText>
+              <Pressable onPress={() => setAuthType(AuthType.createAccount)}>
+                <LinkText>Create Account</LinkText>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.headerView}>
+              <HeaderText>Create Account</HeaderText>
+              <NormalText>or</NormalText>
+              <Pressable onPress={() => setAuthType(AuthType.login)}>
+                <LinkText>Login</LinkText>
+              </Pressable>
+            </View>
+          )}
           <Spacer />
-
           <TextInput
             style={styles.input}
             placeholder="Username"
             value={email}
             onChangeText={setEmail}
           />
-          <Spacer />
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -156,30 +173,20 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
             onChangeText={setPassword}
           />
           <Spacer />
-          <Pressable
-            style={styles.submitButton}
-            onPressIn={() => setChangeButtonColor(true)}
-            onPressOut={() => setChangeButtonColor(false)}
-            onPress={() => handleCreateNewUser()}
-          >
-            <NormalText>Submit</NormalText>
-          </Pressable>
-          <Pressable
-            style={styles.submitButton}
-            onPressIn={() => setChangeButtonColor(true)}
-            onPressOut={() => setChangeButtonColor(false)}
-            onPress={() => handleLogin()}
-          >
-            <NormalText>Login</NormalText>
-          </Pressable>
-          <Pressable
-            style={styles.submitButton}
-            onPressIn={() => setChangeButtonColor(true)}
-            onPressOut={() => setChangeButtonColor(false)}
-            onPress={() => handleSignout()}
-          >
-            <NormalText>Signout</NormalText>
-          </Pressable>
+          <View style={styles.buttonContainer}>
+            <Pressable
+              style={styles.submitButton}
+              onPressIn={() => setChangeButtonColor(true)}
+              onPressOut={() => setChangeButtonColor(false)}
+              onPress={() =>
+                authType === AuthType.login
+                  ? handleLogin()
+                  : handleCreateNewUser()
+              }
+            >
+              <NormalText>Submit</NormalText>
+            </Pressable>
+          </View>
         </View>
       </View>
     </Modal>
