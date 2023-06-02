@@ -14,7 +14,7 @@ export const HeaderText = (props) => (
   <Text
     {...props}
     style={{
-      fontFamily: "MarcellusRegular",
+      fontFamily: "CourierRegular",
       color: "black",
       fontSize: 32,
       textAlign: "center",
@@ -25,7 +25,7 @@ export const HeaderText = (props) => (
 export const NormalText = (props) => (
   <Text
     {...props}
-    style={{ fontFamily: "MarcellusRegular", color: "black", fontSize: 16 }}
+    style={{ fontFamily: "CourierRegular", color: "black", fontSize: 16 }}
   />
 );
 
@@ -33,7 +33,7 @@ export const LinkText = (props) => (
   <Text
     {...props}
     style={{
-      fontFamily: "MarcellusRegular",
+      fontFamily: "CourierRegular",
       color: "blue",
       fontSize: 16,
       textDecorationLine: "underline",

@@ -19,6 +19,7 @@ const theme = usetheme;
 export default function App() {
   const [loaded] = useFonts({
     MarcellusRegular: require("./assets/fonts/Marcellus-Regular.ttf"),
+    CourierRegular: require("./assets/fonts/CourierPrime-Regular.ttf"),
   });
 
   if (!loaded) {
