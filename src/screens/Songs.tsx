@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Song } from "../models/Song";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
-import { BoldText, HeaderText, NormalText } from "../theme/theme";
+import { BoldText, HeaderText, NormalText, SmallText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 
 const SongsScreen = ({ navigation }) => {
@@ -35,7 +35,7 @@ const SongsScreen = ({ navigation }) => {
           }
         >
           <View style={styles.songInfo}>
-            <NormalText>{song.title}</NormalText>
+            <SmallText>{song.title}</SmallText>
             <NormalText>{song.category}</NormalText>
           </View>
         </Pressable>
@@ -45,7 +45,7 @@ const SongsScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.container}>
       <HeaderText>Songs</HeaderText>
       <Spacer />
       <View style={styles.songInfo}>

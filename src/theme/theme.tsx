@@ -22,6 +22,13 @@ export const HeaderText = (props) => (
   />
 );
 
+export const SmallText = (props) => (
+  <Text
+    {...props}
+    style={{ fontFamily: "CourierRegular", color: "black", fontSize: 14 }}
+  />
+);
+
 export const NormalText = (props) => (
   <Text
     {...props}

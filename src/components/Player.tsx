@@ -70,12 +70,6 @@ const Player = ({ song }: PlayerProps) => {
     }
   }
 
-  async function onStop() {
-    await player.stopAsync();
-    setSongisPlaying(false);
-    setSongisPaused(false);
-  }
-
   async function onPause() {
     await player.pauseAsync();
     setSongisPlaying(false);
@@ -113,14 +107,6 @@ const Player = ({ song }: PlayerProps) => {
           />
         </Pressable>
         <Spacer width={20} />
-        {/* <Pressable onPress={onStop}>
-          <Icon
-            name="stop-circle"
-            type="feather"
-            size={60}
-            color={!songIsLoaded ? "grey" : "black"}
-          />
-        </Pressable> */}
       </View>
       <PlayerSlider
         songDuration={songDuration}
