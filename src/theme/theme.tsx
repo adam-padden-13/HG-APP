@@ -29,6 +29,13 @@ export const NormalText = (props) => (
   />
 );
 
+export const BoldText = (props) => (
+  <Text
+    {...props}
+    style={{ fontFamily: "CourierBold", color: "black", fontSize: 16 }}
+  />
+);
+
 export const LinkText = (props) => (
   <Text
     {...props}

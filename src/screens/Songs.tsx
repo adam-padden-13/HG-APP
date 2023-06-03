@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Song } from "../models/Song";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
-import { HeaderText, NormalText } from "../theme/theme";
+import { BoldText, HeaderText, NormalText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 
 const SongsScreen = ({ navigation }) => {
@@ -27,19 +27,17 @@ const SongsScreen = ({ navigation }) => {
     return (
       <View>
         <Pressable
-          style={{
-            height: 40,
-            borderWidth: 1,
-            justifyContent: "center",
-            paddingHorizontal: 10,
-          }}
+          style={styles.songContainer}
           onPress={() =>
             navigation.navigate("SongScreen", {
               song: song,
             })
           }
         >
-          <NormalText>{song.title}</NormalText>
+          <View style={styles.songInfo}>
+            <NormalText>{song.title}</NormalText>
+            <NormalText>{song.category}</NormalText>
+          </View>
         </Pressable>
         <View style={{ marginBottom: 12 }} />
       </View>
@@ -50,6 +48,11 @@ const SongsScreen = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <HeaderText>Songs</HeaderText>
       <Spacer />
+      <View style={styles.songInfo}>
+        <BoldText>Title</BoldText>
+        <BoldText>Category</BoldText>
+      </View>
+      <Spacer height={10} />
       <View>
         {songs.map((song, id) => {
           return renderSongInfo(song);
@@ -59,17 +62,27 @@ const SongsScreen = ({ navigation }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     marginTop: 60,
-    marginHorizontal: 36,
+    marginHorizontal: 20,
     flex: 1,
   },
   goBack: {
     position: "absolute",
     top: 0,
     left: 10,
+  },
+  songContainer: {
+    height: 42,
+    borderWidth: 1,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+  },
+  songInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 4,
   },
 });
 
