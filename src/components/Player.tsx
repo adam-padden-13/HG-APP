@@ -24,10 +24,10 @@ const Player = ({ song }: PlayerProps) => {
 
   const audioFileTitle: string = removeSpaces(song.title);
   const audioRef = ref(storage, "audio");
-  const callingNightRef = ref(audioRef, `/${audioFileTitle}.m4a`);
+  const songRef = ref(audioRef, `/${audioFileTitle}.m4a`);
 
   const getSong = async () => {
-    await getDownloadURL(callingNightRef).then((convertedURL) => {
+    await getDownloadURL(songRef).then((convertedURL) => {
       loadSound(convertedURL);
     });
   };
@@ -113,14 +113,14 @@ const Player = ({ song }: PlayerProps) => {
           />
         </Pressable>
         <Spacer width={20} />
-        <Pressable onPress={onStop}>
+        {/* <Pressable onPress={onStop}>
           <Icon
             name="stop-circle"
             type="feather"
             size={60}
             color={!songIsLoaded ? "grey" : "black"}
           />
-        </Pressable>
+        </Pressable> */}
       </View>
       <PlayerSlider
         songDuration={songDuration}

@@ -51,7 +51,7 @@ const SongsScreen = ({ navigation }) => {
       <HeaderText>Songs</HeaderText>
       <Spacer />
       <View>
-        {songs.map((song) => {
+        {songs.map((song, id) => {
           return renderSongInfo(song);
         })}
       </View>

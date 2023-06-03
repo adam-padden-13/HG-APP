@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/SongsStackNavigator";
-import { HeaderText } from "../theme/theme";
+import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "../components/Spacer";
-import { Icon } from "@rneui/themed";
 import GoBack from "../components/GoBack";
 import Player from "../components/Player";
 
@@ -20,6 +18,10 @@ const SongScreen = ({ navigation, route }: Props) => {
       <GoBack navigation={navigation} />
       <Spacer />
       <HeaderText> {song.title}</HeaderText>
+      <Spacer />
+      <NormalText> Recorded Date: {song.recordedDate}</NormalText>
+      <Spacer height={10} />
+      <NormalText>Category: {song.category}</NormalText>
       <Spacer />
       <Player song={song} />
     </View>

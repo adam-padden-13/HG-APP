@@ -1,3 +1,5 @@
 export interface Song {
-    title: string;
+  title: string;
+  recordedDate?: string;
+  category?: string;
 }
