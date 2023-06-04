@@ -23,6 +23,8 @@ const SongScreen = ({ navigation, route }: Props) => {
       <Spacer height={10} />
       <NormalText>Category: {song.category}</NormalText>
       <Spacer />
+      <NormalText>Notes: {song.notes}</NormalText>
+      <Spacer />
       <Player song={song} />
     </View>
   );

@@ -1,4 +1,4 @@
-import { Text, View, Pressable, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
 import { storage } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
@@ -6,7 +6,6 @@ import Spacer from "./Spacer";
 import { NormalText } from "../theme/theme";
 import PlayerSlider from "./PlayerSlider";
 import { getDownloadURL, ref } from "firebase/storage";
-import { removeSpaces } from "../utilities/stringUtilities";
 import { useEffect, useState } from "react";
 import { Song } from "../models/Song";
 
@@ -22,9 +21,9 @@ const Player = ({ song }: PlayerProps) => {
   const [songDuration, setSongDuration] = useState(0);
   const [currentPlayback, setCurrentPlayback] = useState(0);
 
-  const audioFileTitle: string = removeSpaces(song.title);
+  const audioFileTitle: string = song.audioFileName;
   const audioRef = ref(storage, "audio");
-  const songRef = ref(audioRef, `/${audioFileTitle}.m4a`);
+  const songRef = ref(audioRef, `/${audioFileTitle}`);
 
   const getSong = async () => {
     await getDownloadURL(songRef).then((convertedURL) => {
