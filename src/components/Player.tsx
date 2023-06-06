@@ -1,4 +1,4 @@
-import { View, Pressable, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { Audio } from "expo-av";
 import { storage } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
@@ -84,38 +84,49 @@ const Player = ({ song }: PlayerProps) => {
       }
     }
   };
-  
+
   return (
-    <View style={styles.container}>
-      <View style={styles.buttons}>
-        <Pressable onPress={onPlay} disabled={!songIsLoaded}>
-          <Icon
-            name="play-circle"
-            type="feather"
-            size={60}
-            color={!songIsLoaded ? "grey" : songIsPlaying ? "green" : "black"}
+    <>
+      {!songIsLoaded ? (
+        <>
+          <ActivityIndicator size={"large"} color="black" />
+          <Spacer />
+          <NormalText>Player is loading...</NormalText>
+        </>
+      ) : (
+        <View style={styles.container}>
+          <View style={styles.buttons}>
+            <Pressable onPress={onPlay} disabled={!songIsLoaded}>
+              <Icon
+                name="play-circle"
+                type="feather"
+                size={60}
+                color={
+                  !songIsLoaded ? "grey" : songIsPlaying ? "green" : "black"
+                }
+              />
+            </Pressable>
+            <Spacer width={20} />
+            <Pressable onPress={onPause} disabled={!songIsPlaying}>
+              <Icon
+                name="pause-circle"
+                type="feather"
+                size={60}
+                color={!songIsLoaded ? "grey" : songIsPaused ? "red" : "black"}
+              />
+            </Pressable>
+            <Spacer width={20} />
+          </View>
+          <PlayerSlider
+            songDuration={songDuration}
+            currentPlayback={currentPlayback}
+            updateCurrentPlayback={(updatedTime) =>
+              player.setPositionAsync(updatedTime)
+            }
           />
-        </Pressable>
-        <Spacer width={20} />
-        <Pressable onPress={onPause} disabled={!songIsPlaying}>
-          <Icon
-            name="pause-circle"
-            type="feather"
-            size={60}
-            color={!songIsLoaded ? "grey" : songIsPaused ? "red" : "black"}
-          />
-        </Pressable>
-        <Spacer width={20} />
-      </View>
-      <PlayerSlider
-        songDuration={songDuration}
-        currentPlayback={currentPlayback}
-        updateCurrentPlayback={(updatedTime) =>
-          player.setPositionAsync(updatedTime)
-        }
-      />
-      {!songIsLoaded && <NormalText>Player is loading...</NormalText>}
-    </View>
+        </View>
+      )}
+    </>
   );
 };
 

@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Song } from "../models/Song";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
@@ -8,8 +14,10 @@ import Spacer from "../components/Spacer";
 
 const SongsScreen = ({ navigation }) => {
   const [songs, setSongs] = useState<Song[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getData = async () => {
+    setIsLoading(true);
     const querySnapshot = await getDocs(collection(db, "songs"));
     const songsToPush: Song[] = [];
     querySnapshot.forEach((song) => {
@@ -17,15 +25,16 @@ const SongsScreen = ({ navigation }) => {
     });
 
     setSongs(songsToPush);
+    setIsLoading(false);
   };
 
   useEffect(() => {
     getData();
   }, []);
 
-  const renderSongInfo = (song: Song) => {
+  const renderSongInfo = (song: Song, id: number) => {
     return (
-      <View>
+      <View key={id}>
         <Pressable
           style={styles.songContainer}
           onPress={() =>
@@ -54,8 +63,9 @@ const SongsScreen = ({ navigation }) => {
       </View>
       <Spacer height={10} />
       <View>
+        {isLoading && <ActivityIndicator size={"large"} color="black" />}
         {songs.map((song, id) => {
-          return renderSongInfo(song);
+          return renderSongInfo(song, id);
         })}
       </View>
     </ScrollView>
