@@ -222,6 +222,7 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
               placeholder="Password"
               value={password}
               onChangeText={setPassword}
+              secureTextEntry
             />
             <Spacer />
             {submitButton()}
