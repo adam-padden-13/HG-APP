@@ -176,8 +176,8 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
             }}
             style={{
               alignSelf: "flex-end",
-              right: 60,
-              top: 68,
+              right: 50,
+              top: 50,
               zIndex: 1,
               margin: 0,
             }}
@@ -185,9 +185,8 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
             <Icon
               name="closecircle"
               type="ant-design"
-              size={30}
+              size={20}
               color="black"
-              style={{}}
             />
           </Pressable>
         )}
