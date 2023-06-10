@@ -119,13 +119,19 @@ const SongInfoModal = ({ showModal, hideModal }: SongInfoModalProps) => {
           <Spacer />
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Title"
             value={email}
             onChangeText={setEmail}
           />
           <TextInput
             style={styles.input}
-            placeholder="Password"
+            placeholder="Notes"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Recorded Date"
             value={password}
             onChangeText={setPassword}
           />
