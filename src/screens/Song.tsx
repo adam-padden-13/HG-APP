@@ -34,12 +34,12 @@ const SongScreen = ({ navigation, route }: Props) => {
         <NormalText>Category: {song.category}</NormalText>
         <Spacer height={10} />
         <NormalText>Notes: {song.notes ? song.notes : "N/A"}</NormalText>
-        {/* <Icon
-          name="info"
+        <Icon
+          name="edit"
           type="feather"
           color={"black"}
           style={styles.editIcon}
-        /> */}
+        />
       </Pressable>
 
       <Spacer height={40} />
@@ -48,6 +48,7 @@ const SongScreen = ({ navigation, route }: Props) => {
         <SongInfoModal
           showModal={showSongInfo}
           hideModal={() => setShowSongInfo(false)}
+          song={song}
         />
       )}
     </View>
