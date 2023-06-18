@@ -3,23 +3,36 @@ import { Icon } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useState } from "react";
+import { Song } from "../models/Song";
 
 interface SongInfoModalProps {
   showModal: boolean;
   hideModal: () => void;
+  song: Song;
 }
 
-const SongInfoModal = ({ showModal, hideModal }: SongInfoModalProps) => {
+const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
 
   // FORM FIELDS
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [updateTitle, setUpdateTitle] = useState(song.title);
+  const [updateRecordedDate, setUpdateRecordedDate] = useState(
+    song.recordedDate
+  );
+  const [updateCategory, setUpdateCategory] = useState(song.category);
+  const [updateNotes, setUpdateNotes] = useState(song.notes);
+  const [updatedSong, setUpdatedSong] = useState<Song>({
+    id: song.id,
+    title: updateTitle,
+    recordedDate: updateRecordedDate,
+    category: updateCategory,
+    image: "",
+    notes: updateNotes,
+    audioFileName: song.audioFileName,
+  });
 
-  const resetForm = () => {
-    setEmail("");
-    setPassword("");
-  };
+  // NOT SURE IF I NEED THIS
+  const resetForm = () => {};
 
   const styles = StyleSheet.create({
     centeredView: {
@@ -110,7 +123,6 @@ const SongInfoModal = ({ showModal, hideModal }: SongInfoModalProps) => {
         >
           <Icon name="closecircle" type="ant-design" size={20} color="black" />
         </Pressable>
-
         <View style={styles.modalView}>
           <View style={styles.headerView}>
             <HeaderText>Song Name</HeaderText>
@@ -120,20 +132,26 @@ const SongInfoModal = ({ showModal, hideModal }: SongInfoModalProps) => {
           <TextInput
             style={styles.input}
             placeholder="Title"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Notes"
-            value={password}
-            onChangeText={setPassword}
+            value={updateTitle}
+            onChangeText={setUpdateTitle}
           />
           <TextInput
             style={styles.input}
             placeholder="Recorded Date"
-            value={password}
-            onChangeText={setPassword}
+            value={updateRecordedDate}
+            onChangeText={setUpdateRecordedDate}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Category"
+            value={updateCategory}
+            onChangeText={setUpdateCategory}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Notes"
+            value={updateNotes}
+            onChangeText={setUpdateNotes}
           />
           <Spacer />
           {saveButton()}
