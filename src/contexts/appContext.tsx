@@ -1,4 +1,4 @@
-import React, { Key, createContext, useReducer } from "react";
+import React, { createContext, useReducer } from "react";
 
 export interface AppState {
   user: {
