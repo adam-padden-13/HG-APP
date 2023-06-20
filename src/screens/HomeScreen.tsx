@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation }) => {
         alert("Signed Out");
         dispatch({
           type: "User",
-          payload: { userDisplayName: "Guest" },
+          payload: { userDisplayName: "Guest", userEmail: "" },
         });
       })
       .catch((error) => {

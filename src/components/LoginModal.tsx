@@ -107,8 +107,12 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
       .then((userCredential) => {
         alert("Account created!");
         dispatch({
-          type: "User", payload: {userDisplayName: userCredential.user.displayName}
-         })
+          type: "User",
+          payload: {
+            userDisplayName: userCredential.user.displayName,
+            userEmail: userCredential.user.email,
+          },
+        });
         setShowUpdateInfo(true);
       })
       .catch((error) => {
@@ -134,8 +138,12 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
       .then((userCredential) => {
         alert("SIGNED IN");
         dispatch({
-          type: "User", payload: {userDisplayName: userCredential.user.displayName}
-         })
+          type: "User",
+          payload: {
+            userDisplayName: userCredential.user.displayName,
+            userEmail: userCredential.user.email,
+          },
+        });
         resetForm();
         hideModal();
       })

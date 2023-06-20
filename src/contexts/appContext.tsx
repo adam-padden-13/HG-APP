@@ -3,11 +3,12 @@ import React, { createContext, useReducer } from "react";
 export interface AppState {
   user: {
     userDisplayName: string;
+    userEmail: string;
   };
 }
 
 export interface AppActionPayloads {
-  User: { userDisplayName: string };
+  User: { userDisplayName: string; userEmail: string };
 }
 
 export type AppAction = {
@@ -24,6 +25,7 @@ const appReducer = (state: AppState, action: AppAction) => {
         ...state,
         user: {
           userDisplayName: action.payload.userDisplayName,
+          userEmail: action.payload.userEmail,
         },
       };
     default:
@@ -35,6 +37,7 @@ const initialValue = {
   state: {
     user: {
       userDisplayName: "Guest",
+      userEmail: ""
     },
   },
   dispatch: () => null,
