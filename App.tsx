@@ -8,7 +8,7 @@ import { Icon } from "@rneui/themed";
 import { ThemeProvider } from "@rneui/themed";
 import { usetheme } from "./src/theme/theme";
 import { useFonts } from "expo-font";
-import TakeOutScreen from "./src/screens/TakeOutScreen";
+import EggScreen from "./src/screens/TakeOutScreen";
 import { AppProvider } from "./src/contexts/appContext";
 
 const BottomTab = createBottomTabNavigator();
@@ -50,14 +50,12 @@ export default function App() {
               }}
             />
             <BottomTab.Screen
-              name="Takeout"
-              component={TakeOutScreen}
+              name="EggScreen"
+              component={EggScreen}
               options={{
-                title: "Our Favorite Takeout",
+                title: "Egg",
                 headerShown: false,
-                tabBarIcon: () => (
-                  <Icon name="food-hot-dog" type="material-community" />
-                ),
+                tabBarIcon: () => <Icon name="egg-outline" type="ionicon" />,
               }}
             />
           </BottomTab.Navigator>
