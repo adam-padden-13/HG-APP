@@ -2,7 +2,7 @@ import { View, Pressable, StyleSheet, Modal, TextInput } from "react-native";
 import { Icon } from "@rneui/themed";
 import { HeaderText, LinkText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { auth } from "../../firebaseConfig";
 import {
   User,
@@ -10,6 +10,7 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+import { AppContext } from "../contexts/appContext";
 
 interface LoginModalProps {
   showModal: boolean;
@@ -25,6 +26,8 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [authType, setAuthType] = useState<AuthType>(AuthType.login);
   const [showUpdateInfo, setShowUpdateInfo] = useState(false);
+
+  const { state, dispatch } = useContext(AppContext);
 
   // FORM FIELDS
   const [email, setEmail] = useState("");
@@ -103,7 +106,9 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         alert("Account created!");
-        setUser(userCredential.user);
+        dispatch({
+          type: "User", payload: {userDisplayName: userCredential.user.displayName}
+         })
         setShowUpdateInfo(true);
       })
       .catch((error) => {
@@ -128,7 +133,9 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         alert("SIGNED IN");
-        setUser(userCredential.user);
+        dispatch({
+          type: "User", payload: {userDisplayName: userCredential.user.displayName}
+         })
         resetForm();
         hideModal();
       })

@@ -34,7 +34,7 @@ const appReducer = (state: AppState, action: AppAction) => {
 const initialValue = {
   state: {
     user: {
-      userDisplayName: "",
+      userDisplayName: "Guest",
     },
   },
   dispatch: () => null,
