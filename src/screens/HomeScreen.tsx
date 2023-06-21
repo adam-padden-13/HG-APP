@@ -1,30 +1,29 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { StyleSheet, View, Image, Pressable } from "react-native";
 import { Icon } from "@rneui/themed";
 import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
-import { User, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { NormalText } from "../theme/theme";
+import { AppContext } from "../contexts/appContext";
 
 const HomeScreen = ({ navigation }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [user, setUser] = useState<User>();
+  const { state, dispatch } = useContext(AppContext);
 
   useEffect(() => {
-    if (auth.currentUser) {
-      setUser(auth.currentUser);
-    } else {
-      setShowLoginModal(true);
-    }
+    if (state.user.userDisplayName === "Guest") setShowLoginModal(true);
   }, [showLoginModal]);
 
   const handleSignout = () => {
-    // alert(`the user name is ${userName} and the password is ${password}`);
     signOut(auth)
       .then((res) => {
-        alert(res);
-        setUser(null);
+        alert("Signed Out");
+        dispatch({
+          type: "User",
+          payload: { userDisplayName: "Guest", userEmail: "" },
+        });
       })
       .catch((error) => {
         alert(error);
@@ -35,7 +34,7 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView>
       <View style={{}}>
         <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-          <NormalText>Hello {user ? user.displayName : ""}</NormalText>
+          <NormalText>Hello {state.user.userDisplayName ?? ""}</NormalText>
           <Pressable onPress={() => setShowLoginModal(true)}>
             <Icon
               name="user-circle"

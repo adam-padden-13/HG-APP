@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./src/screens/HomeScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SongsStackNavigator from "./src/navigation/SongsStackNavigator";
@@ -9,8 +8,8 @@ import { Icon } from "@rneui/themed";
 import { ThemeProvider } from "@rneui/themed";
 import { usetheme } from "./src/theme/theme";
 import { useFonts } from "expo-font";
-import Header from "./src/components/Header";
-import TakeOutScreen from "./src/screens/TakeOutScreen";
+import EggScreen from "./src/screens/TakeOutScreen";
+import { AppProvider } from "./src/contexts/appContext";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -28,42 +27,42 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <BottomTab.Navigator>
-          <BottomTab.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              title: "Home",
-              headerShown: false,
-              tabBarIcon: () => <Icon name="home" type="feather" />,
-            }}
-          />
-          <BottomTab.Screen
-            name="SongsTab"
-            component={SongsStackNavigator}
-            options={{
-              title: "Songs",
-              headerShown: false,
-              tabBarIcon: () => <Icon name="music" type="feather" />,
-            }}
-          />
-          <BottomTab.Screen
-            name="Takeout"
-            component={TakeOutScreen}
-            options={{
-              title: "Our Favorite Takeout",
-              headerShown: false,
-              tabBarIcon: () => (
-                <Icon name="food-hot-dog" type="material-community" />
-              ),
-            }}
-          />
-        </BottomTab.Navigator>
-        <StatusBar style="auto" />
-      </NavigationContainer>
-    </ThemeProvider>
+    <AppProvider>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          <BottomTab.Navigator>
+            <BottomTab.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{
+                title: "Home",
+                headerShown: false,
+                tabBarIcon: () => <Icon name="home" type="feather" />,
+              }}
+            />
+            <BottomTab.Screen
+              name="SongsTab"
+              component={SongsStackNavigator}
+              options={{
+                title: "Songs",
+                headerShown: false,
+                tabBarIcon: () => <Icon name="music" type="feather" />,
+              }}
+            />
+            <BottomTab.Screen
+              name="EggScreen"
+              component={EggScreen}
+              options={{
+                title: "Egg",
+                headerShown: false,
+                tabBarIcon: () => <Icon name="egg-outline" type="ionicon" />,
+              }}
+            />
+          </BottomTab.Navigator>
+          <StatusBar style="auto" />
+        </NavigationContainer>
+      </ThemeProvider>
+    </AppProvider>
   );
 }
 

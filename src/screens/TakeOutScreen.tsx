@@ -1,7 +1,7 @@
 import { WebView } from "react-native-webview";
 import Constants from "expo-constants";
 
-const TakeOutScreen = () => {
+const EggScreen = () => {
   return (
     <WebView
       source={{ uri: "https://egggame.org/" }}
@@ -10,4 +10,4 @@ const TakeOutScreen = () => {
   );
 };
 
-export default TakeOutScreen;
+export default EggScreen;
