@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -11,10 +11,12 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { BoldText, HeaderText, NormalText, SmallText } from "../theme/theme";
 import Spacer from "../components/Spacer";
+import { AppContext } from "../contexts/appContext";
 
 const SongsScreen = ({ navigation }) => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { state, dispatch } = useContext(AppContext);
 
   const getData = async () => {
     setIsLoading(true);
@@ -37,11 +39,16 @@ const SongsScreen = ({ navigation }) => {
       <View key={id}>
         <Pressable
           style={styles.songContainer}
-          onPress={() =>
+          onPress={() => {
             navigation.navigate("SongScreen", {
               song: song,
-            })
-          }
+            });
+
+            dispatch({
+              type: "SelectedSong",
+              payload: song,
+            });
+          }}
         >
           <View style={styles.songInfo}>
             <SmallText>{song.title}</SmallText>

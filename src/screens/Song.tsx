@@ -6,7 +6,7 @@ import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import Player from "../components/Player";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@rneui/base";
 import SongInfoModal from "../components/SongInfoModal";
 

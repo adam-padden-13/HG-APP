@@ -2,8 +2,9 @@ import { View, Pressable, StyleSheet, Modal, TextInput } from "react-native";
 import { Icon } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
-import { useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { Song } from "../models/Song";
+import { AppContext } from "../contexts/appContext";
 
 interface SongInfoModalProps {
   showModal: boolean;
@@ -11,28 +12,44 @@ interface SongInfoModalProps {
   song: Song;
 }
 
+const editSongReducer = (
+  state: Pick<Song, "title" | "recordedDate" | "category" | "notes">,
+  action
+) => {
+  switch (action.type) {
+    case "title":
+      return { ...state, title: action.payload };
+    case "recordedDate":
+      return { ...state, recordedDate: action.payload };
+    case "category":
+      return { ...state, category: action.payload };
+    case "notes":
+      return { ...state, notes: action.payload };
+    default:
+      return state;
+  }
+};
+
 const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
+  const { state, dispatch } = useContext(AppContext);
+  const selectedSong = state.selectedSong;
+
+  const [songState, songDispatch] = useReducer(editSongReducer, {
+    title: selectedSong.title,
+    recordedDate: selectedSong.recordedDate,
+    category: selectedSong.category,
+    notes: selectedSong.notes,
+  });
   const [changeButtonColor, setChangeButtonColor] = useState(false);
 
   // FORM FIELDS
-  const [updateTitle, setUpdateTitle] = useState(song.title);
-  const [updateRecordedDate, setUpdateRecordedDate] = useState(
-    song.recordedDate
-  );
-  const [updateCategory, setUpdateCategory] = useState(song.category);
-  const [updateNotes, setUpdateNotes] = useState(song.notes);
-  const [updatedSong, setUpdatedSong] = useState<Song>({
-    id: song.id,
-    title: updateTitle,
-    recordedDate: updateRecordedDate,
-    category: updateCategory,
-    image: "",
-    notes: updateNotes,
-    audioFileName: song.audioFileName,
-  });
 
   // NOT SURE IF I NEED THIS
   const resetForm = () => {};
+
+  useEffect(() => {
+    console.log(songState);
+  }, [songState]);
 
   const styles = StyleSheet.create({
     centeredView: {
@@ -132,26 +149,46 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
           <TextInput
             style={styles.input}
             placeholder="Title"
-            value={updateTitle}
-            onChangeText={setUpdateTitle}
+            value={songState.title}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "title",
+                payload: value,
+              });
+            }}
           />
           <TextInput
             style={styles.input}
             placeholder="Recorded Date"
-            value={updateRecordedDate}
-            onChangeText={setUpdateRecordedDate}
+            value={songState.recordedDate}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "recordedDate",
+                payload: value,
+              });
+            }}
           />
           <TextInput
             style={styles.input}
             placeholder="Category"
-            value={updateCategory}
-            onChangeText={setUpdateCategory}
+            value={songState.category}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "category",
+                payload: value,
+              });
+            }}
           />
           <TextInput
             style={styles.input}
             placeholder="Notes"
-            value={updateNotes}
-            onChangeText={setUpdateNotes}
+            value={songState.notes}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "notes",
+                payload: value,
+              });
+            }}
           />
           <Spacer />
           {saveButton()}
