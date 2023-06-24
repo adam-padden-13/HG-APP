@@ -1,4 +1,4 @@
-import { View, Pressable, StyleSheet } from "react-native";
+import { View, Pressable, StyleSheet, ScrollView } from "react-native";
 import { Icon, Input } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
@@ -56,6 +56,7 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
     centeredView: {
       flex: 1,
       justifyContent: "center",
+      marginTop: 40
     },
     modalView: {
       alignSelf: "center",
@@ -131,77 +132,79 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
       style={styles.centeredView}
       hasBackdrop={false}
     >
-      <Pressable
-        onPress={() => {
-          hideModal();
-          resetForm();
-        }}
-        style={{
-          alignSelf: "flex-end",
-          right: 50,
-          top: 50,
-          zIndex: 1,
-        }}
-      >
-        <Icon name="closecircle" type="ant-design" size={20} color="black" />
-      </Pressable>
-      <View style={styles.modalView}>
-        <View style={styles.headerView}>
-          <HeaderText>Song Name</HeaderText>
-        </View>
+      <ScrollView>
+        <Pressable
+          onPress={() => {
+            hideModal();
+            resetForm();
+          }}
+          style={{
+            alignSelf: "flex-end",
+            right: 20,
+            top: 50,
+            zIndex: 1,
+          }}
+        >
+          <Icon name="closecircle" type="ant-design" size={20} color="black" />
+        </Pressable>
+        <View style={styles.modalView}>
+          <View style={styles.headerView}>
+            <HeaderText>Song Name</HeaderText>
+          </View>
 
-        <Spacer />
-        <Input
-          label={"Title"}
-          placeholder="Title"
-          inputContainerStyle={styles.inputContainerStyle}
-          value={songState.title}
-          onChangeText={(value) => {
-            songDispatch({
-              type: "title",
-              payload: value,
-            });
-          }}
-        />
-        <Input
-          label={"Recorded Date"}
-          placeholder="MM/DD/YYYY"
-          inputContainerStyle={styles.inputContainerStyle}
-          value={songState.recordedDate}
-          onChangeText={(value) => {
-            songDispatch({
-              type: "recordedDate",
-              payload: value,
-            });
-          }}
-        />
-        <Input
-          label={"Category"}
-          placeholder="Category"
-          inputContainerStyle={styles.inputContainerStyle}
-          value={songState.category}
-          onChangeText={(value) => {
-            songDispatch({
-              type: "category",
-              payload: value,
-            });
-          }}
-        />
-        <Input
-          label={"Notes"}
-          placeholder="Notes"
-          inputContainerStyle={[styles.inputContainerStyle]}
-          value={songState.notes}
-          onChangeText={(value) => {
-            songDispatch({
-              type: "notes",
-              payload: value,
-            });
-          }}
-        />
-        <Spacer />
-        {saveButton()}
-      </View>
+          <Spacer />
+          <Input
+            label={"Title"}
+            placeholder="Title"
+            inputContainerStyle={styles.inputContainerStyle}
+            value={songState.title}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "title",
+                payload: value,
+              });
+            }}
+          />
+          <Input
+            label={"Recorded Date"}
+            placeholder="MM/DD/YYYY"
+            inputContainerStyle={styles.inputContainerStyle}
+            value={songState.recordedDate}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "recordedDate",
+                payload: value,
+              });
+            }}
+          />
+          <Input
+            label={"Category"}
+            placeholder="Category"
+            inputContainerStyle={styles.inputContainerStyle}
+            value={songState.category}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "category",
+                payload: value,
+              });
+            }}
+          />
+          <Input
+            multiline
+            label={"Notes"}
+            inputContainerStyle={[styles.inputContainerStyle]}
+            value={songState.notes}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "notes",
+                payload: value,
+              });
+            }}
+          />
+          <Spacer />
+          {saveButton()}
+        </View>
+      </ScrollView>
     </Modal>
   );
 };
