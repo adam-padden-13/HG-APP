@@ -2,10 +2,12 @@ import { View, Pressable, StyleSheet, ScrollView } from "react-native";
 import { Icon, Input } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import { Song } from "../models/Song";
 import { AppContext } from "../contexts/appContext";
 import Modal from "react-native-modal";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 
 interface SongInfoModalProps {
   showModal: boolean;
@@ -13,10 +15,7 @@ interface SongInfoModalProps {
   song: Song;
 }
 
-const editSongReducer = (
-  state: Pick<Song, "title" | "recordedDate" | "category" | "notes">,
-  action
-) => {
+const editSongReducer = (state: Song, action) => {
   switch (action.type) {
     case "title":
       return { ...state, title: action.payload };
@@ -36,27 +35,25 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
   const selectedSong = state.selectedSong;
 
   const [songState, songDispatch] = useReducer(editSongReducer, {
+    id: selectedSong.id,
     title: selectedSong.title,
     recordedDate: selectedSong.recordedDate,
     category: selectedSong.category,
+    image: selectedSong.image,
     notes: selectedSong.notes,
+    audioFileName: selectedSong.audioFileName,
+    documentId: selectedSong.documentId,
   });
   const [changeButtonColor, setChangeButtonColor] = useState(false);
 
-  // FORM FIELDS
-
   // NOT SURE IF I NEED THIS
   const resetForm = () => {};
-
-  useEffect(() => {
-    console.log(songState);
-  }, [songState]);
 
   const styles = StyleSheet.create({
     centeredView: {
       flex: 1,
       justifyContent: "center",
-      marginTop: 40
+      marginTop: 40,
     },
     modalView: {
       alignSelf: "center",
@@ -110,6 +107,25 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
     },
   });
 
+  const handleSave = async () => {
+    await setDoc(doc(db, "songs", `${selectedSong.documentId}`), {
+      id: songState.id,
+      title: songState.title,
+      recordedDate: songState.recordedDate,
+      category: songState.category,
+      image: songState.image,
+      notes: songState.notes,
+      audioFileName: songState.audioFileName,
+    })
+      .then(() => {
+        alert("Save Sucessful");
+        hideModal();
+      })
+      .catch((error) => {
+        alert("An error occurred, save was unsuccessful");
+      });
+  };
+
   const saveButton = () => {
     return (
       <View style={styles.buttonContainer}>
@@ -117,7 +133,7 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
           style={styles.saveButton}
           onPressIn={() => setChangeButtonColor(true)}
           onPressOut={() => setChangeButtonColor(false)}
-          onPress={() => console.log("hello")}
+          onPress={() => handleSave()}
         >
           <NormalText>Save</NormalText>
         </Pressable>
@@ -141,15 +157,15 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
           style={{
             alignSelf: "flex-end",
             right: 20,
-            top: 50,
+            top: 60,
             zIndex: 1,
           }}
         >
-          <Icon name="closecircle" type="ant-design" size={20} color="black" />
+          <Icon name="closecircle" type="ant-design" size={30} color="black" />
         </Pressable>
         <View style={styles.modalView}>
           <View style={styles.headerView}>
-            <HeaderText>Song Name</HeaderText>
+            <HeaderText>{state.selectedSong.title}</HeaderText>
           </View>
 
           <Spacer />

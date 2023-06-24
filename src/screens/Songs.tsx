@@ -23,7 +23,9 @@ const SongsScreen = ({ navigation }) => {
     const querySnapshot = await getDocs(collection(db, "songs"));
     const songsToPush: Song[] = [];
     querySnapshot.forEach((song) => {
-      songsToPush.push(song.data() as Song);
+      let currentSong: Song = song.data() as Song;
+      currentSong.documentId = song.id;
+      songsToPush.push(currentSong);
     });
 
     setSongs(songsToPush);
