@@ -1,5 +1,5 @@
-import { View, Pressable, StyleSheet, Modal, TextInput } from "react-native";
-import { Icon } from "@rneui/themed";
+import { View, Pressable, StyleSheet, Modal } from "react-native";
+import { Icon, Input } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useEffect, useReducer, useState } from "react";
@@ -101,6 +101,11 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
       alignItems: "center",
       textAlign: "center",
     },
+    inputContainerStyle: {
+      borderWidth: 1,
+      paddingHorizontal: 8,
+      marginTop: 4,
+    },
   });
 
   const saveButton = () => {
@@ -146,9 +151,10 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
           </View>
 
           <Spacer />
-          <TextInput
-            style={styles.input}
+          <Input
+            label={"Title"}
             placeholder="Title"
+            inputContainerStyle={styles.inputContainerStyle}
             value={songState.title}
             onChangeText={(value) => {
               songDispatch({
@@ -157,9 +163,10 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
               });
             }}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Recorded Date"
+          <Input
+            label={"Recorded Date"}
+            placeholder="MM/DD/YYYY"
+            inputContainerStyle={styles.inputContainerStyle}
             value={songState.recordedDate}
             onChangeText={(value) => {
               songDispatch({
@@ -168,9 +175,10 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
               });
             }}
           />
-          <TextInput
-            style={styles.input}
+          <Input
+            label={"Category"}
             placeholder="Category"
+            inputContainerStyle={styles.inputContainerStyle}
             value={songState.category}
             onChangeText={(value) => {
               songDispatch({
@@ -179,9 +187,10 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
               });
             }}
           />
-          <TextInput
-            style={styles.input}
+          <Input
+            label={"Notes"}
             placeholder="Notes"
+            inputContainerStyle={styles.inputContainerStyle}
             value={songState.notes}
             onChangeText={(value) => {
               songDispatch({
