@@ -1,10 +1,11 @@
-import { View, Pressable, StyleSheet, Modal } from "react-native";
+import { View, Pressable, StyleSheet } from "react-native";
 import { Icon, Input } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useEffect, useReducer, useState } from "react";
 import { Song } from "../models/Song";
 import { AppContext } from "../contexts/appContext";
+import Modal from "react-native-modal";
 
 interface SongInfoModalProps {
   showModal: boolean;
@@ -54,10 +55,10 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
   const styles = StyleSheet.create({
     centeredView: {
       flex: 1,
-      alignItems: "center",
-      marginTop: 100,
+      justifyContent: "center",
     },
     modalView: {
+      alignSelf: "center",
       margin: 20,
       backgroundColor: "white",
       borderRadius: 20,
@@ -73,7 +74,7 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
       shadowRadius: 4,
       elevation: 5,
       borderWidth: 2,
-      width: "80%",
+      width: "96%",
     },
     modalText: {
       marginBottom: 15,
@@ -125,83 +126,81 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
 
   return (
     <Modal
-      animationType="slide"
-      transparent={true}
-      visible={showModal}
-      onRequestClose={hideModal}
+      avoidKeyboard={true}
+      isVisible={showModal}
+      style={styles.centeredView}
+      hasBackdrop={false}
     >
-      <View style={styles.centeredView}>
-        <Pressable
-          onPress={() => {
-            hideModal();
-            resetForm();
-          }}
-          style={{
-            alignSelf: "flex-end",
-            right: 50,
-            top: 50,
-            zIndex: 1,
-          }}
-        >
-          <Icon name="closecircle" type="ant-design" size={20} color="black" />
-        </Pressable>
-        <View style={styles.modalView}>
-          <View style={styles.headerView}>
-            <HeaderText>Song Name</HeaderText>
-          </View>
-
-          <Spacer />
-          <Input
-            label={"Title"}
-            placeholder="Title"
-            inputContainerStyle={styles.inputContainerStyle}
-            value={songState.title}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "title",
-                payload: value,
-              });
-            }}
-          />
-          <Input
-            label={"Recorded Date"}
-            placeholder="MM/DD/YYYY"
-            inputContainerStyle={styles.inputContainerStyle}
-            value={songState.recordedDate}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "recordedDate",
-                payload: value,
-              });
-            }}
-          />
-          <Input
-            label={"Category"}
-            placeholder="Category"
-            inputContainerStyle={styles.inputContainerStyle}
-            value={songState.category}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "category",
-                payload: value,
-              });
-            }}
-          />
-          <Input
-            label={"Notes"}
-            placeholder="Notes"
-            inputContainerStyle={styles.inputContainerStyle}
-            value={songState.notes}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "notes",
-                payload: value,
-              });
-            }}
-          />
-          <Spacer />
-          {saveButton()}
+      <Pressable
+        onPress={() => {
+          hideModal();
+          resetForm();
+        }}
+        style={{
+          alignSelf: "flex-end",
+          right: 50,
+          top: 50,
+          zIndex: 1,
+        }}
+      >
+        <Icon name="closecircle" type="ant-design" size={20} color="black" />
+      </Pressable>
+      <View style={styles.modalView}>
+        <View style={styles.headerView}>
+          <HeaderText>Song Name</HeaderText>
         </View>
+
+        <Spacer />
+        <Input
+          label={"Title"}
+          placeholder="Title"
+          inputContainerStyle={styles.inputContainerStyle}
+          value={songState.title}
+          onChangeText={(value) => {
+            songDispatch({
+              type: "title",
+              payload: value,
+            });
+          }}
+        />
+        <Input
+          label={"Recorded Date"}
+          placeholder="MM/DD/YYYY"
+          inputContainerStyle={styles.inputContainerStyle}
+          value={songState.recordedDate}
+          onChangeText={(value) => {
+            songDispatch({
+              type: "recordedDate",
+              payload: value,
+            });
+          }}
+        />
+        <Input
+          label={"Category"}
+          placeholder="Category"
+          inputContainerStyle={styles.inputContainerStyle}
+          value={songState.category}
+          onChangeText={(value) => {
+            songDispatch({
+              type: "category",
+              payload: value,
+            });
+          }}
+        />
+        <Input
+          label={"Notes"}
+          placeholder="Notes"
+          inputContainerStyle={[styles.inputContainerStyle]}
+          value={songState.notes}
+          onChangeText={(value) => {
+            songDispatch({
+              type: "notes",
+              payload: value,
+            });
+          }}
+        />
+        <Spacer />
+        {saveButton()}
       </View>
     </Modal>
   );
