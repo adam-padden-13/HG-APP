@@ -32,7 +32,7 @@ const SongsScreen = ({ navigation }) => {
     });
   }, []);
 
-  const Song = (song: Song, id: number) => {
+  const renderSong = (song: Song, id: number) => {
     return (
       <View key={id}>
         <Pressable
@@ -73,7 +73,7 @@ const SongsScreen = ({ navigation }) => {
           </>
         }
         data={state.songs}
-        renderItem={(song) => Song(song.item, song.item.id)}
+        renderItem={(song) => renderSong(song.item, song.item.id)}
       />
     </View>
   );
