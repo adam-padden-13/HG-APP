@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  RefreshControl,
   StyleSheet,
   View,
 } from "react-native";
@@ -13,24 +14,26 @@ import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
 
 const SongsScreen = ({ navigation }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
   const { state, dispatch } = useContext(AppContext);
 
   useEffect(() => {
-    setIsLoading(true);
+    loadSongs();
+  }, []);
+
+  const loadSongs = () => {
     getSongs().then((response) => {
       if (response.length > 0) {
+        setRefreshing(false);
         dispatch({
           type: "Songs",
           payload: response,
         });
-        setIsLoading(false);
       } else {
         alert("error loading songs");
-        setIsLoading(false);
       }
     });
-  }, []);
+  };
 
   const renderSong = (song: Song, id: number) => {
     return (
@@ -59,7 +62,7 @@ const SongsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isLoading && <ActivityIndicator size={"large"} color="black" />}
+      {refreshing ? <ActivityIndicator /> : null}
       <FlatList
         ListHeaderComponent={
           <>
@@ -74,6 +77,9 @@ const SongsScreen = ({ navigation }) => {
         }
         data={state.songs}
         renderItem={(song) => renderSong(song.item, song.item.id)}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadSongs} />
+        }
       />
     </View>
   );
