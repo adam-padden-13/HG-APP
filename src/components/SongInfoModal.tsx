@@ -12,7 +12,7 @@ import { db } from "../../firebaseConfig";
 interface SongInfoModalProps {
   showModal: boolean;
   hideModal: () => void;
-  song: Song;
+  reloadSongs: () => void;
 }
 
 const editSongReducer = (state: Song, action) => {
@@ -30,7 +30,11 @@ const editSongReducer = (state: Song, action) => {
   }
 };
 
-const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
+const SongInfoModal = ({
+  showModal,
+  hideModal,
+  reloadSongs,
+}: SongInfoModalProps) => {
   const { state, dispatch } = useContext(AppContext);
   const selectedSong = state.selectedSong;
 
@@ -118,8 +122,13 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
       audioFileName: songState.audioFileName,
     })
       .then(() => {
+        dispatch({
+          type: "SelectedSong",
+          payload: songState,
+        });
         alert("Save Sucessful");
         hideModal();
+        reloadSongs(); 
       })
       .catch((error) => {
         alert("An error occurred, save was unsuccessful");
