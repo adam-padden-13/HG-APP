@@ -6,4 +6,5 @@ export interface Song {
   image?: string;
   notes?: string;
   audioFileName: string;
+  documentId: string
 }

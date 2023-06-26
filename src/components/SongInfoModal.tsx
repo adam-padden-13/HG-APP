@@ -1,35 +1,54 @@
-import { View, Pressable, StyleSheet, Modal, TextInput } from "react-native";
-import { Icon } from "@rneui/themed";
+import { View, Pressable, StyleSheet, ScrollView } from "react-native";
+import { Icon, Input } from "@rneui/themed";
 import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "./Spacer";
-import { useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import { Song } from "../models/Song";
+import { AppContext } from "../contexts/appContext";
+import Modal from "react-native-modal";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 
 interface SongInfoModalProps {
   showModal: boolean;
   hideModal: () => void;
-  song: Song;
+  reloadSongs: () => void;
 }
 
-const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
-  const [changeButtonColor, setChangeButtonColor] = useState(false);
+const editSongReducer = (state: Song, action) => {
+  switch (action.type) {
+    case "title":
+      return { ...state, title: action.payload };
+    case "recordedDate":
+      return { ...state, recordedDate: action.payload };
+    case "category":
+      return { ...state, category: action.payload };
+    case "notes":
+      return { ...state, notes: action.payload };
+    default:
+      return state;
+  }
+};
 
-  // FORM FIELDS
-  const [updateTitle, setUpdateTitle] = useState(song.title);
-  const [updateRecordedDate, setUpdateRecordedDate] = useState(
-    song.recordedDate
-  );
-  const [updateCategory, setUpdateCategory] = useState(song.category);
-  const [updateNotes, setUpdateNotes] = useState(song.notes);
-  const [updatedSong, setUpdatedSong] = useState<Song>({
-    id: song.id,
-    title: updateTitle,
-    recordedDate: updateRecordedDate,
-    category: updateCategory,
-    image: "",
-    notes: updateNotes,
-    audioFileName: song.audioFileName,
+const SongInfoModal = ({
+  showModal,
+  hideModal,
+  reloadSongs,
+}: SongInfoModalProps) => {
+  const { state, dispatch } = useContext(AppContext);
+  const selectedSong = state.selectedSong;
+
+  const [songState, songDispatch] = useReducer(editSongReducer, {
+    id: selectedSong.id,
+    title: selectedSong.title,
+    recordedDate: selectedSong.recordedDate,
+    category: selectedSong.category,
+    image: selectedSong.image,
+    notes: selectedSong.notes,
+    audioFileName: selectedSong.audioFileName,
+    documentId: selectedSong.documentId,
   });
+  const [changeButtonColor, setChangeButtonColor] = useState(false);
 
   // NOT SURE IF I NEED THIS
   const resetForm = () => {};
@@ -37,10 +56,11 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
   const styles = StyleSheet.create({
     centeredView: {
       flex: 1,
-      alignItems: "center",
-      marginTop: 100,
+      justifyContent: "center",
+      marginTop: 40,
     },
     modalView: {
+      alignSelf: "center",
       margin: 20,
       backgroundColor: "white",
       borderRadius: 20,
@@ -56,7 +76,7 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
       shadowRadius: 4,
       elevation: 5,
       borderWidth: 2,
-      width: "80%",
+      width: "96%",
     },
     modalText: {
       marginBottom: 15,
@@ -84,7 +104,36 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
       alignItems: "center",
       textAlign: "center",
     },
+    inputContainerStyle: {
+      borderWidth: 1,
+      paddingHorizontal: 8,
+      marginTop: 4,
+    },
   });
+
+  const handleSave = async () => {
+    await setDoc(doc(db, "songs", `${selectedSong.documentId}`), {
+      id: songState.id,
+      title: songState.title,
+      recordedDate: songState.recordedDate,
+      category: songState.category,
+      image: songState.image,
+      notes: songState.notes,
+      audioFileName: songState.audioFileName,
+    })
+      .then(() => {
+        dispatch({
+          type: "SelectedSong",
+          payload: songState,
+        });
+        alert("Save Sucessful");
+        hideModal();
+        reloadSongs(); 
+      })
+      .catch((error) => {
+        alert("An error occurred, save was unsuccessful");
+      });
+  };
 
   const saveButton = () => {
     return (
@@ -93,7 +142,7 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
           style={styles.saveButton}
           onPressIn={() => setChangeButtonColor(true)}
           onPressOut={() => setChangeButtonColor(false)}
-          onPress={() => console.log("hello")}
+          onPress={() => handleSave()}
         >
           <NormalText>Save</NormalText>
         </Pressable>
@@ -103,12 +152,12 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
 
   return (
     <Modal
-      animationType="slide"
-      transparent={true}
-      visible={showModal}
-      onRequestClose={hideModal}
+      avoidKeyboard={true}
+      isVisible={showModal}
+      style={styles.centeredView}
+      hasBackdrop={false}
     >
-      <View style={styles.centeredView}>
+      <ScrollView>
         <Pressable
           onPress={() => {
             hideModal();
@@ -116,47 +165,71 @@ const SongInfoModal = ({ showModal, hideModal, song }: SongInfoModalProps) => {
           }}
           style={{
             alignSelf: "flex-end",
-            right: 50,
-            top: 50,
+            right: 20,
+            top: 60,
             zIndex: 1,
           }}
         >
-          <Icon name="closecircle" type="ant-design" size={20} color="black" />
+          <Icon name="closecircle" type="ant-design" size={30} color="black" />
         </Pressable>
         <View style={styles.modalView}>
           <View style={styles.headerView}>
-            <HeaderText>Song Name</HeaderText>
+            <HeaderText>{state.selectedSong.title}</HeaderText>
           </View>
 
           <Spacer />
-          <TextInput
-            style={styles.input}
+          <Input
+            label={"Title"}
             placeholder="Title"
-            value={updateTitle}
-            onChangeText={setUpdateTitle}
+            inputContainerStyle={styles.inputContainerStyle}
+            value={songState.title}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "title",
+                payload: value,
+              });
+            }}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Recorded Date"
-            value={updateRecordedDate}
-            onChangeText={setUpdateRecordedDate}
+          <Input
+            label={"Recorded Date"}
+            placeholder="MM/DD/YYYY"
+            inputContainerStyle={styles.inputContainerStyle}
+            value={songState.recordedDate}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "recordedDate",
+                payload: value,
+              });
+            }}
           />
-          <TextInput
-            style={styles.input}
+          <Input
+            label={"Category"}
             placeholder="Category"
-            value={updateCategory}
-            onChangeText={setUpdateCategory}
+            inputContainerStyle={styles.inputContainerStyle}
+            value={songState.category}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "category",
+                payload: value,
+              });
+            }}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Notes"
-            value={updateNotes}
-            onChangeText={setUpdateNotes}
+          <Input
+            multiline
+            label={"Notes"}
+            inputContainerStyle={[styles.inputContainerStyle]}
+            value={songState.notes}
+            onChangeText={(value) => {
+              songDispatch({
+                type: "notes",
+                payload: value,
+              });
+            }}
           />
           <Spacer />
           {saveButton()}
         </View>
-      </View>
+      </ScrollView>
     </Modal>
   );
 };

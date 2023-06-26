@@ -1,14 +1,19 @@
 import React, { createContext, useReducer } from "react";
+import { Song } from "../models/Song";
 
 export interface AppState {
   user: {
     userDisplayName: string;
     userEmail: string;
   };
+  selectedSong: Song;
+  songs: Song[];
 }
 
 export interface AppActionPayloads {
   User: { userDisplayName: string; userEmail: string };
+  SelectedSong: Song;
+  Songs: Song[];
 }
 
 export type AppAction = {
@@ -28,6 +33,16 @@ const appReducer = (state: AppState, action: AppAction) => {
           userEmail: action.payload.userEmail,
         },
       };
+    case "SelectedSong":
+      return {
+        ...state,
+        selectedSong: action.payload,
+      };
+    case "Songs":
+      return {
+        ...state,
+        songs: action.payload,
+      };
     default:
       return state;
   }
@@ -37,8 +52,10 @@ const initialValue = {
   state: {
     user: {
       userDisplayName: "Guest",
-      userEmail: ""
+      userEmail: "",
     },
+    selectedSong: undefined,
+    songs: undefined,
   },
   dispatch: () => null,
 };

@@ -6,34 +6,56 @@ import { HeaderText, NormalText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import Player from "../components/Player";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Icon } from "@rneui/base";
 import SongInfoModal from "../components/SongInfoModal";
+import { AppContext } from "../contexts/appContext";
+import { getSongs } from "../services/SongService";
 
-const player = new Audio.Sound();
 type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
 
-const SongScreen = ({ navigation, route }: Props) => {
-  const { song } = route.params;
+const SongScreen = ({ navigation }: Props) => {
+  const { state, dispatch } = useContext(AppContext);
   const [showSongInfo, setShowSongInfo] = useState(false);
+
+  const reloadSongs = () => {
+    getSongs().then((response) => {
+      if (response.length > 0) {
+        // setRefreshing(false);
+        dispatch({
+          type: "Songs",
+          payload: response,
+        });
+      } else {
+        alert("error loading songs");
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
       <GoBack navigation={navigation} />
       <Spacer />
-      <HeaderText> {song.title}</HeaderText>
+      <HeaderText>
+        {state.selectedSong.title && state.selectedSong.title}
+      </HeaderText>
       <Spacer />
       <Pressable
         style={styles.songInfoContainer}
         onPress={() => setShowSongInfo(true)}
       >
         <NormalText>
-          Recorded Date: {song.recordedDate ? song.recordedDate : "N/A"}
+          Recorded Date:
+          {state.selectedSong.recordedDate
+            ? state.selectedSong.recordedDate
+            : "N/A"}
         </NormalText>
         <Spacer height={10} />
-        <NormalText>Category: {song.category}</NormalText>
+        <NormalText>Category: {state.selectedSong.category}</NormalText>
         <Spacer height={10} />
-        <NormalText>Notes: {song.notes ? song.notes : "N/A"}</NormalText>
+        <NormalText>
+          Notes: {state.selectedSong.notes ? state.selectedSong.notes : "N/A"}
+        </NormalText>
         <Icon
           name="edit"
           type="feather"
@@ -43,12 +65,12 @@ const SongScreen = ({ navigation, route }: Props) => {
       </Pressable>
 
       <Spacer height={40} />
-      <Player song={song} />
+      <Player song={state.selectedSong} />
       {showSongInfo && (
         <SongInfoModal
           showModal={showSongInfo}
           hideModal={() => setShowSongInfo(false)}
-          song={song}
+          reloadSongs={() => reloadSongs()}
         />
       )}
     </View>

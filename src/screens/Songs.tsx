@@ -1,47 +1,54 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   Pressable,
-  ScrollView,
+  RefreshControl,
   StyleSheet,
   View,
 } from "react-native";
 import { Song } from "../models/Song";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
 import { BoldText, HeaderText, NormalText, SmallText } from "../theme/theme";
 import Spacer from "../components/Spacer";
+import { AppContext } from "../contexts/appContext";
+import { getSongs } from "../services/SongService";
 
 const SongsScreen = ({ navigation }) => {
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const getData = async () => {
-    setIsLoading(true);
-    const querySnapshot = await getDocs(collection(db, "songs"));
-    const songsToPush: Song[] = [];
-    querySnapshot.forEach((song) => {
-      songsToPush.push(song.data() as Song);
-    });
-
-    setSongs(songsToPush);
-    setIsLoading(false);
-  };
+  const [refreshing, setRefreshing] = useState(true);
+  const { state, dispatch } = useContext(AppContext);
 
   useEffect(() => {
-    getData();
+    loadSongs();
   }, []);
 
-  const renderSongInfo = (song: Song, id: number) => {
+  const loadSongs = () => {
+    getSongs().then((response) => {
+      if (response.length > 0) {
+        setRefreshing(false);
+        dispatch({
+          type: "Songs",
+          payload: response,
+        });
+      } else {
+        alert("error loading songs");
+      }
+    });
+  };
+
+  const renderSong = (song: Song, id: number) => {
     return (
       <View key={id}>
         <Pressable
           style={styles.songContainer}
-          onPress={() =>
+          onPress={() => {
             navigation.navigate("SongScreen", {
               song: song,
-            })
-          }
+            });
+            dispatch({
+              type: "SelectedSong",
+              payload: song,
+            });
+          }}
         >
           <View style={styles.songInfo}>
             <SmallText>{song.title}</SmallText>
@@ -54,21 +61,27 @@ const SongsScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <HeaderText>Songs</HeaderText>
-      <Spacer />
-      <View style={styles.songInfo}>
-        <BoldText>Title</BoldText>
-        <BoldText>Category</BoldText>
-      </View>
-      <Spacer height={10} />
-      <View>
-        {isLoading && <ActivityIndicator size={"large"} color="black" />}
-        {songs.map((song, id) => {
-          return renderSongInfo(song, id);
-        })}
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      {refreshing ? <ActivityIndicator /> : null}
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <HeaderText>Songs</HeaderText>
+            <Spacer />
+            <View style={styles.songInfo}>
+              <BoldText>Title</BoldText>
+              <BoldText>Category</BoldText>
+            </View>
+            <Spacer height={10} />
+          </>
+        }
+        data={state.songs}
+        renderItem={(song) => renderSong(song.item, song.item.id)}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={loadSongs} />
+        }
+      />
+    </View>
   );
 };
 
