@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   Pressable,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
@@ -13,13 +13,12 @@ import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
 
 const SongsScreen = ({ navigation }) => {
-  const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
   useEffect(() => {
+    setIsLoading(true);
     getSongs().then((response) => {
-      setIsLoading(true);
       if (response.length > 0) {
         dispatch({
           type: "Songs",
@@ -33,7 +32,7 @@ const SongsScreen = ({ navigation }) => {
     });
   }, []);
 
-  const renderSongInfo = (song: Song, id: number) => {
+  const Song = (song: Song, id: number) => {
     return (
       <View key={id}>
         <Pressable
@@ -42,7 +41,6 @@ const SongsScreen = ({ navigation }) => {
             navigation.navigate("SongScreen", {
               song: song,
             });
-
             dispatch({
               type: "SelectedSong",
               payload: song,
@@ -60,22 +58,24 @@ const SongsScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <HeaderText>Songs</HeaderText>
-      <Spacer />
-      <View style={styles.songInfo}>
-        <BoldText>Title</BoldText>
-        <BoldText>Category</BoldText>
-      </View>
-      <Spacer height={10} />
-      <View>
-        {isLoading && <ActivityIndicator size={"large"} color="black" />}
-        {state.songs &&
-          state.songs.map((song, id) => {
-            return renderSongInfo(song, id);
-          })}
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      {isLoading && <ActivityIndicator size={"large"} color="black" />}
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <HeaderText>Songs</HeaderText>
+            <Spacer />
+            <View style={styles.songInfo}>
+              <BoldText>Title</BoldText>
+              <BoldText>Category</BoldText>
+            </View>
+            <Spacer height={10} />
+          </>
+        }
+        data={state.songs}
+        renderItem={(song) => Song(song.item, song.item.id)}
+      />
+    </View>
   );
 };
 
