@@ -7,33 +7,30 @@ import {
   View,
 } from "react-native";
 import { Song } from "../models/Song";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
 import { BoldText, HeaderText, NormalText, SmallText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { AppContext } from "../contexts/appContext";
+import { getSongs } from "../services/SongService";
 
 const SongsScreen = ({ navigation }) => {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
-  const getData = async () => {
-    setIsLoading(true);
-    const querySnapshot = await getDocs(collection(db, "songs"));
-    const songsToPush: Song[] = [];
-    querySnapshot.forEach((song) => {
-      let currentSong: Song = song.data() as Song;
-      currentSong.documentId = song.id;
-      songsToPush.push(currentSong);
-    });
-
-    setSongs(songsToPush);
-    setIsLoading(false);
-  };
-
   useEffect(() => {
-    getData();
+    getSongs().then((response) => {
+      setIsLoading(true);
+      if (response.length > 0) {
+        dispatch({
+          type: "Songs",
+          payload: response,
+        });
+        setIsLoading(false);
+      } else {
+        alert("error loading songs");
+        setIsLoading(false);
+      }
+    });
   }, []);
 
   const renderSongInfo = (song: Song, id: number) => {
@@ -73,9 +70,10 @@ const SongsScreen = ({ navigation }) => {
       <Spacer height={10} />
       <View>
         {isLoading && <ActivityIndicator size={"large"} color="black" />}
-        {songs.map((song, id) => {
-          return renderSongInfo(song, id);
-        })}
+        {state.songs &&
+          state.songs.map((song, id) => {
+            return renderSongInfo(song, id);
+          })}
       </View>
     </ScrollView>
   );
