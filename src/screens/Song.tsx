@@ -1,8 +1,7 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import { Audio } from "expo-av";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/SongsStackNavigator";
-import { HeaderText, NormalText } from "../theme/theme";
+import { BoldText, HeaderText, NormalText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import Player from "../components/Player";
@@ -41,21 +40,40 @@ const SongScreen = ({ navigation }: Props) => {
       </HeaderText>
       <Spacer />
       <Pressable
-        style={styles.songInfoContainer}
+        style={[styles.songInfoContainer, styles.shadowProp]}
         onPress={() => setShowSongInfo(true)}
       >
-        <NormalText>
-          Recorded Date:
-          {state.selectedSong.recordedDate
-            ? state.selectedSong.recordedDate
-            : "N/A"}
-        </NormalText>
+        <View style={styles.songInfoRow}>
+          <BoldText>Recorded Date: </BoldText>
+          <NormalText>
+            {state.selectedSong.recordedDate
+              ? state.selectedSong.recordedDate
+              : "N/A"}
+          </NormalText>
+        </View>
         <Spacer height={10} />
-        <NormalText>Category: {state.selectedSong.category}</NormalText>
-        <Spacer height={10} />
-        <NormalText>
-          Notes: {state.selectedSong.notes ? state.selectedSong.notes : "N/A"}
-        </NormalText>
+        <View style={styles.songInfoRow}>
+          <BoldText>Category: </BoldText>
+
+          <NormalText>{state.selectedSong.category}</NormalText>
+        </View>
+        <View style={styles.songInfoRow}>
+          <BoldText>Notes: </BoldText>
+        </View>
+        <View
+          style={{
+            alignSelf: "flex-start",
+            borderWidth: 1,
+            borderColor: "696969",
+            width: 260,
+            height: state.selectedSong.notes.length > 10 ? 100 : 40,
+          }}
+        >
+          <NormalText>
+            {state.selectedSong.notes ? state.selectedSong.notes : "N/A"}
+          </NormalText>
+        </View>
+
         <Icon
           name="edit"
           type="feather"
@@ -63,7 +81,6 @@ const SongScreen = ({ navigation }: Props) => {
           style={styles.editIcon}
         />
       </Pressable>
-
       <Spacer height={40} />
       <Player song={state.selectedSong} />
       {showSongInfo && (
@@ -89,8 +106,20 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
+    backgroundColor: "white",
   },
   editIcon: { alignSelf: "flex-end", marginTop: 20 },
+  shadowProp: {
+    shadowColor: "#171717",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  songInfoRow: {
+    flexDirection: "row",
+    width: 280,
+    marginVertical: 10,
+  },
 });
 
 export default SongScreen;
