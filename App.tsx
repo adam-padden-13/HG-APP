@@ -10,6 +10,7 @@ import { usetheme } from "./src/theme/theme";
 import { useFonts } from "expo-font";
 import EggScreen from "./src/screens/TakeOutScreen";
 import { AppProvider } from "./src/contexts/appContext";
+import PlayerScreen from "./src/screens/PlayerScreen";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -56,6 +57,15 @@ export default function App() {
                 title: "Egg",
                 headerShown: false,
                 tabBarIcon: () => <Icon name="egg-outline" type="ionicon" />,
+              }}
+            />
+            <BottomTab.Screen
+              name="PlayerScreen"
+              component={PlayerScreen}
+              options={{
+                title: "Player",
+                headerShown: false,
+                tabBarIcon: () => <Icon name="play-outline" type="ionicon" />,
               }}
             />
           </BottomTab.Navigator>

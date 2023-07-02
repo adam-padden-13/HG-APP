@@ -15,6 +15,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
 
 const SongScreen = ({ navigation }: Props) => {
   const { state, dispatch } = useContext(AppContext);
+  const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showSongInfo, setShowSongInfo] = useState(false);
 
   const reloadSongs = () => {
@@ -30,6 +31,52 @@ const SongScreen = ({ navigation }: Props) => {
       }
     });
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      marginTop: 60,
+      justifyContent: "center",
+      alignItems: "center",
+      flex: 1,
+    },
+    songInfoContainer: {
+      borderWidth: 1,
+      padding: 20,
+      borderRadius: 10,
+      alignItems: "center",
+      backgroundColor: "white",
+    },
+    editIcon: { alignSelf: "flex-end", marginTop: 20 },
+    shadowProp: {
+      shadowColor: "#171717",
+      shadowOffset: { width: 4, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+    },
+    songInfoRow: {
+      flexDirection: "row",
+      width: 280,
+      marginVertical: 10,
+    },
+    notesContainer: {
+      alignSelf: "flex-start",
+      borderWidth: 1,
+      borderColor: "696969",
+      width: 280,
+      height: state.selectedSong.notes.length > 10 ? 120 : 40,
+      padding: 4,
+      borderRadius: 5,
+      borderStyle: "dotted",
+    },
+    saveButton: {
+      borderColor: "grey",
+      borderWidth: 2,
+      borderRadius: 10,
+      padding: 10,
+      backgroundColor: changeButtonColor ? "grey" : "white",
+      marginHorizontal: 8,
+    },
+  });
 
   return (
     <View style={styles.container}>
@@ -60,17 +107,11 @@ const SongScreen = ({ navigation }: Props) => {
         <View style={styles.songInfoRow}>
           <BoldText>Notes: </BoldText>
         </View>
-        <View
-          style={{
-            alignSelf: "flex-start",
-            borderWidth: 1,
-            borderColor: "696969",
-            width: 260,
-            height: state.selectedSong.notes.length > 10 ? 100 : 40,
-          }}
-        >
+        <View style={styles.notesContainer}>
           <NormalText>
-            {state.selectedSong.notes ? state.selectedSong.notes : "N/A"}
+            {state.selectedSong.notes
+              ? state.selectedSong.notes
+              : "Add notes here you bitch."}
           </NormalText>
         </View>
 
@@ -82,7 +123,15 @@ const SongScreen = ({ navigation }: Props) => {
         />
       </Pressable>
       <Spacer height={40} />
-      <Player song={state.selectedSong} />
+      <View>
+        <Pressable
+          onPressIn={() => setChangeButtonColor(true)}
+          onPressOut={() => setChangeButtonColor(false)}
+          style={[styles.saveButton, styles.shadowProp]}
+        >
+          <NormalText>Play Song</NormalText>
+        </Pressable>
+      </View>
       {showSongInfo && (
         <SongInfoModal
           showModal={showSongInfo}
@@ -93,33 +142,5 @@ const SongScreen = ({ navigation }: Props) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
-  },
-  songInfoContainer: {
-    borderWidth: 1,
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    backgroundColor: "white",
-  },
-  editIcon: { alignSelf: "flex-end", marginTop: 20 },
-  shadowProp: {
-    shadowColor: "#171717",
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-  },
-  songInfoRow: {
-    flexDirection: "row",
-    width: 280,
-    marginVertical: 10,
-  },
-});
 
 export default SongScreen;

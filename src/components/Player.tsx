@@ -6,8 +6,9 @@ import Spacer from "./Spacer";
 import { NormalText } from "../theme/theme";
 import PlayerSlider from "./PlayerSlider";
 import { getDownloadURL, ref } from "firebase/storage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Song } from "../models/Song";
+import { AppContext } from "../contexts/appContext";
 
 const player = new Audio.Sound();
 
@@ -15,15 +16,18 @@ interface PlayerProps {
   song: Song;
 }
 const Player = ({ song }: PlayerProps) => {
+  const { state } = useContext(AppContext);
   const [songIsLoaded, setSongIsLoaded] = useState(false);
   const [songIsPlaying, setSongisPlaying] = useState(false);
   const [songIsPaused, setSongisPaused] = useState(false);
   const [songDuration, setSongDuration] = useState(0);
   const [currentPlayback, setCurrentPlayback] = useState(0);
 
-  const audioFileTitle: string = song.audioFileName;
+  const audioFileTitle: string = state.selectedSong.audioFileName
+    ? state.selectedSong.audioFileName
+    : "";
   const audioRef = ref(storage, "audio");
-  const songRef = ref(audioRef, `/${audioFileTitle}`);
+  const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
 
   const getSong = async () => {
     await getDownloadURL(songRef).then((convertedURL) => {
@@ -49,6 +53,8 @@ const Player = ({ song }: PlayerProps) => {
   }
 
   useEffect(() => {
+    setSongisPlaying(false);
+    setSongisPaused(false);
     getSong();
     async function unloadSound() {
       // cleanup
@@ -58,7 +64,7 @@ const Player = ({ song }: PlayerProps) => {
     return () => {
       unloadSound();
     };
-  }, []);
+  }, [state.selectedSong]);
 
   async function onPlay() {
     try {
