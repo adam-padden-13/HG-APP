@@ -1,4 +1,5 @@
 import { createTheme, Text } from "@rneui/themed";
+import { ReactNode } from "react";
 
 export const usetheme = createTheme({
   lightColors: {
@@ -10,47 +11,77 @@ export const usetheme = createTheme({
   mode: "light",
 });
 
-export const HeaderText = (props) => (
+interface TextProps {
+  children: ReactNode;
+  color?: string;
+  size?: number;
+}
+
+export const colors = {
+  red: "#cd2326",
+  blue: "#074684",
+  green: "green",
+  black: 'black'
+};
+
+export const HeaderText = ({ ...props }: TextProps) => (
   <Text
-    {...props}
     style={{
       fontFamily: "CourierRegular",
-      color: "black",
+      color: props.color ? props.color : "black",
       fontSize: 32,
       textAlign: "center",
     }}
-  />
+  >
+    {props.children}
+  </Text>
 );
 
-export const SmallText = (props) => (
+export const SmallText = ({ ...props }: TextProps) => (
   <Text
-    {...props}
-    style={{ fontFamily: "CourierRegular", color: "black", fontSize: 14 }}
-  />
-);
-
-export const NormalText = (props) => (
-  <Text
-    {...props}
-    style={{ fontFamily: "CourierRegular", color: "black", fontSize: 16 }}
-  />
-);
-
-export const BoldText = (props) => (
-  <Text
-    {...props}
-    style={{ fontFamily: "CourierBold", color: "black", fontSize: 16 }}
-  />
-);
-
-export const LinkText = (props) => (
-  <Text
-    {...props}
     style={{
       fontFamily: "CourierRegular",
-      color: "blue",
-      fontSize: 16,
+      color: props.color ? props.color : "black",
+      fontSize: props.size ? props.size : 14,
+    }}
+  >
+    {props.children}
+  </Text>
+);
+
+export const NormalText = ({ ...props }: TextProps) => (
+  <Text
+    style={{
+      fontFamily: "CourierRegular",
+      color: props.color ? props.color : "black",
+      fontSize: props.size ? props.size : 16,
+    }}
+  >
+    {props.children}
+  </Text>
+);
+
+export const BoldText = ({ ...props }: TextProps) => (
+  <Text
+    style={{
+      fontFamily: "CourierBold",
+      color: props.color ? props.color : "black",
+      fontSize: props.size ? props.size : 16,
+    }}
+  >
+    {props.children}
+  </Text>
+);
+
+export const LinkText = ({ ...props }: TextProps) => (
+  <Text
+    style={{
+      fontFamily: "CourierRegular",
+      color: props.color ? props.color : "blue",
+      fontSize: props.size ? props.size : 16,
       textDecorationLine: "underline",
     }}
-  />
+  >
+    {props.children}
+  </Text>
 );

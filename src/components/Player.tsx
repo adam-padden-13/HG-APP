@@ -6,24 +6,24 @@ import Spacer from "./Spacer";
 import { NormalText } from "../theme/theme";
 import PlayerSlider from "./PlayerSlider";
 import { getDownloadURL, ref } from "firebase/storage";
-import { useEffect, useState } from "react";
-import { Song } from "../models/Song";
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "../contexts/appContext";
 
 const player = new Audio.Sound();
 
-interface PlayerProps {
-  song: Song;
-}
-const Player = ({ song }: PlayerProps) => {
+const Player = () => {
+  const { state } = useContext(AppContext);
   const [songIsLoaded, setSongIsLoaded] = useState(false);
   const [songIsPlaying, setSongisPlaying] = useState(false);
   const [songIsPaused, setSongisPaused] = useState(false);
   const [songDuration, setSongDuration] = useState(0);
   const [currentPlayback, setCurrentPlayback] = useState(0);
 
-  const audioFileTitle: string = song.audioFileName;
+  const audioFileTitle: string = state.loadedSong.audioFileName
+    ? state.loadedSong.audioFileName
+    : "";
   const audioRef = ref(storage, "audio");
-  const songRef = ref(audioRef, `/${audioFileTitle}`);
+  const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
 
   const getSong = async () => {
     await getDownloadURL(songRef).then((convertedURL) => {
@@ -41,6 +41,7 @@ const Player = ({ song }: PlayerProps) => {
         if (res.isLoaded) {
           setSongIsLoaded(true);
           setSongDuration(res.durationMillis);
+          onPlay();
         }
       })
       .catch(() => {
@@ -49,6 +50,8 @@ const Player = ({ song }: PlayerProps) => {
   }
 
   useEffect(() => {
+    setSongisPlaying(false);
+    setSongisPaused(false);
     getSong();
     async function unloadSound() {
       // cleanup
@@ -58,7 +61,7 @@ const Player = ({ song }: PlayerProps) => {
     return () => {
       unloadSound();
     };
-  }, []);
+  }, [state.loadedSong]);
 
   async function onPlay() {
     try {
@@ -91,10 +94,10 @@ const Player = ({ song }: PlayerProps) => {
         <>
           <ActivityIndicator size={"large"} color="black" />
           <Spacer />
-          <NormalText>Player is loading...</NormalText>
+          <NormalText color={"white"}>Song is loading...</NormalText>
         </>
       ) : (
-        <View style={styles.container}>
+        <View style={[styles.container, styles.shadowProp]}>
           <View style={styles.buttons}>
             <Pressable onPress={onPlay} disabled={!songIsLoaded}>
               <Icon
@@ -131,10 +134,25 @@ const Player = ({ song }: PlayerProps) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 10,
+    paddingTop: 24,
+  },
   buttons: {
     flexDirection: "row",
+    alignItems: "center",
+    left: 10,
   },
-  container: { alignItems: "center", width: "80%" },
+  shadowProp: {
+    shadowColor: "#171717",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
 });
 
 export default Player;

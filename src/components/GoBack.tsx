@@ -1,13 +1,9 @@
-import { Pressable, View, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { Icon } from "@rneui/themed";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/SongsStackNavigator";
+import { useNavigation } from "@react-navigation/native";
 
-interface GoBackProps {
-  navigation: NativeStackNavigationProp<RootStackParamList, "SongScreen">;
-}
-
-const GoBack = ({ navigation }: GoBackProps) => {
+const GoBack = () => {
+  const navigation = useNavigation();
   return (
     <Pressable style={styles.goBack} onPress={() => navigation.goBack()}>
       <Icon name="arrow-left" type="feather" size={40} />
@@ -18,8 +14,8 @@ const GoBack = ({ navigation }: GoBackProps) => {
 const styles = StyleSheet.create({
   goBack: {
     position: "absolute",
-    top: 0,
-    left: 10,
+    top: 48,
+    left: 18,
   },
 });
 

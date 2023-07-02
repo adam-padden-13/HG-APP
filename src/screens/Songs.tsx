@@ -8,7 +8,13 @@ import {
   View,
 } from "react-native";
 import { Song } from "../models/Song";
-import { BoldText, HeaderText, NormalText, SmallText } from "../theme/theme";
+import {
+  BoldText,
+  HeaderText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
@@ -39,7 +45,21 @@ const SongsScreen = ({ navigation }) => {
     return (
       <View key={id}>
         <Pressable
-          style={styles.songContainer}
+          style={[
+            styles.songContainer,
+            {
+              borderColor: state.loadedSong
+                ? song.title === state.loadedSong.title
+                  ? colors.green
+                  : colors.black
+                : colors.black,
+              borderWidth: state.loadedSong
+                ? song.title === state.loadedSong.title
+                  ? 5
+                  : 1
+                : 1,
+            },
+          ]}
           onPress={() => {
             navigation.navigate("SongScreen", {
               song: song,
@@ -101,6 +121,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     paddingHorizontal: 10,
+    borderRadius: 8,
   },
   songInfo: {
     flexDirection: "row",
