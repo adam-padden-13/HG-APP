@@ -98,7 +98,7 @@ const Player = () => {
           <NormalText>Player is loading...</NormalText>
         </>
       ) : (
-        <View style={styles.container}>
+        <View style={[styles.container, styles.shadowProp]}>
           <View style={styles.buttons}>
             <Pressable onPress={onPlay} disabled={!songIsLoaded}>
               <Icon
@@ -135,10 +135,25 @@ const Player = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 10,
+    paddingTop: 24,
+  },
   buttons: {
     flexDirection: "row",
+    alignItems: "center",
+    left: 10,
   },
-  container: { alignItems: "center", width: "80%" },
+  shadowProp: {
+    shadowColor: "#171717",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
 });
 
 export default Player;
