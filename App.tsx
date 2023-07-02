@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SongsStackNavigator from "./src/navigation/SongsStackNavigator";
 import { Icon } from "@rneui/themed";
 import { ThemeProvider } from "@rneui/themed";
-import { usetheme } from "./src/theme/theme";
+import { colors, usetheme } from "./src/theme/theme";
 import { useFonts } from "expo-font";
 import EggScreen from "./src/screens/TakeOutScreen";
 import { AppProvider } from "./src/contexts/appContext";
@@ -65,7 +65,9 @@ export default function App() {
               options={{
                 title: "Player",
                 headerShown: false,
-                tabBarIcon: () => <Icon name="play-outline" type="ionicon" />,
+                tabBarIcon: () => (
+                  <Icon name="play" type="ionicon" color={colors.green} />
+                ),
               }}
             />
           </BottomTab.Navigator>

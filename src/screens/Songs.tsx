@@ -55,7 +55,7 @@ const SongsScreen = ({ navigation }) => {
                 : colors.black,
               borderWidth: state.loadedSong
                 ? song.title === state.loadedSong.title
-                  ? 5
+                  ? 3
                   : 1
                 : 1,
             },
