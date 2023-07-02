@@ -3,7 +3,7 @@ import { Audio } from "expo-av";
 import { storage } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
 import Spacer from "./Spacer";
-import { NormalText } from "../theme/theme";
+import { NormalText, colors } from "../theme/theme";
 import PlayerSlider from "./PlayerSlider";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useContext, useEffect, useState } from "react";
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     width: "80%",
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 10,
     paddingTop: 24,

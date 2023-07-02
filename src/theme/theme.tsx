@@ -21,8 +21,9 @@ export const colors = {
   red: "#cd2326",
   blue: "#074684",
   green: "green",
-  black: 'black',
-  white: 'white'
+  black: "black",
+  white: "#fafafa",
+  grey: "#e3e3e3",
 };
 
 export const HeaderText = ({ ...props }: TextProps) => (

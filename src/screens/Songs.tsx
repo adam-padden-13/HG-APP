@@ -71,8 +71,11 @@ const SongsScreen = ({ navigation }) => {
           }}
         >
           <View style={styles.songInfo}>
-            <SmallText>{song.title}</SmallText>
-            <NormalText>{song.category}</NormalText>
+            <View style={{ width: 180 }}>
+              <SmallText>{song.title}</SmallText>
+            </View>
+
+            <SmallText>{song.category}</SmallText>
           </View>
         </Pressable>
         <View style={{ marginBottom: 12 }} />
@@ -122,7 +125,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
     borderRadius: 8,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   songInfo: {
     flexDirection: "row",
