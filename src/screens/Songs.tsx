@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
     borderRadius: 8,
+    backgroundColor: colors.white
   },
   songInfo: {
     flexDirection: "row",
