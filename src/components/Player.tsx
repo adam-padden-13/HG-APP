@@ -7,7 +7,6 @@ import { NormalText } from "../theme/theme";
 import PlayerSlider from "./PlayerSlider";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useContext, useEffect, useState } from "react";
-import { Song } from "../models/Song";
 import { AppContext } from "../contexts/appContext";
 
 const player = new Audio.Sound();
@@ -95,7 +94,7 @@ const Player = () => {
         <>
           <ActivityIndicator size={"large"} color="black" />
           <Spacer />
-          <NormalText>Player is loading...</NormalText>
+          <NormalText color={"white"}>Song is loading...</NormalText>
         </>
       ) : (
         <View style={[styles.container, styles.shadowProp]}>

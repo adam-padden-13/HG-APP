@@ -17,7 +17,6 @@ const PlayerSlider = ({
 }: PlayerSliderProps) => {
   const [value, setValue] = useState(0);
 
-
   return (
     <>
       <View style={[styles.contentView]}>
@@ -38,18 +37,14 @@ const PlayerSlider = ({
                 size={4}
                 reverse
                 containerStyle={{ bottom: 12, right: 16 }}
-                color={'red'}
+                color={"red"}
               />
             ),
           }}
         />
         <View style={styles.timeContainer}>
-          <NormalText style={{ borderWidth: 1 }}>
-            {convertMilliToMinutes(currentPlayback)}
-          </NormalText>
-          <NormalText style={{ borderWidth: 1 }}>
-            {convertMilliToMinutes(songDuration)}
-          </NormalText>
+          <NormalText>{convertMilliToMinutes(currentPlayback)}</NormalText>
+          <NormalText>{convertMilliToMinutes(songDuration)}</NormalText>
         </View>
       </View>
     </>
@@ -74,7 +69,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: -10,
-    marginHorizontal: 4
+    marginHorizontal: 4,
   },
 });
 

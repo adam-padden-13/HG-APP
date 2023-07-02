@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { AppContext } from "../contexts/appContext";
 import Player from "../components/Player";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { HeaderText, NormalText } from "../theme/theme";
+import { BoldText, HeaderText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 
 const PlayerScreen = ({ navigation }) => {
@@ -46,28 +46,17 @@ const PlayerScreen = ({ navigation }) => {
   });
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ backgroundColor: "#074684" }}>
       <View style={styles.container}>
         {state.loadedSong && (
           <>
-            <HeaderText>
+            <BoldText size={20}>Now Playing:</BoldText>
+            <HeaderText color={"white"}>
               {state.loadedSong.title && state.loadedSong.title}
             </HeaderText>
             <Spacer />
             <Player />
             <Spacer height={40} />
-            <Pressable
-              onPress={() => {
-                navigation.navigate("SongScreen", {
-                  song: state.loadedSong,
-                });
-              }}
-              onPressIn={() => setChangeButtonColor(true)}
-              onPressOut={() => setChangeButtonColor(false)}
-              style={[styles.goToSongButton, styles.shadowProp]}
-            >
-              <NormalText>Go back to Song Info</NormalText>
-            </Pressable>
           </>
         )}
       </View>

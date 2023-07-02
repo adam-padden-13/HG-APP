@@ -1,5 +1,5 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import { BoldText, HeaderText, NormalText } from "../theme/theme";
+import { BoldText, HeaderText, NormalText, colors } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import { useContext, useState } from "react";
@@ -58,20 +58,18 @@ const SongScreen = () => {
     },
     notesContainer: {
       alignSelf: "flex-start",
-      borderWidth: 1,
       borderColor: "696969",
       width: 280,
       height: state.selectedSong.notes.length > 10 ? 120 : 40,
       padding: 4,
       borderRadius: 5,
-      borderStyle: "dotted",
     },
     saveButton: {
-      borderColor: "grey",
+      borderColor: "black",
       borderWidth: 2,
       borderRadius: 10,
       padding: 10,
-      backgroundColor: changeButtonColor ? "grey" : "white",
+      backgroundColor: changeButtonColor ? colors.red : colors.blue,
       marginHorizontal: 8,
     },
   });
@@ -112,13 +110,14 @@ const SongScreen = () => {
               : "Add notes here you bitch."}
           </NormalText>
         </View>
-
-        <Icon
-          name="edit"
-          type="feather"
-          color={"black"}
-          style={styles.editIcon}
-        />
+        <View style={{ width: 280 }}>
+          <Icon
+            name="edit"
+            type="feather"
+            color={colors.red}
+            style={styles.editIcon}
+          />
+        </View>
       </Pressable>
       <Spacer height={40} />
       <View>
@@ -134,7 +133,7 @@ const SongScreen = () => {
           onPressOut={() => setChangeButtonColor(false)}
           style={[styles.saveButton, styles.shadowProp]}
         >
-          <NormalText>Play Song</NormalText>
+          <NormalText color="white">Play Song</NormalText>
         </Pressable>
       </View>
       {showSongInfo && (
