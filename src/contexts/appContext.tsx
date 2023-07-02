@@ -7,12 +7,14 @@ export interface AppState {
     userEmail: string;
   };
   selectedSong: Song;
+  loadedSong: Song;
   songs: Song[];
 }
 
 export interface AppActionPayloads {
   User: { userDisplayName: string; userEmail: string };
   SelectedSong: Song;
+  LoadedSong: Song;
   Songs: Song[];
 }
 
@@ -38,6 +40,11 @@ const appReducer = (state: AppState, action: AppAction) => {
         ...state,
         selectedSong: action.payload,
       };
+    case "LoadedSong":
+      return {
+        ...state,
+        loadedSong: action.payload,
+      };
     case "Songs":
       return {
         ...state,
@@ -55,6 +62,7 @@ const initialValue = {
       userEmail: "",
     },
     selectedSong: undefined,
+    loadedSong: undefined,
     songs: undefined,
   },
   dispatch: () => null,

@@ -4,19 +4,23 @@ import { AppContext } from "../contexts/appContext";
 import Player from "../components/Player";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Song } from "../models/Song";
+import { HeaderText } from "../theme/theme";
 
 const PlayerScreen = () => {
   const { state, dispatch } = useContext(AppContext);
   const [song, setSong] = useState<Song>();
 
-  useEffect(() => {
-    console.log("screen", state.selectedSong.title);
-    if (state.selectedSong) setSong(state.selectedSong);
-  }, [state.selectedSong]);
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        {state.selectedSong && <Player song={song} />}
+        {state.loadedSong && (
+          <>
+            <HeaderText>
+              {state.loadedSong.title && state.loadedSong.title}
+            </HeaderText>
+            <Player />
+          </>
+        )}
       </View>
     </SafeAreaView>
   );

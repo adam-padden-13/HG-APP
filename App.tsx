@@ -33,7 +33,7 @@ export default function App() {
         <NavigationContainer>
           <BottomTab.Navigator>
             <BottomTab.Screen
-              name="Home"
+              name="HomeTab"
               component={HomeScreen}
               options={{
                 title: "Home",
@@ -51,7 +51,7 @@ export default function App() {
               }}
             />
             <BottomTab.Screen
-              name="EggScreen"
+              name="EggTab"
               component={EggScreen}
               options={{
                 title: "Egg",
@@ -60,7 +60,7 @@ export default function App() {
               }}
             />
             <BottomTab.Screen
-              name="PlayerScreen"
+              name="PlayerTab"
               component={PlayerScreen}
               options={{
                 title: "Player",

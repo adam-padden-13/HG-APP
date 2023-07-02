@@ -12,10 +12,7 @@ import { AppContext } from "../contexts/appContext";
 
 const player = new Audio.Sound();
 
-interface PlayerProps {
-  song: Song;
-}
-const Player = ({ song }: PlayerProps) => {
+const Player = () => {
   const { state } = useContext(AppContext);
   const [songIsLoaded, setSongIsLoaded] = useState(false);
   const [songIsPlaying, setSongisPlaying] = useState(false);
@@ -23,8 +20,8 @@ const Player = ({ song }: PlayerProps) => {
   const [songDuration, setSongDuration] = useState(0);
   const [currentPlayback, setCurrentPlayback] = useState(0);
 
-  const audioFileTitle: string = state.selectedSong.audioFileName
-    ? state.selectedSong.audioFileName
+  const audioFileTitle: string = state.loadedSong.audioFileName
+    ? state.loadedSong.audioFileName
     : "";
   const audioRef = ref(storage, "audio");
   const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
@@ -45,6 +42,7 @@ const Player = ({ song }: PlayerProps) => {
         if (res.isLoaded) {
           setSongIsLoaded(true);
           setSongDuration(res.durationMillis);
+          onPlay();
         }
       })
       .catch(() => {
@@ -64,7 +62,7 @@ const Player = ({ song }: PlayerProps) => {
     return () => {
       unloadSound();
     };
-  }, [state.selectedSong]);
+  }, [state.loadedSong]);
 
   async function onPlay() {
     try {

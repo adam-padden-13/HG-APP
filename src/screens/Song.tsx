@@ -1,19 +1,18 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/SongsStackNavigator";
 import { BoldText, HeaderText, NormalText } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
-import Player from "../components/Player";
 import { useContext, useState } from "react";
 import { Icon } from "@rneui/base";
 import SongInfoModal from "../components/SongInfoModal";
 import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
-type Props = NativeStackScreenProps<RootStackParamList, "SongScreen">;
+const SongScreen = () => {
+  const navigation = useNavigation();
 
-const SongScreen = ({ navigation }: Props) => {
   const { state, dispatch } = useContext(AppContext);
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showSongInfo, setShowSongInfo] = useState(false);
@@ -34,7 +33,6 @@ const SongScreen = ({ navigation }: Props) => {
 
   const styles = StyleSheet.create({
     container: {
-      marginTop: 60,
       justifyContent: "center",
       alignItems: "center",
       flex: 1,
@@ -79,8 +77,8 @@ const SongScreen = ({ navigation }: Props) => {
   });
 
   return (
-    <View style={styles.container}>
-      <GoBack navigation={navigation} />
+    <SafeAreaView style={styles.container}>
+      <GoBack />
       <Spacer />
       <HeaderText>
         {state.selectedSong.title && state.selectedSong.title}
@@ -125,6 +123,13 @@ const SongScreen = ({ navigation }: Props) => {
       <Spacer height={40} />
       <View>
         <Pressable
+          onPress={() => {
+            dispatch({
+              type: "LoadedSong",
+              payload: state.selectedSong,
+            });
+            navigation.navigate("PlayerTab" as never);
+          }}
           onPressIn={() => setChangeButtonColor(true)}
           onPressOut={() => setChangeButtonColor(false)}
           style={[styles.saveButton, styles.shadowProp]}
@@ -139,7 +144,7 @@ const SongScreen = ({ navigation }: Props) => {
           reloadSongs={() => reloadSongs()}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
