@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Slider, Text, Icon } from "@rneui/themed";
 import { NormalText } from "../theme/theme";
 import { convertMilliToMinutes } from "../utilities/stringUtilities";
+import { AppContext } from "../contexts/appContext";
 
 interface PlayerSliderProps {
   songDuration: number;
@@ -15,12 +16,13 @@ const PlayerSlider = ({
   currentPlayback,
   updateCurrentPlayback,
 }: PlayerSliderProps) => {
-  const [value, setValue] = useState(0);
+  const { state } = useContext(AppContext);
 
   return (
     <>
       <View style={[styles.contentView]}>
         <Slider
+          disabled={!state.loadedSong}
           value={currentPlayback}
           onValueChange={(changeValue) => updateCurrentPlayback(changeValue)}
           maximumValue={songDuration}

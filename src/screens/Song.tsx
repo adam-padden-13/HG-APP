@@ -15,7 +15,6 @@ import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import moment from "moment";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -70,7 +69,7 @@ const SongScreen = () => {
       padding: 4,
       borderRadius: 5,
     },
-    saveButton: {
+    playButton: {
       borderColor: "black",
       borderWidth: 2,
       borderRadius: 10,
@@ -152,7 +151,7 @@ const SongScreen = () => {
           }}
           onPressIn={() => setChangeButtonColor(true)}
           onPressOut={() => setChangeButtonColor(false)}
-          style={[styles.saveButton, styles.shadowProp]}
+          style={[styles.playButton, styles.shadowProp]}
         >
           <NormalText color="white">Play Song</NormalText>
         </Pressable>

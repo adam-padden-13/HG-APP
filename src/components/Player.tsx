@@ -19,9 +19,10 @@ const Player = () => {
   const [songDuration, setSongDuration] = useState(0);
   const [currentPlayback, setCurrentPlayback] = useState(0);
 
-  const audioFileTitle: string = state.loadedSong.audioFileName
-    ? state.loadedSong.audioFileName
-    : "";
+  const audioFileTitle: string =
+    state.loadedSong && state.loadedSong.audioFileName
+      ? state.loadedSong.audioFileName
+      : "";
   const audioRef = ref(storage, "audio");
   const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
 
@@ -52,7 +53,7 @@ const Player = () => {
   useEffect(() => {
     setSongisPlaying(false);
     setSongisPaused(false);
-    getSong();
+    if (state.loadedSong) getSong();
     async function unloadSound() {
       // cleanup
       await player.unloadAsync();
@@ -88,46 +89,58 @@ const Player = () => {
     }
   };
 
+  const PlayerControls = () => {
+    return (
+      <View style={[styles.container, styles.shadowProp]}>
+        <View style={styles.buttons}>
+          <Pressable onPress={onPlay} disabled={!songIsLoaded}>
+            <Icon
+              name="play-circle"
+              type="feather"
+              size={120}
+              color={!songIsLoaded ? "grey" : songIsPlaying ? "green" : "black"}
+            />
+          </Pressable>
+          <Spacer width={20} />
+          <Pressable onPress={onPause} disabled={!songIsPlaying}>
+            <Icon
+              name="pause-circle"
+              type="feather"
+              size={120}
+              color={!songIsLoaded ? "grey" : songIsPaused ? "red" : "black"}
+            />
+          </Pressable>
+          <Spacer width={20} />
+        </View>
+
+        <PlayerSlider
+          songDuration={songDuration}
+          currentPlayback={currentPlayback}
+          updateCurrentPlayback={(updatedTime) =>
+            player.setPositionAsync(updatedTime)
+          }
+        />
+        {!state.loadedSong && (
+          <NormalText>No song is loaded you bitch.</NormalText>
+        )}
+      </View>
+    );
+  };
+
   return (
     <>
-      {!songIsLoaded ? (
-        <>
-          <ActivityIndicator size={"large"} color="black" />
-          <Spacer />
-          <NormalText color={"white"}>Song is loading...</NormalText>
-        </>
+      {state.loadedSong ? (
+        !songIsLoaded ? (
+          <>
+            <ActivityIndicator size={"large"} color="black" />
+            <Spacer />
+            <NormalText color={"white"}>Song is loading...</NormalText>
+          </>
+        ) : (
+          <PlayerControls />
+        )
       ) : (
-        <View style={[styles.container, styles.shadowProp]}>
-          <View style={styles.buttons}>
-            <Pressable onPress={onPlay} disabled={!songIsLoaded}>
-              <Icon
-                name="play-circle"
-                type="feather"
-                size={60}
-                color={
-                  !songIsLoaded ? "grey" : songIsPlaying ? "green" : "black"
-                }
-              />
-            </Pressable>
-            <Spacer width={20} />
-            <Pressable onPress={onPause} disabled={!songIsPlaying}>
-              <Icon
-                name="pause-circle"
-                type="feather"
-                size={60}
-                color={!songIsLoaded ? "grey" : songIsPaused ? "red" : "black"}
-              />
-            </Pressable>
-            <Spacer width={20} />
-          </View>
-          <PlayerSlider
-            songDuration={songDuration}
-            currentPlayback={currentPlayback}
-            updateCurrentPlayback={(updatedTime) =>
-              player.setPositionAsync(updatedTime)
-            }
-          />
-        </View>
+        <PlayerControls />
       )}
     </>
   );
@@ -136,12 +149,14 @@ const Player = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    width: "80%",
+    justifyContent: "center",
+    width: "90%",
+    height: "40%",
     backgroundColor: colors.white,
     borderRadius: 16,
     padding: 10,
     paddingTop: 24,
-    borderWidth: 3
+    borderWidth: 3,
   },
   buttons: {
     flexDirection: "row",
