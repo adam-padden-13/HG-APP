@@ -84,6 +84,9 @@ const SongScreen = () => {
     <SafeAreaView style={styles.container}>
       <GoBack />
       <Spacer />
+      <BoldText color={colors.red} size={20}>
+        Song Info:
+      </BoldText>
       <HeaderText>
         {state.selectedSong.title && state.selectedSong.title}
       </HeaderText>
@@ -110,27 +113,30 @@ const SongScreen = () => {
           <BoldText>Notes: </BoldText>
         </View>
         <View style={styles.notesContainer}>
-          <NormalText>
+          <SmallText>
             {state.selectedSong.notes
               ? state.selectedSong.notes
               : "Add notes here you bitch."}
-          </NormalText>
+          </SmallText>
         </View>
         <View
           style={{
             width: 290,
             flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: "flex-end",
           }}
         >
-          <SmallText size={10}>
-            Last Modified By: {state.selectedSong.lastModifiedBy}
-          </SmallText>
-          {/* <SmallText size={10} >
-            Last Modified By: {state.selectedSong.lastModifiedDate.getDate()}
-          </SmallText>
-           */}
+          {state.selectedSong.lastModifiedBy &&
+          state.selectedSong.lastModifiedDate ? (
+            <SmallText size={10}>
+              Last modified by {state.selectedSong.lastModifiedBy} on{" "}
+              {state.selectedSong.lastModifiedDate}
+            </SmallText>
+          ) : (
+            <SmallText size={10}> </SmallText>
+          )}
+
           <Icon name="edit" type="feather" color={colors.red} />
         </View>
       </Pressable>

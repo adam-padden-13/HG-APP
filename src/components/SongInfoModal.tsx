@@ -8,6 +8,7 @@ import { AppContext } from "../contexts/appContext";
 import Modal from "react-native-modal";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import moment from "moment";
 
 interface SongInfoModalProps {
   showModal: boolean;
@@ -37,7 +38,7 @@ const SongInfoModal = ({
 }: SongInfoModalProps) => {
   const { state, dispatch } = useContext(AppContext);
   const selectedSong = state.selectedSong;
-
+  const today = moment().format("MM-DD-YYYY");
   const [songState, songDispatch] = useReducer(editSongReducer, {
     id: selectedSong.id,
     title: selectedSong.title,
@@ -48,7 +49,7 @@ const SongInfoModal = ({
     audioFileName: selectedSong.audioFileName,
     documentId: selectedSong.documentId,
     lastModifiedBy: state.user.userDisplayName,
-    lastModifiedDate: new Date(),
+    lastModifiedDate: today,
   });
   const [changeButtonColor, setChangeButtonColor] = useState(false);
 
@@ -123,7 +124,7 @@ const SongInfoModal = ({
       notes: songState.notes,
       audioFileName: songState.audioFileName,
       lastModifiedBy: state.user.userDisplayName,
-      lastModifiedDate: new Date(),
+      lastModifiedDate: today,
     })
       .then(() => {
         dispatch({

@@ -10,5 +10,5 @@ export interface Song {
   audioFileName: string;
   documentId: string;
   lastModifiedBy?: string;
-  lastModifiedDate?: object;
+  lastModifiedDate?: string;
 }
