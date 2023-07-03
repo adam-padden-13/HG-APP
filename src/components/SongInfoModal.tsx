@@ -47,6 +47,8 @@ const SongInfoModal = ({
     notes: selectedSong.notes,
     audioFileName: selectedSong.audioFileName,
     documentId: selectedSong.documentId,
+    lastModifiedBy: state.user.userDisplayName,
+    lastModifiedDate: new Date(),
   });
   const [changeButtonColor, setChangeButtonColor] = useState(false);
 
@@ -120,6 +122,8 @@ const SongInfoModal = ({
       image: songState.image,
       notes: songState.notes,
       audioFileName: songState.audioFileName,
+      lastModifiedBy: state.user.userDisplayName,
+      lastModifiedDate: new Date(),
     })
       .then(() => {
         dispatch({
@@ -128,7 +132,7 @@ const SongInfoModal = ({
         });
         alert("Save Sucessful");
         hideModal();
-        reloadSongs(); 
+        reloadSongs();
       })
       .catch((error) => {
         alert("An error occurred, save was unsuccessful");

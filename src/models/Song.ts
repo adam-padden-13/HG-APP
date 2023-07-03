@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export interface Song {
   id: number;
   title: string;
@@ -6,5 +8,7 @@ export interface Song {
   image?: string;
   notes?: string;
   audioFileName: string;
-  documentId: string
+  documentId: string;
+  lastModifiedBy?: string;
+  lastModifiedDate?: object;
 }

@@ -1,5 +1,11 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import { BoldText, HeaderText, NormalText, colors } from "../theme/theme";
+import {
+  BoldText,
+  HeaderText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import { useContext, useState } from "react";
@@ -9,6 +15,7 @@ import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import moment from "moment";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -39,12 +46,11 @@ const SongScreen = () => {
     },
     songInfoContainer: {
       borderWidth: 1,
-      padding: 20,
+      padding: 16,
       borderRadius: 10,
       alignItems: "center",
       backgroundColor: "white",
     },
-    editIcon: { alignSelf: "flex-end", marginTop: 20 },
     shadowProp: {
       shadowColor: "#171717",
       shadowOffset: { width: 4, height: 4 },
@@ -110,13 +116,22 @@ const SongScreen = () => {
               : "Add notes here you bitch."}
           </NormalText>
         </View>
-        <View style={{ width: 280 }}>
-          <Icon
-            name="edit"
-            type="feather"
-            color={colors.red}
-            style={styles.editIcon}
-          />
+        <View
+          style={{
+            width: 290,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <SmallText size={10}>
+            Last Modified By: {state.selectedSong.lastModifiedBy}
+          </SmallText>
+          {/* <SmallText size={10} >
+            Last Modified By: {state.selectedSong.lastModifiedDate.getDate()}
+          </SmallText>
+           */}
+          <Icon name="edit" type="feather" color={colors.red} />
         </View>
       </Pressable>
       <Spacer height={40} />

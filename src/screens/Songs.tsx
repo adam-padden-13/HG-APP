@@ -11,7 +11,6 @@ import { Song } from "../models/Song";
 import {
   BoldText,
   HeaderText,
-  NormalText,
   SmallText,
   colors,
 } from "../theme/theme";
