@@ -8,21 +8,17 @@ import {
   View,
 } from "react-native";
 import { Song } from "../models/Song";
-import {
-  BoldText,
-  HeaderText,
-  NormalText,
-  SmallText,
-  colors,
-} from "../theme/theme";
+import { BoldText, HeaderText, SmallText, colors } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
 import { Icon } from "@rneui/base";
+import AddSongModal from "../components/AddSongModal";
 
 const SongsScreen = ({ navigation }) => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [refreshing, setRefreshing] = useState(true);
+  const [showAddSong, setShowAddSong] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
   useEffect(() => {
@@ -136,7 +132,7 @@ const SongsScreen = ({ navigation }) => {
     <View style={styles.container}>
       {refreshing ? <ActivityIndicator /> : null}
       <Pressable
-        onPress={() => {}}
+        onPress={() => setShowAddSong(true)}
         onPressIn={() => setChangeButtonColor(true)}
         onPressOut={() => setChangeButtonColor(false)}
         style={[styles.addSongButton, styles.shadowProp]}
@@ -171,6 +167,13 @@ const SongsScreen = ({ navigation }) => {
           <RefreshControl refreshing={refreshing} onRefresh={loadSongs} />
         }
       />
+      {showAddSong && (
+        <AddSongModal
+          showModal={showAddSong}
+          hideModal={() => setShowAddSong(false)}
+          reloadSongs={() => loadSongs()}
+        />
+      )}
     </View>
   );
 };

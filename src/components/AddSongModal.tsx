@@ -6,24 +6,26 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Icon, Input } from "@rneui/themed";
-import { HeaderText, NormalText, colors } from "../theme/theme";
+import { NormalText, colors } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useReducer, useState } from "react";
 import { Song } from "../models/Song";
 import { AppContext } from "../contexts/appContext";
 import Modal from "react-native-modal";
-import { doc, setDoc } from "firebase/firestore";
-import { db, songCollection } from "../../firebaseConfig";
+import { addDoc, collection } from "firebase/firestore";
+import { db, songCollection, storage } from "../../firebaseConfig";
 import moment from "moment";
 import Toast from "react-native-root-toast";
+import { FirebaseError } from "firebase/app";
+import { ref } from "firebase/storage";
 
-interface SongInfoModalProps {
+interface AddSongModalProps {
   showModal: boolean;
   hideModal: () => void;
-  reloadSongs: () => void;
+  reloadSongs?: () => void;
 }
 
-const editSongReducer = (state: Song, action) => {
+const addSongReducer = (state: Song, action) => {
   switch (action.type) {
     case "title":
       return { ...state, title: action.payload };
@@ -38,28 +40,31 @@ const editSongReducer = (state: Song, action) => {
   }
 };
 
-const SongInfoModal = ({
+const AddSongModal = ({
   showModal,
   hideModal,
   reloadSongs,
-}: SongInfoModalProps) => {
+}: AddSongModalProps) => {
   const { state, dispatch } = useContext(AppContext);
-  const selectedSong = state.selectedSong;
   const today = moment().format("MM-DD-YYYY");
-  const [songState, songDispatch] = useReducer(editSongReducer, {
-    id: selectedSong.id,
-    title: selectedSong.title,
-    recordedDate: selectedSong.recordedDate,
-    category: selectedSong.category,
-    image: selectedSong.image,
-    notes: selectedSong.notes,
-    audioFileName: selectedSong.audioFileName,
-    documentId: selectedSong.documentId,
-    lastModifiedBy: state.user.userDisplayName,
-    lastModifiedDate: today,
-  });
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+
+
+  const initialState: Song = {
+    id: state.songs.length + 1,
+    title: "",
+    recordedDate: "",
+    category: "",
+    image: "",
+    notes: "",
+    audioFileName: "",
+    documentId: null,
+    lastModifiedBy: "",
+    lastModifiedDate: today,
+  };
+
+  const [songState, songDispatch] = useReducer(addSongReducer, initialState);
 
   const styles = StyleSheet.create({
     centeredView: {
@@ -121,7 +126,7 @@ const SongInfoModal = ({
 
   const handleSave = async () => {
     setShowLoader(true);
-    await setDoc(doc(db, `${songCollection}`, `${selectedSong.documentId}`), {
+    await addDoc(collection(db, `${songCollection}`), {
       id: songState.id,
       title: songState.title,
       recordedDate: songState.recordedDate,
@@ -133,18 +138,14 @@ const SongInfoModal = ({
       lastModifiedDate: today,
     })
       .then(() => {
-        dispatch({
-          type: "SelectedSong",
-          payload: songState,
-        });
         Toast.show("Save Successful!", {
           position: 0,
         });
+        reloadSongs();
         setShowLoader(false);
         hideModal();
-        reloadSongs();
       })
-      .catch((error) => {
+      .catch((error: FirebaseError) => {
         setShowLoader(false);
         hideModal();
         alert("An error occurred, save was unsuccessful");
@@ -196,9 +197,8 @@ const SongInfoModal = ({
           ) : (
             <>
               <View style={styles.headerView}>
-                <NormalText>Edit Song:</NormalText>
+                <NormalText>Add Song</NormalText>
                 <Spacer height={10} />
-                <HeaderText>{state.selectedSong.title}</HeaderText>
               </View>
               <Spacer />
               <Input
@@ -259,4 +259,4 @@ const SongInfoModal = ({
   );
 };
 
-export default SongInfoModal;
+export default AddSongModal;
