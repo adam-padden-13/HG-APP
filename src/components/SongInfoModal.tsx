@@ -196,6 +196,8 @@ const SongInfoModal = ({
           ) : (
             <>
               <View style={styles.headerView}>
+                <NormalText>Edit Song:</NormalText>
+                <Spacer height={10} />
                 <HeaderText>{state.selectedSong.title}</HeaderText>
               </View>
               <Spacer />
