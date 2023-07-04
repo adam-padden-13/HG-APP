@@ -23,7 +23,7 @@ import { db, songCollection, storage } from "../../firebaseConfig";
 import moment from "moment";
 import Toast from "react-native-root-toast";
 import { FirebaseError } from "firebase/app";
-import { ref } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import * as DocumentPicker from "expo-document-picker";
 
 interface AddSongModalProps {
@@ -184,10 +184,33 @@ const AddSongModal = ({
     });
   };
 
-  const handleUploadAudio = (audioFile: DocumentPicker.DocumentResult) => {
-    console.log(audioFile);
-  };
+  const handleUploadAudio = async (
+    audioFile: DocumentPicker.DocumentResult
+  ) => {
+    if (audioFile.type === "success") {
+      try {
+        setShowLoader(true);
+        const audioFileRef = ref(storage, `audio/${audioFile.name}`);
 
+        const fetchResponse = await fetch(audioFile.uri);
+        const blob = await fetchResponse.blob();
+        console.log(blob);
+
+        if (blob) {
+          await uploadBytes(audioFileRef, blob).then((snapshot) => {
+            Toast.show("Upload success!", {
+              position: 0,
+            });
+            setShowLoader(false);
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error);
+        setShowLoader(false);
+      }
+    }
+  };
   const UploadSong = () => {
     return (
       <View style={styles.modalView}>
