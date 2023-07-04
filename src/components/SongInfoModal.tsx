@@ -1,6 +1,12 @@
-import { View, Pressable, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { Icon, Input } from "@rneui/themed";
-import { HeaderText, NormalText } from "../theme/theme";
+import { HeaderText, NormalText, colors } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useReducer, useState } from "react";
 import { Song } from "../models/Song";
@@ -8,6 +14,7 @@ import { AppContext } from "../contexts/appContext";
 import Modal from "react-native-modal";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import moment from "moment";
 
 interface SongInfoModalProps {
   showModal: boolean;
@@ -37,7 +44,7 @@ const SongInfoModal = ({
 }: SongInfoModalProps) => {
   const { state, dispatch } = useContext(AppContext);
   const selectedSong = state.selectedSong;
-
+  const today = moment().format("MM-DD-YYYY");
   const [songState, songDispatch] = useReducer(editSongReducer, {
     id: selectedSong.id,
     title: selectedSong.title,
@@ -47,11 +54,11 @@ const SongInfoModal = ({
     notes: selectedSong.notes,
     audioFileName: selectedSong.audioFileName,
     documentId: selectedSong.documentId,
+    lastModifiedBy: state.user.userDisplayName,
+    lastModifiedDate: today,
   });
   const [changeButtonColor, setChangeButtonColor] = useState(false);
-
-  // NOT SURE IF I NEED THIS
-  const resetForm = () => {};
+  const [showLoader, setShowLoader] = useState(false);
 
   const styles = StyleSheet.create({
     centeredView: {
@@ -94,7 +101,7 @@ const SongInfoModal = ({
       borderWidth: 2,
       borderRadius: 10,
       padding: 10,
-      backgroundColor: changeButtonColor ? "grey" : "white",
+      backgroundColor: changeButtonColor ? colors.red : colors.white,
       marginHorizontal: 8,
     },
     buttonContainer: {
@@ -112,6 +119,7 @@ const SongInfoModal = ({
   });
 
   const handleSave = async () => {
+    setShowLoader(true);
     await setDoc(doc(db, "songs", `${selectedSong.documentId}`), {
       id: songState.id,
       title: songState.title,
@@ -120,6 +128,8 @@ const SongInfoModal = ({
       image: songState.image,
       notes: songState.notes,
       audioFileName: songState.audioFileName,
+      lastModifiedBy: state.user.userDisplayName,
+      lastModifiedDate: today,
     })
       .then(() => {
         dispatch({
@@ -127,10 +137,13 @@ const SongInfoModal = ({
           payload: songState,
         });
         alert("Save Sucessful");
+        setShowLoader(false);
         hideModal();
-        reloadSongs(); 
+        reloadSongs();
       })
       .catch((error) => {
+        setShowLoader(false);
+        hideModal();
         alert("An error occurred, save was unsuccessful");
       });
   };
@@ -161,7 +174,6 @@ const SongInfoModal = ({
         <Pressable
           onPress={() => {
             hideModal();
-            resetForm();
           }}
           style={{
             alignSelf: "flex-end",
@@ -172,62 +184,70 @@ const SongInfoModal = ({
         >
           <Icon name="closecircle" type="ant-design" size={30} color="black" />
         </Pressable>
-        <View style={styles.modalView}>
-          <View style={styles.headerView}>
-            <HeaderText>{state.selectedSong.title}</HeaderText>
-          </View>
 
-          <Spacer />
-          <Input
-            label={"Title"}
-            placeholder="Title"
-            inputContainerStyle={styles.inputContainerStyle}
-            value={songState.title}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "title",
-                payload: value,
-              });
-            }}
-          />
-          <Input
-            label={"Recorded Date"}
-            placeholder="MM/DD/YYYY"
-            inputContainerStyle={styles.inputContainerStyle}
-            value={songState.recordedDate}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "recordedDate",
-                payload: value,
-              });
-            }}
-          />
-          <Input
-            label={"Category"}
-            placeholder="Category"
-            inputContainerStyle={styles.inputContainerStyle}
-            value={songState.category}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "category",
-                payload: value,
-              });
-            }}
-          />
-          <Input
-            multiline
-            label={"Notes"}
-            inputContainerStyle={[styles.inputContainerStyle]}
-            value={songState.notes}
-            onChangeText={(value) => {
-              songDispatch({
-                type: "notes",
-                payload: value,
-              });
-            }}
-          />
-          <Spacer />
-          {saveButton()}
+        <View style={styles.modalView}>
+          {showLoader ? (
+            <View style={{ height: 400, justifyContent: "center" }}>
+              <ActivityIndicator size="large" color={colors.black} />
+            </View>
+          ) : (
+            <>
+              <View style={styles.headerView}>
+                <HeaderText>{state.selectedSong.title}</HeaderText>
+              </View>
+              <Spacer />
+              <Input
+                label={"Title"}
+                placeholder="Title"
+                inputContainerStyle={styles.inputContainerStyle}
+                value={songState.title}
+                onChangeText={(value) => {
+                  songDispatch({
+                    type: "title",
+                    payload: value,
+                  });
+                }}
+              />
+              <Input
+                label={"Recorded Date"}
+                placeholder="MM/DD/YYYY"
+                inputContainerStyle={styles.inputContainerStyle}
+                value={songState.recordedDate}
+                onChangeText={(value) => {
+                  songDispatch({
+                    type: "recordedDate",
+                    payload: value,
+                  });
+                }}
+              />
+              <Input
+                label={"Category"}
+                placeholder="Category"
+                inputContainerStyle={styles.inputContainerStyle}
+                value={songState.category}
+                onChangeText={(value) => {
+                  songDispatch({
+                    type: "category",
+                    payload: value,
+                  });
+                }}
+              />
+              <Input
+                multiline
+                label={"Notes"}
+                inputContainerStyle={[styles.inputContainerStyle]}
+                value={songState.notes}
+                onChangeText={(value) => {
+                  songDispatch({
+                    type: "notes",
+                    payload: value,
+                  });
+                }}
+              />
+              <Spacer />
+              {saveButton()}
+            </>
+          )}
         </View>
       </ScrollView>
     </Modal>

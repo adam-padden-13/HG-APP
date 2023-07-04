@@ -1,14 +1,23 @@
-import { View, StyleSheet, Pressable } from "react-native";
-import { BoldText, HeaderText, NormalText, colors } from "../theme/theme";
+import { View, StyleSheet, Pressable, Linking } from "react-native";
+import {
+  BoldText,
+  HeaderText,
+  LinkText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Icon } from "@rneui/base";
 import SongInfoModal from "../components/SongInfoModal";
 import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../../firebaseConfig";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -16,6 +25,22 @@ const SongScreen = () => {
   const { state, dispatch } = useContext(AppContext);
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showSongInfo, setShowSongInfo] = useState(false);
+  const [songURL, setSongURL] = useState("");
+
+  const audioFileTitle: string = state.selectedSong.audioFileName ?? "";
+
+  const audioRef = ref(storage, "audio");
+  const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
+
+  const getSongUrl = async () => {
+    await getDownloadURL(songRef).then((convertedURL) => {
+      setSongURL(convertedURL);
+    });
+  };
+
+  useEffect(() => {
+    getSongUrl();
+  }, []);
 
   const reloadSongs = () => {
     getSongs().then((response) => {
@@ -31,6 +56,10 @@ const SongScreen = () => {
     });
   };
 
+  const openSongURL = () => {
+    if (songURL) Linking.openURL(songURL);
+  };
+
   const styles = StyleSheet.create({
     container: {
       justifyContent: "center",
@@ -39,12 +68,11 @@ const SongScreen = () => {
     },
     songInfoContainer: {
       borderWidth: 1,
-      padding: 20,
+      padding: 16,
       borderRadius: 10,
       alignItems: "center",
       backgroundColor: "white",
     },
-    editIcon: { alignSelf: "flex-end", marginTop: 20 },
     shadowProp: {
       shadowColor: "#171717",
       shadowOffset: { width: 4, height: 4 },
@@ -64,7 +92,7 @@ const SongScreen = () => {
       padding: 4,
       borderRadius: 5,
     },
-    saveButton: {
+    playButton: {
       borderColor: "black",
       borderWidth: 2,
       borderRadius: 10,
@@ -78,14 +106,14 @@ const SongScreen = () => {
     <SafeAreaView style={styles.container}>
       <GoBack />
       <Spacer />
+      <BoldText color={colors.red} size={20}>
+        Song Info:
+      </BoldText>
       <HeaderText>
         {state.selectedSong.title && state.selectedSong.title}
       </HeaderText>
       <Spacer />
-      <Pressable
-        style={[styles.songInfoContainer, styles.shadowProp]}
-        onPress={() => setShowSongInfo(true)}
-      >
+      <View style={[styles.songInfoContainer, styles.shadowProp]}>
         <View style={styles.songInfoRow}>
           <BoldText>Recorded Date: </BoldText>
           <NormalText>
@@ -94,31 +122,55 @@ const SongScreen = () => {
               : "N/A"}
           </NormalText>
         </View>
-        <Spacer height={10} />
         <View style={styles.songInfoRow}>
           <BoldText>Category: </BoldText>
-
           <NormalText>{state.selectedSong.category}</NormalText>
         </View>
+        {songURL && (
+          <Pressable
+            style={[styles.songInfoRow, { flexDirection: "column" }]}
+            onPress={() => openSongURL()}
+          >
+            <BoldText>Link to audio source: </BoldText>
+            <LinkText size={12}>{state.selectedSong.audioFileName}</LinkText>
+          </Pressable>
+        )}
+
         <View style={styles.songInfoRow}>
           <BoldText>Notes: </BoldText>
         </View>
         <View style={styles.notesContainer}>
-          <NormalText>
+          <SmallText>
             {state.selectedSong.notes
               ? state.selectedSong.notes
               : "Add notes here you bitch."}
-          </NormalText>
+          </SmallText>
         </View>
-        <View style={{ width: 280 }}>
-          <Icon
-            name="edit"
-            type="feather"
-            color={colors.red}
-            style={styles.editIcon}
-          />
+        <View
+          style={{
+            width: 290,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+          }}
+        >
+          {state.selectedSong.lastModifiedBy &&
+          state.selectedSong.lastModifiedDate ? (
+            <SmallText size={10}>
+              Last modified by {state.selectedSong.lastModifiedBy} on{" "}
+              {state.selectedSong.lastModifiedDate}
+            </SmallText>
+          ) : (
+            <SmallText size={10}> </SmallText>
+          )}
+          <Pressable
+            style={[styles.songInfoContainer, styles.shadowProp]}
+            onPress={() => setShowSongInfo(true)}
+          >
+            <Icon name="edit" type="feather" color={colors.red} />
+          </Pressable>
         </View>
-      </Pressable>
+      </View>
       <Spacer height={40} />
       <View>
         <Pressable
@@ -131,7 +183,7 @@ const SongScreen = () => {
           }}
           onPressIn={() => setChangeButtonColor(true)}
           onPressOut={() => setChangeButtonColor(false)}
-          style={[styles.saveButton, styles.shadowProp]}
+          style={[styles.playButton, styles.shadowProp]}
         >
           <NormalText color="white">Play Song</NormalText>
         </Pressable>

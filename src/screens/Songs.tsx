@@ -8,13 +8,7 @@ import {
   View,
 } from "react-native";
 import { Song } from "../models/Song";
-import {
-  BoldText,
-  HeaderText,
-  NormalText,
-  SmallText,
-  colors,
-} from "../theme/theme";
+import { BoldText, HeaderText, SmallText, colors } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
@@ -87,6 +81,7 @@ const SongsScreen = ({ navigation }) => {
     <View style={styles.container}>
       {refreshing ? <ActivityIndicator /> : null}
       <FlatList
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
             <HeaderText>Songs</HeaderText>
