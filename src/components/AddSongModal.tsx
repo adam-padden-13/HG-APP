@@ -6,7 +6,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Icon, Input } from "@rneui/themed";
-import { NormalText, colors } from "../theme/theme";
+import {
+  HeaderText,
+  LinkText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useReducer, useState } from "react";
 import { Song } from "../models/Song";
@@ -18,6 +24,7 @@ import moment from "moment";
 import Toast from "react-native-root-toast";
 import { FirebaseError } from "firebase/app";
 import { ref } from "firebase/storage";
+import * as DocumentPicker from "expo-document-picker";
 
 interface AddSongModalProps {
   showModal: boolean;
@@ -49,7 +56,9 @@ const AddSongModal = ({
   const today = moment().format("MM-DD-YYYY");
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-
+  const [showUploadFileScreen, setShowUploadFileScreen] = useState(true);
+  const [fileToUpload, setFileToUpload] =
+    useState<DocumentPicker.DocumentResult>();
 
   const initialState: Song = {
     id: state.songs.length + 1,
@@ -167,6 +176,75 @@ const AddSongModal = ({
     );
   };
 
+  const handleOpenDocPicker = () => {
+    DocumentPicker.getDocumentAsync({
+      type: ["audio/x-m4a", "audio/mpeg"],
+    }).then((result: DocumentPicker.DocumentResult) => {
+      if (result.type === "success") setFileToUpload(result);
+    });
+  };
+
+  const handleUploadAudio = (audioFile: DocumentPicker.DocumentResult) => {
+    console.log(audioFile);
+  };
+
+  const UploadSong = () => {
+    return (
+      <View style={styles.modalView}>
+        {showLoader ? (
+          <View style={{ height: 400, justifyContent: "center" }}>
+            <ActivityIndicator size="large" color={colors.black} />
+          </View>
+        ) : (
+          <>
+            {fileToUpload && fileToUpload.type === "success" ? (
+              <>
+                <View style={styles.headerView}>
+                  <HeaderText>Upload Audio</HeaderText>
+                </View>
+                <Spacer />
+                <LinkText>{fileToUpload.name} </LinkText>
+                <Spacer />
+                <View style={styles.buttonContainer}>
+                  <Pressable
+                    style={[
+                      styles.saveButton,
+                      {
+                        backgroundColor: colors.green,
+                        borderColor: colors.black,
+                      },
+                    ]}
+                    onPress={() => handleUploadAudio(fileToUpload)}
+                  >
+                    <NormalText color={colors.white}>
+                      Click to Upload
+                    </NormalText>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={styles.headerView}>
+                  <HeaderText>Upload Audio</HeaderText>
+                  <Spacer height={10} />
+                </View>
+                <Spacer />
+                <View style={styles.buttonContainer}>
+                  <Pressable
+                    style={styles.saveButton}
+                    onPress={() => handleOpenDocPicker()}
+                  >
+                    <NormalText>Select File</NormalText>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </>
+        )}
+      </View>
+    );
+  };
+
   return (
     <Modal
       avoidKeyboard={true}
@@ -188,72 +266,75 @@ const AddSongModal = ({
         >
           <Icon name="closecircle" type="ant-design" size={30} color="black" />
         </Pressable>
-
-        <View style={styles.modalView}>
-          {showLoader ? (
-            <View style={{ height: 400, justifyContent: "center" }}>
-              <ActivityIndicator size="large" color={colors.black} />
-            </View>
-          ) : (
-            <>
-              <View style={styles.headerView}>
-                <NormalText>Add Song</NormalText>
-                <Spacer height={10} />
+        {showUploadFileScreen ? (
+          <UploadSong />
+        ) : (
+          <View style={styles.modalView}>
+            {showLoader ? (
+              <View style={{ height: 400, justifyContent: "center" }}>
+                <ActivityIndicator size="large" color={colors.black} />
               </View>
-              <Spacer />
-              <Input
-                label={"Title"}
-                placeholder="Title"
-                inputContainerStyle={styles.inputContainerStyle}
-                value={songState.title}
-                onChangeText={(value) => {
-                  songDispatch({
-                    type: "title",
-                    payload: value,
-                  });
-                }}
-              />
-              <Input
-                label={"Recorded Date"}
-                placeholder="MM/DD/YYYY"
-                inputContainerStyle={styles.inputContainerStyle}
-                value={songState.recordedDate}
-                onChangeText={(value) => {
-                  songDispatch({
-                    type: "recordedDate",
-                    payload: value,
-                  });
-                }}
-              />
-              <Input
-                label={"Category"}
-                placeholder="Category"
-                inputContainerStyle={styles.inputContainerStyle}
-                value={songState.category}
-                onChangeText={(value) => {
-                  songDispatch({
-                    type: "category",
-                    payload: value,
-                  });
-                }}
-              />
-              <Input
-                multiline
-                label={"Notes"}
-                inputContainerStyle={[styles.inputContainerStyle]}
-                value={songState.notes}
-                onChangeText={(value) => {
-                  songDispatch({
-                    type: "notes",
-                    payload: value,
-                  });
-                }}
-              />
-              <Spacer />
-              {saveButton()}
-            </>
-          )}
-        </View>
+            ) : (
+              <>
+                <View style={styles.headerView}>
+                  <NormalText>Add Song</NormalText>
+                  <Spacer height={10} />
+                </View>
+                <Spacer />
+                <Input
+                  label={"Title"}
+                  placeholder="Title"
+                  inputContainerStyle={styles.inputContainerStyle}
+                  value={songState.title}
+                  onChangeText={(value) => {
+                    songDispatch({
+                      type: "title",
+                      payload: value,
+                    });
+                  }}
+                />
+                <Input
+                  label={"Recorded Date"}
+                  placeholder="MM/DD/YYYY"
+                  inputContainerStyle={styles.inputContainerStyle}
+                  value={songState.recordedDate}
+                  onChangeText={(value) => {
+                    songDispatch({
+                      type: "recordedDate",
+                      payload: value,
+                    });
+                  }}
+                />
+                <Input
+                  label={"Category"}
+                  placeholder="Category"
+                  inputContainerStyle={styles.inputContainerStyle}
+                  value={songState.category}
+                  onChangeText={(value) => {
+                    songDispatch({
+                      type: "category",
+                      payload: value,
+                    });
+                  }}
+                />
+                <Input
+                  multiline
+                  label={"Notes"}
+                  inputContainerStyle={[styles.inputContainerStyle]}
+                  value={songState.notes}
+                  onChangeText={(value) => {
+                    songDispatch({
+                      type: "notes",
+                      payload: value,
+                    });
+                  }}
+                />
+                <Spacer />
+                {saveButton()}
+              </>
+            )}
+          </View>
+        )}
       </ScrollView>
     </Modal>
   );
