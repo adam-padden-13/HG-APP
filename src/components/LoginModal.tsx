@@ -1,6 +1,12 @@
 import { View, Pressable, StyleSheet, Modal, TextInput } from "react-native";
 import { Icon } from "@rneui/themed";
-import { HeaderText, LinkText, NormalText } from "../theme/theme";
+import {
+  HeaderText,
+  LinkText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useState } from "react";
 import { auth } from "../../firebaseConfig";
@@ -28,6 +34,7 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [authType, setAuthType] = useState<AuthType>(AuthType.login);
   const [showUpdateInfo, setShowUpdateInfo] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const { state, dispatch } = useContext(AppContext);
 
@@ -182,7 +189,7 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
                 : handleCreateNewUser()
               : displayName
               ? handleUpdateUser()
-              : alert("Please enter a display name")
+              : setShowError(true)
           }
         >
           <NormalText>Submit</NormalText>
@@ -259,13 +266,19 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
           </View>
         ) : (
           <View style={styles.modalView}>
-            <HeaderText>Update Info</HeaderText>
+            <HeaderText>Enter Display Name</HeaderText>
             <TextInput
               style={styles.input}
               placeholder="Display Name"
               value={displayName}
               onChangeText={setDisplayName}
             />
+            {showError && (
+              <SmallText color={colors.red} size={12}>
+                Please enter a Display Name.
+              </SmallText>
+            )}
+            <Spacer />
             {submitButton()}
           </View>
         )}

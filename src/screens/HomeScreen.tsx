@@ -7,6 +7,7 @@ import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
 import { NormalText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
+import Toast from "react-native-root-toast";
 
 const HomeScreen = ({ navigation }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -19,7 +20,9 @@ const HomeScreen = ({ navigation }) => {
   const handleSignout = () => {
     signOut(auth)
       .then((res) => {
-        alert("Signed Out");
+        Toast.show("Successfully Signed Out!", {
+          position: 60,
+        });
         dispatch({
           type: "User",
           payload: { userDisplayName: "Guest", userEmail: "" },
