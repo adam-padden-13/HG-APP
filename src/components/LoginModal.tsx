@@ -1,6 +1,12 @@
 import { View, Pressable, StyleSheet, Modal, TextInput } from "react-native";
 import { Icon } from "@rneui/themed";
-import { HeaderText, LinkText, NormalText } from "../theme/theme";
+import {
+  HeaderText,
+  LinkText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useState } from "react";
 import { auth } from "../../firebaseConfig";
@@ -11,6 +17,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { AppContext } from "../contexts/appContext";
+import Toast from "react-native-root-toast";
+import { FirebaseError } from "firebase/app";
 
 interface LoginModalProps {
   showModal: boolean;
@@ -26,6 +34,7 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [authType, setAuthType] = useState<AuthType>(AuthType.login);
   const [showUpdateInfo, setShowUpdateInfo] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const { state, dispatch } = useContext(AppContext);
 
@@ -105,7 +114,10 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const handleCreateNewUser = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        alert("Account created!");
+        Toast.show("Account Created!", {
+          position: 60,
+        });
+        setUser(userCredential.user);
         dispatch({
           type: "User",
           payload: {
@@ -123,7 +135,16 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const handleUpdateUser = () => {
     updateProfile(user, { displayName })
       .then(() => {
-        alert(`Thanks ${displayName}!`);
+        dispatch({
+          type: "User",
+          payload: {
+            userDisplayName: user.displayName,
+            userEmail: user.email,
+          },
+        });
+        Toast.show(`Thanks, ${displayName}!`, {
+          position: 60,
+        });
         setShowUpdateInfo(false);
         resetForm();
         hideModal();
@@ -136,7 +157,9 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        alert("SIGNED IN");
+        Toast.show("Signed in!", {
+          position: 60,
+        });
         dispatch({
           type: "User",
           payload: {
@@ -147,8 +170,8 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
         resetForm();
         hideModal();
       })
-      .catch((error) => {
-        alert(error);
+      .catch((error: FirebaseError) => {
+        alert(error.message);
       });
   };
 
@@ -166,7 +189,7 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
                 : handleCreateNewUser()
               : displayName
               ? handleUpdateUser()
-              : alert("Please enter a display name")
+              : setShowError(true)
           }
         >
           <NormalText>Submit</NormalText>
@@ -243,13 +266,19 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
           </View>
         ) : (
           <View style={styles.modalView}>
-            <HeaderText>Update Info</HeaderText>
+            <HeaderText>Enter Display Name</HeaderText>
             <TextInput
               style={styles.input}
               placeholder="Display Name"
               value={displayName}
               onChangeText={setDisplayName}
             />
+            {showError && (
+              <SmallText color={colors.red} size={12}>
+                Please enter a Display Name.
+              </SmallText>
+            )}
+            <Spacer />
             {submitButton()}
           </View>
         )}

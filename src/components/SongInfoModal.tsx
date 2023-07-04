@@ -15,6 +15,7 @@ import Modal from "react-native-modal";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import moment from "moment";
+import Toast from "react-native-root-toast";
 
 interface SongInfoModalProps {
   showModal: boolean;
@@ -136,7 +137,9 @@ const SongInfoModal = ({
           type: "SelectedSong",
           payload: songState,
         });
-        alert("Save Sucessful");
+        Toast.show("Save Successful!", {
+          position: 0,
+        });
         setShowLoader(false);
         hideModal();
         reloadSongs();

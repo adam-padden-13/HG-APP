@@ -11,6 +11,7 @@ import { useFonts } from "expo-font";
 import EggScreen from "./src/screens/TakeOutScreen";
 import { AppProvider } from "./src/contexts/appContext";
 import PlayerScreen from "./src/screens/PlayerScreen";
+import { RootSiblingParent } from "react-native-root-siblings";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -28,53 +29,55 @@ export default function App() {
   }
 
   return (
-    <AppProvider>
-      <ThemeProvider theme={theme}>
-        <NavigationContainer>
-          <BottomTab.Navigator>
-            <BottomTab.Screen
-              name="HomeTab"
-              component={HomeScreen}
-              options={{
-                title: "Home",
-                headerShown: false,
-                tabBarIcon: () => <Icon name="home" type="feather" />,
-              }}
-            />
-            <BottomTab.Screen
-              name="SongsTab"
-              component={SongsStackNavigator}
-              options={{
-                title: "Songs",
-                headerShown: false,
-                tabBarIcon: () => <Icon name="music" type="feather" />,
-              }}
-            />
-            <BottomTab.Screen
-              name="EggTab"
-              component={EggScreen}
-              options={{
-                title: "Egg",
-                headerShown: false,
-                tabBarIcon: () => <Icon name="egg-outline" type="ionicon" />,
-              }}
-            />
-            <BottomTab.Screen
-              name="PlayerTab"
-              component={PlayerScreen}
-              options={{
-                title: "Player",
-                headerShown: false,
-                tabBarIcon: () => (
-                  <Icon name="play" type="ionicon" color={colors.green} />
-                ),
-              }}
-            />
-          </BottomTab.Navigator>
-          <StatusBar style="auto" />
-        </NavigationContainer>
-      </ThemeProvider>
-    </AppProvider>
+    <RootSiblingParent>
+      <AppProvider>
+        <ThemeProvider theme={theme}>
+          <NavigationContainer>
+            <BottomTab.Navigator>
+              <BottomTab.Screen
+                name="HomeTab"
+                component={HomeScreen}
+                options={{
+                  title: "Home",
+                  headerShown: false,
+                  tabBarIcon: () => <Icon name="home" type="feather" />,
+                }}
+              />
+              <BottomTab.Screen
+                name="SongsTab"
+                component={SongsStackNavigator}
+                options={{
+                  title: "Songs",
+                  headerShown: false,
+                  tabBarIcon: () => <Icon name="music" type="feather" />,
+                }}
+              />
+              <BottomTab.Screen
+                name="EggTab"
+                component={EggScreen}
+                options={{
+                  title: "Egg",
+                  headerShown: false,
+                  tabBarIcon: () => <Icon name="egg-outline" type="ionicon" />,
+                }}
+              />
+              <BottomTab.Screen
+                name="PlayerTab"
+                component={PlayerScreen}
+                options={{
+                  title: "Player",
+                  headerShown: false,
+                  tabBarIcon: () => (
+                    <Icon name="play" type="ionicon" color={colors.green} />
+                  ),
+                }}
+              />
+            </BottomTab.Navigator>
+            <StatusBar style="auto" />
+          </NavigationContainer>
+        </ThemeProvider>
+      </AppProvider>
+    </RootSiblingParent>
   );
 }
 
