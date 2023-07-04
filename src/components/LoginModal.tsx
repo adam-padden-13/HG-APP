@@ -11,6 +11,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { AppContext } from "../contexts/appContext";
+import Toast from "react-native-root-toast";
+import { FirebaseError } from "firebase/app";
 
 interface LoginModalProps {
   showModal: boolean;
@@ -105,7 +107,10 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const handleCreateNewUser = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        alert("Account created!");
+        Toast.show("Account Created!", {
+          position: 60,
+        });
+        setUser(userCredential.user);
         dispatch({
           type: "User",
           payload: {
@@ -123,7 +128,16 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const handleUpdateUser = () => {
     updateProfile(user, { displayName })
       .then(() => {
-        alert(`Thanks ${displayName}!`);
+        dispatch({
+          type: "User",
+          payload: {
+            userDisplayName: user.displayName,
+            userEmail: user.email,
+          },
+        });
+        Toast.show(`Thanks, ${displayName}!`, {
+          position: 60,
+        });
         setShowUpdateInfo(false);
         resetForm();
         hideModal();
@@ -136,7 +150,9 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        alert("SIGNED IN");
+        Toast.show("Signed in!", {
+          position: 60,
+        });
         dispatch({
           type: "User",
           payload: {
@@ -147,8 +163,8 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
         resetForm();
         hideModal();
       })
-      .catch((error) => {
-        alert(error);
+      .catch((error: FirebaseError) => {
+        alert(error.message);
       });
   };
 
