@@ -18,7 +18,7 @@ const Player = () => {
   const [songIsPlaying, setSongisPlaying] = useState(false);
   const [songIsPaused, setSongisPaused] = useState(false);
   const [songDuration, setSongDuration] = useState(0);
-  const [currentPlayback, setCurrentPlayback] = useState<number>();
+  const [currentPlayback, setCurrentPlayback] = useState<number>(0);
 
   const audioFileTitle: string =
     state.loadedSong && state.loadedSong.audioFileName
