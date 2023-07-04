@@ -8,6 +8,7 @@ import PlayerSlider from "./PlayerSlider";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../contexts/appContext";
+import Toast from "react-native-root-toast";
 
 const player = new Audio.Sound();
 
@@ -17,7 +18,7 @@ const Player = () => {
   const [songIsPlaying, setSongisPlaying] = useState(false);
   const [songIsPaused, setSongisPaused] = useState(false);
   const [songDuration, setSongDuration] = useState(0);
-  const [currentPlayback, setCurrentPlayback] = useState(0);
+  const [currentPlayback, setCurrentPlayback] = useState<number>();
 
   const audioFileTitle: string =
     state.loadedSong && state.loadedSong.audioFileName
@@ -65,6 +66,10 @@ const Player = () => {
   }, [state.loadedSong]);
 
   async function onPlay() {
+    Toast.show("Audio will not be audible if phone is in silent mode.", {
+      position: 60,
+      duration: 3000,
+    });
     try {
       await player.playAsync();
     } catch (error) {

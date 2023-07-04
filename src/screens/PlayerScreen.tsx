@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 import { AppContext } from "../contexts/appContext";
 import Player from "../components/Player";
 import { SafeAreaView } from "react-native-safe-area-context";
