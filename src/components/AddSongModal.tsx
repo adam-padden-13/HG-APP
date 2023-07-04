@@ -52,7 +52,7 @@ const AddSongModal = ({
   hideModal,
   reloadSongs,
 }: AddSongModalProps) => {
-  const { state, dispatch } = useContext(AppContext);
+  const { state } = useContext(AppContext);
   const today = moment().format("MM-DD-YYYY");
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -134,31 +134,38 @@ const AddSongModal = ({
   });
 
   const handleSave = async () => {
-    setShowLoader(true);
-    await addDoc(collection(db, `${songCollection}`), {
-      id: songState.id,
-      title: songState.title,
-      recordedDate: songState.recordedDate,
-      category: songState.category,
-      image: songState.image,
-      notes: songState.notes,
-      audioFileName: songState.audioFileName,
-      lastModifiedBy: state.user.userDisplayName,
-      lastModifiedDate: today,
-    })
-      .then(() => {
-        Toast.show("Save Successful!", {
-          position: 0,
-        });
-        reloadSongs();
-        setShowLoader(false);
-        hideModal();
+    if (songState.title && songState.category && songState.recordedDate) {
+      setShowLoader(true);
+      await addDoc(collection(db, `${songCollection}`), {
+        id: songState.id,
+        title: songState.title,
+        recordedDate: songState.recordedDate,
+        category: songState.category,
+        image: songState.image,
+        notes: songState.notes,
+        audioFileName: fileToUpload.type === "success" && fileToUpload.name,
+        lastModifiedBy: state.user.userDisplayName,
+        lastModifiedDate: today,
       })
-      .catch((error: FirebaseError) => {
-        setShowLoader(false);
-        hideModal();
-        alert("An error occurred, save was unsuccessful");
+        .then(() => {
+          Toast.show("Save Successful!", {
+            position: 0,
+          });
+          reloadSongs();
+          setShowLoader(false);
+          hideModal();
+        })
+        .catch((error: FirebaseError) => {
+          setShowLoader(false);
+          hideModal();
+          alert("An error occurred, save was unsuccessful");
+        });
+    } else {
+      Toast.show("Please enter required info", {
+        position: 60,
+        backgroundColor: colors.red,
       });
+    }
   };
 
   const saveButton = () => {
@@ -194,7 +201,6 @@ const AddSongModal = ({
 
         const fetchResponse = await fetch(audioFile.uri);
         const blob = await fetchResponse.blob();
-        console.log(blob);
 
         if (blob) {
           await uploadBytes(audioFileRef, blob).then((snapshot) => {
@@ -202,6 +208,7 @@ const AddSongModal = ({
               position: 0,
             });
             setShowLoader(false);
+            setShowUploadFileScreen(false);
           });
         }
       } catch (error) {
@@ -302,6 +309,11 @@ const AddSongModal = ({
                 <View style={styles.headerView}>
                   <NormalText>Add Song</NormalText>
                   <Spacer height={10} />
+                  <LinkText>
+                    {fileToUpload &&
+                      fileToUpload.type === "success" &&
+                      fileToUpload.name}
+                  </LinkText>
                 </View>
                 <Spacer />
                 <Input
