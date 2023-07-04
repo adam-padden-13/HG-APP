@@ -8,12 +8,20 @@ import {
   View,
 } from "react-native";
 import { Song } from "../models/Song";
-import { BoldText, HeaderText, SmallText, colors } from "../theme/theme";
+import {
+  BoldText,
+  HeaderText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
+import { Icon } from "@rneui/base";
 
 const SongsScreen = ({ navigation }) => {
+  const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [refreshing, setRefreshing] = useState(true);
   const { state, dispatch } = useContext(AppContext);
 
@@ -77,9 +85,73 @@ const SongsScreen = ({ navigation }) => {
     );
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      marginTop: 60,
+      marginHorizontal: 20,
+      flex: 1,
+    },
+    goBack: {
+      position: "absolute",
+      top: 0,
+      left: 10,
+    },
+    songContainer: {
+      height: 42,
+      borderWidth: 1,
+      justifyContent: "center",
+      paddingHorizontal: 10,
+      borderRadius: 8,
+      backgroundColor: colors.white,
+    },
+    songInfo: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginHorizontal: 4,
+    },
+    addSongButton: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      alignItems: "center",
+      alignSelf: "flex-end",
+      borderColor: "black",
+      borderWidth: 2,
+      borderRadius: 10,
+      padding: 10,
+      backgroundColor: changeButtonColor ? colors.blue : colors.white,
+      marginHorizontal: 8,
+      marginBottom: 8,
+      height: 50,
+      width: 50,
+    },
+    shadowProp: {
+      shadowColor: "#171717",
+      shadowOffset: { width: 4, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+    },
+  });
+
   return (
     <View style={styles.container}>
       {refreshing ? <ActivityIndicator /> : null}
+      <Pressable
+        onPress={() => {}}
+        onPressIn={() => setChangeButtonColor(true)}
+        onPressOut={() => setChangeButtonColor(false)}
+        style={[styles.addSongButton, styles.shadowProp]}
+      >
+        <Icon
+          name="add"
+          type="ionicon"
+          color={colors.red}
+          size={16}
+          style={{ marginRight: 10 }}
+        />
+        <SmallText size={8} color={colors.black}>
+          Add Song
+        </SmallText>
+      </Pressable>
       <FlatList
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
@@ -102,31 +174,5 @@ const SongsScreen = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 60,
-    marginHorizontal: 20,
-    flex: 1,
-  },
-  goBack: {
-    position: "absolute",
-    top: 0,
-    left: 10,
-  },
-  songContainer: {
-    height: 42,
-    borderWidth: 1,
-    justifyContent: "center",
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    backgroundColor: colors.white,
-  },
-  songInfo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 4,
-  },
-});
 
 export default SongsScreen;
