@@ -28,6 +28,12 @@ const SongsScreen = ({ navigation }) => {
   const loadSongs = () => {
     getSongs().then((response) => {
       if (response.length > 0) {
+        response.sort((a, b) => {
+          if (a.title < b.title) return -1;
+          if (a.title > b.title) return 1;
+          return 0;
+        });
+
         setRefreshing(false);
         dispatch({
           type: "Songs",
