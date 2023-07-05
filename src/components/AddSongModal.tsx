@@ -19,27 +19,13 @@ import Toast from "react-native-root-toast";
 import { FirebaseError } from "firebase/app";
 import { ref, uploadBytesResumable } from "firebase/storage";
 import * as DocumentPicker from "expo-document-picker";
+import { songReducer } from "../reducers/songReducer";
 
 interface AddSongModalProps {
   showModal: boolean;
   hideModal: () => void;
   reloadSongs?: () => void;
 }
-
-const addSongReducer = (state: Song, action) => {
-  switch (action.type) {
-    case "title":
-      return { ...state, title: action.payload };
-    case "recordedDate":
-      return { ...state, recordedDate: action.payload };
-    case "category":
-      return { ...state, category: action.payload };
-    case "notes":
-      return { ...state, notes: action.payload };
-    default:
-      return state;
-  }
-};
 
 const AddSongModal = ({
   showModal,
@@ -67,7 +53,7 @@ const AddSongModal = ({
     lastModifiedDate: today,
   };
 
-  const [songState, songDispatch] = useReducer(addSongReducer, initialState);
+  const [songState, songDispatch] = useReducer(songReducer, initialState);
 
   const styles = StyleSheet.create({
     centeredView: {

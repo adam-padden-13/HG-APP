@@ -117,7 +117,7 @@ const SongsScreen = ({ navigation }) => {
       alignItems: "center",
       alignSelf: "flex-end",
       borderColor: "black",
-      borderWidth: 2,
+      borderWidth: 1,
       borderRadius: 10,
       padding: 10,
       backgroundColor: changeButtonColor ? colors.blue : colors.white,
