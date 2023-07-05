@@ -9,34 +9,19 @@ import { Icon, Input } from "@rneui/themed";
 import { HeaderText, NormalText, colors } from "../theme/theme";
 import Spacer from "./Spacer";
 import { useContext, useReducer, useState } from "react";
-import { Song } from "../models/Song";
 import { AppContext } from "../contexts/appContext";
 import Modal from "react-native-modal";
 import { doc, setDoc } from "firebase/firestore";
 import { db, songCollection } from "../../firebaseConfig";
 import moment from "moment";
 import Toast from "react-native-root-toast";
+import { songReducer } from "../reducers/songReducer";
 
 interface SongInfoModalProps {
   showModal: boolean;
   hideModal: () => void;
   reloadSongs: () => void;
 }
-
-const editSongReducer = (state: Song, action) => {
-  switch (action.type) {
-    case "title":
-      return { ...state, title: action.payload };
-    case "recordedDate":
-      return { ...state, recordedDate: action.payload };
-    case "category":
-      return { ...state, category: action.payload };
-    case "notes":
-      return { ...state, notes: action.payload };
-    default:
-      return state;
-  }
-};
 
 const SongInfoModal = ({
   showModal,
@@ -46,7 +31,7 @@ const SongInfoModal = ({
   const { state, dispatch } = useContext(AppContext);
   const selectedSong = state.selectedSong;
   const today = moment().format("MM-DD-YYYY");
-  const [songState, songDispatch] = useReducer(editSongReducer, {
+  const [songState, songDispatch] = useReducer(songReducer, {
     id: selectedSong.id,
     title: selectedSong.title,
     recordedDate: selectedSong.recordedDate,
