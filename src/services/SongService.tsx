@@ -1,11 +1,11 @@
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { db, songCollection } from "../../firebaseConfig";
 import { Song } from "../models/Song";
 
 export const getSongs = async () => {
   const songList: Song[] = [];
 
-  await getDocs(collection(db, "songs")).then((response) => {
+  await getDocs(collection(db, `${songCollection}`)).then((response) => {
     response.forEach((song) => {
       let currentSong: Song = song.data() as Song;
       currentSong.documentId = song.id;

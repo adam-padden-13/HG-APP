@@ -13,7 +13,7 @@ import { Song } from "../models/Song";
 import { AppContext } from "../contexts/appContext";
 import Modal from "react-native-modal";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { db, songCollection } from "../../firebaseConfig";
 import moment from "moment";
 import Toast from "react-native-root-toast";
 
@@ -121,7 +121,7 @@ const SongInfoModal = ({
 
   const handleSave = async () => {
     setShowLoader(true);
-    await setDoc(doc(db, "songs", `${selectedSong.documentId}`), {
+    await setDoc(doc(db, `${songCollection}`, `${selectedSong.documentId}`), {
       id: songState.id,
       title: songState.title,
       recordedDate: songState.recordedDate,
