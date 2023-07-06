@@ -8,7 +8,7 @@ import {
   colors,
 } from "../theme/theme";
 import Spacer from "./Spacer";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { auth } from "../../firebaseConfig";
 import {
   User,
@@ -19,6 +19,8 @@ import {
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { FirebaseError } from "firebase/app";
+import * as SecureStore from "expo-secure-store";
+import { SavedCredKeys } from "../utilities/stringUtilities";
 
 interface LoginModalProps {
   showModal: boolean;
@@ -111,12 +113,32 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
     },
   });
 
+  useEffect(() => {
+    getCreds(SavedCredKeys.email, SavedCredKeys.password);
+  }, [showModal]);
+
+  const getCreds = async (key1: string, key2: string) => {
+    const savedEmail = await SecureStore.getItemAsync(key1);
+    const savedPassword = await SecureStore.getItemAsync(key2);
+
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+    }
+  };
+
+  const saveCreds = async (key: string, value: string) => {
+    await SecureStore.setItemAsync(key, value);
+  };
+
   const handleCreateNewUser = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         Toast.show("Account Created!", {
           position: 60,
         });
+        saveCreds(SavedCredKeys.email, email);
+        saveCreds(SavedCredKeys.password, password);
         setUser(userCredential.user);
         dispatch({
           type: "User",
@@ -157,6 +179,8 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
+        saveCreds(SavedCredKeys.email, email);
+        saveCreds(SavedCredKeys.password, password);
         Toast.show("Signed in!", {
           position: 60,
         });
