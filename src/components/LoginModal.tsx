@@ -115,7 +115,7 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
 
   useEffect(() => {
     getCreds(SavedCredKeys.email, SavedCredKeys.password);
-  }, []);
+  }, [showModal]);
 
   const getCreds = async (key1: string, key2: string) => {
     const savedEmail = await SecureStore.getItemAsync(key1);
