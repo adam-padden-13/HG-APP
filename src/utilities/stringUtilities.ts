@@ -7,3 +7,8 @@ export const convertMilliToMinutes = (milliseconds: number) => {
   let seconds = (milliseconds % 60000) / 1000;
   return minutes + ":" + (seconds < 10 ? "0" : "") + seconds.toFixed(0);
 };
+
+export enum SavedCredKeys {
+  email = "email",
+  password = "password",
+}
