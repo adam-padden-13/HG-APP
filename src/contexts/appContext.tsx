@@ -9,6 +9,7 @@ export interface AppState {
   selectedSong: Song;
   loadedSong: Song;
   songs: Song[];
+  savedSongs: Song[];
 }
 
 export interface AppActionPayloads {
@@ -16,6 +17,7 @@ export interface AppActionPayloads {
   SelectedSong: Song;
   LoadedSong: Song;
   Songs: Song[];
+  SavedSongs: Song[];
 }
 
 export type AppAction = {
@@ -50,6 +52,11 @@ const appReducer = (state: AppState, action: AppAction) => {
         ...state,
         songs: action.payload,
       };
+    case "SavedSongs":
+      return {
+        ...state,
+        songs: action.payload,
+      };
     default:
       return state;
   }
@@ -64,6 +71,7 @@ const initialValue = {
     selectedSong: undefined,
     loadedSong: undefined,
     songs: undefined,
+    savedSongs: undefined,
   },
   dispatch: () => null,
 };
