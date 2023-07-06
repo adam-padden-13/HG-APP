@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SongScreen from "../screens/Song";
-import SongsScreen from "../screens/Songs";
+import SongScreen from "../screens/SongScreen";
+import SongsScreen from "../screens/SongsScreen";
 import { Song } from "../models/Song";
 
 export type RootStackParamList = {

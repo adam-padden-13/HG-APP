@@ -163,12 +163,23 @@ const SongScreen = () => {
           ) : (
             <SmallText size={10}> </SmallText>
           )}
-          <Pressable
-            style={[styles.songInfoContainer, styles.shadowProp]}
-            onPress={() => setShowSongInfo(true)}
-          >
-            <Icon name="edit" type="feather" color={colors.red} />
-          </Pressable>
+          <View style={{ flexDirection: "row" }}>
+            <Pressable
+              style={[styles.songInfoContainer, styles.shadowProp]}
+              onPress={() => {
+                console.log("aklsdhf");
+              }}
+            >
+              <Icon name="add" type="ionicon" color={colors.red} />
+            </Pressable>
+            <Spacer width={10} />
+            <Pressable
+              style={[styles.songInfoContainer, styles.shadowProp]}
+              onPress={() => setShowSongInfo(true)}
+            >
+              <Icon name="edit" type="feather" color={colors.red} />
+            </Pressable>
+          </View>
         </View>
       </View>
       <Spacer height={40} />
