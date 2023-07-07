@@ -124,7 +124,7 @@ const AddSongModal = ({
         image: songState.image,
         notes: songState.notes,
         audioFileName: fileToUpload.type === "success" && fileToUpload.name,
-        lastModifiedBy: state.user.userDisplayName,
+        uploadedBy: state.user.userDisplayName,
         lastModifiedDate: today,
       })
         .then(() => {

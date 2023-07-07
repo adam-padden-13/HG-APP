@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { db, songCollection } from "../../firebaseConfig";
 import { Song } from "../models/Song";
 
@@ -13,4 +13,10 @@ export const getSongs = async () => {
     });
   });
   return songList;
+};
+
+export const deleteSongData = async (id: string) => {
+  await deleteDoc(doc(db, `${songCollection}`, id)).catch(() => {
+    alert("Song could not be deleted");
+  });
 };

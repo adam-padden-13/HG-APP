@@ -116,6 +116,9 @@ const SongInfoModal = ({
       audioFileName: songState.audioFileName,
       lastModifiedBy: state.user.userDisplayName,
       lastModifiedDate: today,
+      uploadedBy: state.selectedSong.uploadedBy
+        ? state.selectedSong.uploadedBy
+        : "",
     })
       .then(() => {
         dispatch({
