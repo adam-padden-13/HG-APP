@@ -5,9 +5,10 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { NormalText } from "../theme/theme";
+import { NormalText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
+import { version } from "../../package.json";
 
 const HomeScreen = ({ navigation }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -35,7 +36,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <View style={{}}>
+      <View>
         <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
           <NormalText>Hello {state.user.userDisplayName ?? ""}</NormalText>
           <Pressable onPress={() => setShowLoginModal(true)}>
@@ -61,6 +62,17 @@ const HomeScreen = ({ navigation }) => {
           source={require("../../assets/hg_triangle.png")}
           style={styles.logo}
         />
+        <Pressable
+          style={{
+            alignSelf: "flex-end",
+            height: 100,
+            justifyContent: "flex-end",
+            padding: 4,
+          }}
+        >
+          <SmallText>v{version}</SmallText>
+        </Pressable>
+
         <LoginModal
           showModal={showLoginModal}
           hideModal={() => setShowLoginModal(false)}
