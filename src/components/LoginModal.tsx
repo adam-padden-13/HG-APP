@@ -21,6 +21,7 @@ import Toast from "react-native-root-toast";
 import { FirebaseError } from "firebase/app";
 import * as SecureStore from "expo-secure-store";
 import { SavedCredKeys } from "../utilities/stringUtilities";
+import { addNewUser } from "../services/UserService";
 
 interface LoginModalProps {
   showModal: boolean;
@@ -163,6 +164,10 @@ const LoginModal = ({ showModal, hideModal }: LoginModalProps) => {
             userDisplayName: user.displayName,
             userEmail: user.email,
           },
+        });
+        addNewUser({
+          userDisplayName: displayName,
+          userEmail: state.user.userEmail,
         });
         Toast.show(`Thanks, ${displayName}!`, {
           position: 60,
