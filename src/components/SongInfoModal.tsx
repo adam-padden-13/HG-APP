@@ -16,6 +16,7 @@ import { db, songCollection } from "../../firebaseConfig";
 import moment from "moment";
 import Toast from "react-native-root-toast";
 import { songReducer } from "../reducers/songReducer";
+import { isValidDateFormat } from "../utilities/stringUtilities";
 
 interface SongInfoModalProps {
   showModal: boolean;
@@ -106,38 +107,48 @@ const SongInfoModal = ({
 
   const handleSave = async () => {
     if (songState.title && songState.category && songState.recordedDate) {
-      setShowLoader(true);
-      await setDoc(doc(db, `${songCollection}`, `${selectedSong.documentId}`), {
-        id: songState.id,
-        title: songState.title,
-        recordedDate: songState.recordedDate,
-        category: songState.category,
-        image: songState.image,
-        notes: songState.notes,
-        audioFileName: songState.audioFileName,
-        lastModifiedBy: state.user.userDisplayName,
-        lastModifiedDate: today,
-        uploadedBy: state.selectedSong.uploadedBy
-          ? state.selectedSong.uploadedBy
-          : "",
-      })
-        .then(() => {
-          dispatch({
-            type: "SelectedSong",
-            payload: songState,
-          });
-          Toast.show("Save Successful!", {
-            position: 0,
-          });
-          setShowLoader(false);
-          hideModal();
-          reloadSongs();
-        })
-        .catch((error) => {
-          setShowLoader(false);
-          hideModal();
-          alert("An error occurred, save was unsuccessful");
+      if (!isValidDateFormat(songState.recordedDate)) {
+        Toast.show("Please enter date in MM/DD/YYYY format", {
+          position: 60,
+          backgroundColor: colors.red,
         });
+      } else {
+        setShowLoader(true);
+        await setDoc(
+          doc(db, `${songCollection}`, `${selectedSong.documentId}`),
+          {
+            id: songState.id,
+            title: songState.title,
+            recordedDate: songState.recordedDate,
+            category: songState.category,
+            image: songState.image,
+            notes: songState.notes,
+            audioFileName: songState.audioFileName,
+            lastModifiedBy: state.user.userDisplayName,
+            lastModifiedDate: today,
+            uploadedBy: state.selectedSong.uploadedBy
+              ? state.selectedSong.uploadedBy
+              : "",
+          }
+        )
+          .then(() => {
+            dispatch({
+              type: "SelectedSong",
+              payload: songState,
+            });
+            Toast.show("Save Successful!", {
+              position: 0,
+            });
+            setShowLoader(false);
+            hideModal();
+            reloadSongs();
+          })
+          .catch((error) => {
+            setShowLoader(false);
+            hideModal();
+            alert("An error occurred, save was unsuccessful");
+          });
+      }
     } else {
       Toast.show("Please enter required info", {
         position: 60,
