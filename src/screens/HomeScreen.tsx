@@ -5,10 +5,11 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { SmallText } from "../theme/theme";
+import { NormalText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { version } from "../../package.json";
+import Spacer from "../components/Spacer";
 
 const HomeScreen = ({ navigation }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -36,16 +37,8 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginHorizontal: 20,
-          }}
-        >
-          <SmallText>Hello {state.user.userDisplayName ?? ""}!</SmallText>
+      <View style={{ height: "100%" }}>
+        <View style={styles.loginIconContainer}>
           {state.user.userDisplayName === "Guest" ? (
             <Pressable onPress={() => setShowLoginModal(true)}>
               <Icon name="login" type="material" size={30} color="black" />
@@ -56,22 +49,16 @@ const HomeScreen = ({ navigation }) => {
             </Pressable>
           )}
         </View>
+        <View style={{ alignItems: "center" }}>
+          <Image
+            source={require("../../assets/hg_triangle.png")}
+            style={styles.logo}
+          />
+          <Spacer />
+          <NormalText>Hello {state.user.userDisplayName ?? ""}!</NormalText>
+        </View>
 
-        <Image
-          source={require("../../assets/hg_triangle.png")}
-          style={styles.logo}
-        />
-        <Pressable
-          style={{
-            alignSelf: "flex-end",
-            height: 100,
-            justifyContent: "flex-end",
-            padding: 4,
-          }}
-        >
-          <SmallText>v{version}</SmallText>
-        </Pressable>
-
+        <SmallText style={styles.versionText}>v{version}</SmallText>
         <LoginModal
           showModal={showLoginModal}
           hideModal={() => setShowLoginModal(false)}
@@ -85,8 +72,18 @@ const styles = StyleSheet.create({
   logo: {
     marginTop: 20,
     alignSelf: "center",
-    height: 300,
+    height: 280,
     resizeMode: "contain",
+  },
+  versionText: {
+    top: 290,
+    left: 10,
+  },
+  loginIconContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginHorizontal: 20,
   },
 });
 
