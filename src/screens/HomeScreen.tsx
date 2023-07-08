@@ -5,18 +5,30 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import {  NormalText, SmallText } from "../theme/theme";
+import { HeaderText, NormalText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { version } from "../../package.json";
 import Spacer from "../components/Spacer";
+import { getUserInfo } from "../services/UserService";
 
 const HomeScreen = ({ navigation }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
   useEffect(() => {
-    if (state.user.userDisplayName === "Guest") setShowLoginModal(true);
+    if (state.user.userDisplayName === "Guest") {
+      setShowLoginModal(true);
+    } else {
+      getUserInfo(state.user.userEmail).then((res) => {
+        if (res.savedSongs.length > 0) {
+          dispatch({
+            type: "SavedSongs",
+            payload: res.savedSongs,
+          });
+        }
+      });
+    }
   }, [showLoginModal]);
 
   const handleSignout = () => {
@@ -58,7 +70,12 @@ const HomeScreen = ({ navigation }) => {
           <NormalText>Hello {state.user.userDisplayName ?? ""}!</NormalText>
         </View>
         <View style={{ alignItems: "center" }}>
-          <NormalText>Saved Songs</NormalText>
+          <HeaderText>Saved Songs</HeaderText>
+          {state.savedSongs.length > 0 &&
+            state.savedSongs.map((song) => {
+              return <NormalText>{song.title}</NormalText>
+            })
+          }
         </View>
 
         <SmallText style={styles.versionText}>v{version}</SmallText>

@@ -75,7 +75,7 @@ const SongScreen = () => {
 
   const handleAddSong = async () => {
     console.log("add song");
-    await addSongToFavorites("VJmM5Y8tB7Us2QKbdTqB", state.selectedSong);
+    await addSongToFavorites(state.user.userEmail, state.selectedSong);
   };
 
   const styles = StyleSheet.create({

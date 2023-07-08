@@ -53,7 +53,7 @@ const appReducer = (state: AppState, action: AppAction) => {
     case "SavedSongs":
       return {
         ...state,
-        songs: action.payload,
+        savedSongs: action.payload,
       };
     default:
       return state;
