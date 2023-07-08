@@ -105,35 +105,45 @@ const SongInfoModal = ({
   });
 
   const handleSave = async () => {
-    setShowLoader(true);
-    await setDoc(doc(db, `${songCollection}`, `${selectedSong.documentId}`), {
-      id: songState.id,
-      title: songState.title,
-      recordedDate: songState.recordedDate,
-      category: songState.category,
-      image: songState.image,
-      notes: songState.notes,
-      audioFileName: songState.audioFileName,
-      lastModifiedBy: state.user.userDisplayName,
-      lastModifiedDate: today,
-    })
-      .then(() => {
-        dispatch({
-          type: "SelectedSong",
-          payload: songState,
-        });
-        Toast.show("Save Successful!", {
-          position: 0,
-        });
-        setShowLoader(false);
-        hideModal();
-        reloadSongs();
+    if (songState.title && songState.category && songState.recordedDate) {
+      setShowLoader(true);
+      await setDoc(doc(db, `${songCollection}`, `${selectedSong.documentId}`), {
+        id: songState.id,
+        title: songState.title,
+        recordedDate: songState.recordedDate,
+        category: songState.category,
+        image: songState.image,
+        notes: songState.notes,
+        audioFileName: songState.audioFileName,
+        lastModifiedBy: state.user.userDisplayName,
+        lastModifiedDate: today,
+        uploadedBy: state.selectedSong.uploadedBy
+          ? state.selectedSong.uploadedBy
+          : "",
       })
-      .catch((error) => {
-        setShowLoader(false);
-        hideModal();
-        alert("An error occurred, save was unsuccessful");
+        .then(() => {
+          dispatch({
+            type: "SelectedSong",
+            payload: songState,
+          });
+          Toast.show("Save Successful!", {
+            position: 0,
+          });
+          setShowLoader(false);
+          hideModal();
+          reloadSongs();
+        })
+        .catch((error) => {
+          setShowLoader(false);
+          hideModal();
+          alert("An error occurred, save was unsuccessful");
+        });
+    } else {
+      Toast.show("Please enter required info", {
+        position: 60,
+        backgroundColor: colors.red,
       });
+    }
   };
 
   const saveButton = () => {
@@ -187,7 +197,7 @@ const SongInfoModal = ({
               </View>
               <Spacer />
               <Input
-                label={"Title"}
+                label={"Title*"}
                 placeholder="Title"
                 inputContainerStyle={styles.inputContainerStyle}
                 value={songState.title}
@@ -199,7 +209,7 @@ const SongInfoModal = ({
                 }}
               />
               <Input
-                label={"Recorded Date"}
+                label={"Recorded Date*"}
                 placeholder="MM/DD/YYYY"
                 inputContainerStyle={styles.inputContainerStyle}
                 value={songState.recordedDate}
@@ -211,7 +221,7 @@ const SongInfoModal = ({
                 }}
               />
               <Input
-                label={"Category"}
+                label={"Category*"}
                 placeholder="Category"
                 inputContainerStyle={styles.inputContainerStyle}
                 value={songState.category}

@@ -11,4 +11,5 @@ export interface Song {
   documentId?: string;
   lastModifiedBy?: string;
   lastModifiedDate?: string;
+  uploadedBy?: string;
 }

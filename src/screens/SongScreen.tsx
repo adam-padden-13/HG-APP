@@ -13,11 +13,13 @@ import { useContext, useEffect, useState } from "react";
 import { Icon } from "@rneui/base";
 import SongInfoModal from "../components/SongInfoModal";
 import { AppContext } from "../contexts/appContext";
-import { getSongs } from "../services/SongService";
+import { deleteSongData, getSongs } from "../services/SongService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { getDownloadURL, ref } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../firebaseConfig";
+import ConfirmModal from "../components/ConfirmModal";
+import Toast from "react-native-root-toast";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -26,6 +28,7 @@ const SongScreen = () => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showSongInfo, setShowSongInfo] = useState(false);
   const [songURL, setSongURL] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const audioFileTitle: string = state.selectedSong.audioFileName ?? "";
 
@@ -42,10 +45,14 @@ const SongScreen = () => {
     getSongUrl();
   }, []);
 
-  const reloadSongs = () => {
+  const reloadSongs = async () => {
     getSongs().then((response) => {
       if (response.length > 0) {
-        // setRefreshing(false);
+        response.sort((a, b) => {
+          if (a.title < b.title) return -1;
+          if (a.title > b.title) return 1;
+          return 0;
+        });
         dispatch({
           type: "Songs",
           payload: response,
@@ -58,6 +65,17 @@ const SongScreen = () => {
 
   const openSongURL = () => {
     if (songURL) Linking.openURL(songURL);
+  };
+
+  const handleDelete = async () => {
+    setShowDeleteModal(false);
+    await deleteObject(songRef);
+    await deleteSongData(state.selectedSong.documentId);
+    await reloadSongs();
+    navigation.goBack();
+    Toast.show("Song deleted!", {
+      position: 60,
+    });
   };
 
   const styles = StyleSheet.create({
@@ -154,35 +172,43 @@ const SongScreen = () => {
             alignItems: "flex-end",
           }}
         >
-          {state.selectedSong.lastModifiedBy &&
-          state.selectedSong.lastModifiedDate ? (
-            <SmallText size={10}>
-              Last modified by {state.selectedSong.lastModifiedBy} on{" "}
-              {state.selectedSong.lastModifiedDate}
-            </SmallText>
-          ) : (
-            <SmallText size={10}> </SmallText>
-          )}
-          <View style={{ flexDirection: "row" }}>
-            <Pressable
-              style={[styles.songInfoContainer, styles.shadowProp]}
-              onPress={() => {
-                console.log("aklsdhf");
-              }}
-            >
-              <Icon name="add" type="ionicon" color={colors.red} />
-            </Pressable>
-            <Spacer width={10} />
-            <Pressable
-              style={[styles.songInfoContainer, styles.shadowProp]}
-              onPress={() => setShowSongInfo(true)}
-            >
-              <Icon name="edit" type="feather" color={colors.red} />
-            </Pressable>
+          <View>
+            {state.selectedSong.uploadedBy && (
+              <SmallText size={10}>
+                Uploaded by {state.selectedSong.uploadedBy}
+              </SmallText>
+            )}
+            {state.selectedSong.lastModifiedBy &&
+            state.selectedSong.lastModifiedDate ? (
+              <SmallText size={10}>
+                Last modified by {state.selectedSong.lastModifiedBy} on{" "}
+                {state.selectedSong.lastModifiedDate}
+              </SmallText>
+            ) : (
+              <SmallText size={10}> </SmallText>
+            )}
           </View>
         </View>
       </View>
-      <Spacer height={40} />
+      <Spacer height={20} />
+      <View style={{ flexDirection: "row" }}>
+        <Pressable
+          style={[styles.songInfoContainer, styles.shadowProp]}
+          onPress={() => {
+            setShowDeleteModal(true);
+          }}
+        >
+          <Icon name="delete" type="ant-design" color={colors.red} />
+        </Pressable>
+        <Spacer width={10} />
+        <Pressable
+          style={[styles.songInfoContainer, styles.shadowProp]}
+          onPress={() => setShowSongInfo(true)}
+        >
+          <Icon name="edit-2" type="feather" color={colors.red} />
+        </Pressable>
+      </View>
+      <Spacer height={20} />
       <View>
         <Pressable
           onPress={() => {
@@ -204,6 +230,14 @@ const SongScreen = () => {
           showModal={showSongInfo}
           hideModal={() => setShowSongInfo(false)}
           reloadSongs={() => reloadSongs()}
+        />
+      )}
+      {showDeleteModal && (
+        <ConfirmModal
+          type={"delete"}
+          showModal={showDeleteModal}
+          hideModal={() => setShowDeleteModal(false)}
+          button1Action={() => handleDelete()}
         />
       )}
     </SafeAreaView>

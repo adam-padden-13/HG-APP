@@ -5,7 +5,7 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { NormalText, SmallText } from "../theme/theme";
+import { HeaderText, NormalText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { version } from "../../package.json";
@@ -37,27 +37,20 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View>
-        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-          <NormalText>Hello {state.user.userDisplayName ?? ""}</NormalText>
-          <Pressable onPress={() => setShowLoginModal(true)}>
-            <Icon
-              name="user-circle"
-              type="font-awesome"
-              size={40}
-              color="black"
-              style={styles.userIcon}
-            />
-          </Pressable>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginHorizontal: 20,
+          }}
+        >
+          <SmallText>Hello {state.user.userDisplayName ?? ""}!</SmallText>
           <Pressable onPress={() => handleSignout()}>
-            <Icon
-              name="logout"
-              type="ant-design"
-              size={40}
-              color="black"
-              style={styles.userIcon}
-            />
+            <Icon name="logout" type="ant-design" size={30} color="black" />
           </Pressable>
         </View>
+
         <Image
           source={require("../../assets/hg_triangle.png")}
           style={styles.logo}
@@ -86,10 +79,6 @@ const styles = StyleSheet.create({
   logo: {
     marginTop: 100,
     alignSelf: "center",
-  },
-  userIcon: {
-    marginRight: 20,
-    alignSelf: "flex-end",
   },
 });
 
