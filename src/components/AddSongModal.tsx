@@ -297,7 +297,7 @@ const AddSongModal = ({
             </View>
             <Spacer />
             <Input
-              label={"Title"}
+              label={"Title*"}
               placeholder="Title"
               inputContainerStyle={styles.inputContainerStyle}
               value={songState.title}
@@ -309,7 +309,7 @@ const AddSongModal = ({
               }}
             />
             <Input
-              label={"Recorded Date"}
+              label={"Recorded Date*"}
               placeholder="MM/DD/YYYY"
               inputContainerStyle={styles.inputContainerStyle}
               value={songState.recordedDate}
@@ -321,7 +321,7 @@ const AddSongModal = ({
               }}
             />
             <Input
-              label={"Category"}
+              label={"Category*"}
               placeholder="Category"
               inputContainerStyle={styles.inputContainerStyle}
               value={songState.category}
