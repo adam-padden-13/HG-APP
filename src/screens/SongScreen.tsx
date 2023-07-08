@@ -207,6 +207,13 @@ const SongScreen = () => {
         >
           <Icon name="edit-2" type="feather" color={colors.red} />
         </Pressable>
+        <Spacer width={10} />
+        <Pressable
+          style={[styles.songInfoContainer, styles.shadowProp]}
+          onPress={() => console.log("adf")}
+        >
+          <Icon name="add" type="ionicons" color={colors.red} />
+        </Pressable>
       </View>
       <Spacer height={30} />
       <View>
