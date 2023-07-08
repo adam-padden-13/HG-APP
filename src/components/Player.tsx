@@ -103,7 +103,13 @@ const Player = () => {
               name="play-circle"
               type="feather"
               size={120}
-              color={!songIsLoaded ? "grey" : songIsPlaying ? "green" : "black"}
+              color={
+                !songIsLoaded
+                  ? colors.grey
+                  : songIsPlaying
+                  ? colors.green
+                  : colors.black
+              }
             />
           </Pressable>
           <Spacer width={20} />
@@ -112,7 +118,13 @@ const Player = () => {
               name="pause-circle"
               type="feather"
               size={120}
-              color={!songIsLoaded ? "grey" : songIsPaused ? "red" : "black"}
+              color={
+                !songIsLoaded
+                  ? colors.grey
+                  : songIsPaused
+                  ? colors.red
+                  : colors.black
+              }
             />
           </Pressable>
           <Spacer width={20} />

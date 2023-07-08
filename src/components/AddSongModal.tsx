@@ -20,6 +20,7 @@ import { FirebaseError } from "firebase/app";
 import { ref, uploadBytesResumable } from "firebase/storage";
 import * as DocumentPicker from "expo-document-picker";
 import { songReducer } from "../reducers/songReducer";
+import { isValidDateFormat } from "../utilities/stringUtilities";
 
 interface AddSongModalProps {
   showModal: boolean;
@@ -115,31 +116,38 @@ const AddSongModal = ({
 
   const handleSave = async () => {
     if (songState.title && songState.category && songState.recordedDate) {
-      setShowLoader(true);
-      await addDoc(collection(db, `${songCollection}`), {
-        id: songState.id,
-        title: songState.title,
-        recordedDate: songState.recordedDate,
-        category: songState.category,
-        image: songState.image,
-        notes: songState.notes,
-        audioFileName: fileToUpload.type === "success" && fileToUpload.name,
-        uploadedBy: state.user.userDisplayName,
-        lastModifiedDate: today,
-      })
-        .then(() => {
-          Toast.show("Save Successful!", {
-            position: 0,
-          });
-          reloadSongs();
-          setShowLoader(false);
-          hideModal();
-        })
-        .catch((error: FirebaseError) => {
-          setShowLoader(false);
-          hideModal();
-          alert("An error occurred, save was unsuccessful");
+      if (!isValidDateFormat(songState.recordedDate)) {
+        Toast.show("Please enter date in MM/DD/YYYY format", {
+          position: 40,
+          backgroundColor: colors.red,
         });
+      } else {
+        setShowLoader(true);
+        await addDoc(collection(db, `${songCollection}`), {
+          id: songState.id,
+          title: songState.title,
+          recordedDate: songState.recordedDate,
+          category: songState.category,
+          image: songState.image,
+          notes: songState.notes,
+          audioFileName: fileToUpload.type === "success" && fileToUpload.name,
+          uploadedBy: state.user.userDisplayName,
+          lastModifiedDate: today,
+        })
+          .then(() => {
+            Toast.show("Save Successful!", {
+              position: 0,
+            });
+            reloadSongs();
+            setShowLoader(false);
+            hideModal();
+          })
+          .catch((error: FirebaseError) => {
+            setShowLoader(false);
+            hideModal();
+            alert("An error occurred, save was unsuccessful");
+          });
+      }
     } else {
       Toast.show("Please enter required info", {
         position: 60,
@@ -287,7 +295,7 @@ const AddSongModal = ({
           // SONG INFO FORM
           <View style={styles.modalView}>
             <View style={styles.headerView}>
-              <NormalText>Add Song</NormalText>
+              <HeaderText>Add Song</HeaderText>
               <Spacer height={10} />
               <LinkText>
                 {fileToUpload &&
