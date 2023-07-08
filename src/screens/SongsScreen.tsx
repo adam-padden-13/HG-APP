@@ -127,7 +127,7 @@ const SongsScreen = ({ navigation }) => {
         }
         data={state.songs}
         renderItem={(song) => (
-          <SongListItem song={song.item} id={song.item.id} />
+          <SongListItem song={song.item} id={song.item.id} currentScreen="songs" />
         )}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={loadSongs} />

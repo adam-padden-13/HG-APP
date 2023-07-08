@@ -5,12 +5,13 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { HeaderText, NormalText, SmallText } from "../theme/theme";
+import { BoldText, HeaderText, NormalText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { version } from "../../package.json";
 import Spacer from "../components/Spacer";
 import { getUserInfo } from "../services/UserService";
+import SongListItem from "../components/SongListItem";
 
 const HomeScreen = ({ navigation }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -68,14 +69,25 @@ const HomeScreen = ({ navigation }) => {
           />
           <Spacer />
           <NormalText>Hello {state.user.userDisplayName ?? ""}!</NormalText>
+          <Spacer height={40} />
         </View>
         <View style={{ alignItems: "center" }}>
-          <HeaderText>Saved Songs</HeaderText>
-          {state.savedSongs.length > 0 &&
-            state.savedSongs.map((song) => {
-              return <NormalText>{song.title}</NormalText>
-            })
-          }
+          <BoldText size={20}>
+            {state.user.userDisplayName}'s Saved Songs
+          </BoldText>
+          <Spacer height={10} />
+          {state.savedSongs && state.savedSongs.length > 0 && (
+            <FlatList
+              data={state.savedSongs}
+              renderItem={(song) => (
+                <SongListItem
+                  song={song.item}
+                  id={song.item.id}
+                  currentScreen="home"
+                />
+              )}
+            />
+          )}
         </View>
 
         <SmallText style={styles.versionText}>v{version}</SmallText>

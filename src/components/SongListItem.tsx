@@ -9,12 +9,13 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 interface SongListItemProps {
   song: Song;
   id: number;
+  currentScreen: string;
 }
 
-const SongListItem = ({ song, id }: SongListItemProps) => {
+const SongListItem = ({ song, id, currentScreen }: SongListItemProps) => {
   const { state, dispatch } = useContext(AppContext);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  
+
   const styles = StyleSheet.create({
     songContainer: {
       height: 42,
@@ -55,9 +56,16 @@ const SongListItem = ({ song, id }: SongListItemProps) => {
           },
         ]}
         onPress={() => {
-          navigation.navigate("SongScreen", {
-            song: song,
-          });
+          if (currentScreen === "songs") {
+            navigation.navigate("SongScreen", {
+              song: song,
+            });
+          }
+
+          if (currentScreen === "home") {
+            navigation.navigate("SongsTab");
+          }
+
           dispatch({
             type: "SelectedSong",
             payload: song,
