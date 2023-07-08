@@ -14,6 +14,7 @@ import { storage } from "../../firebaseConfig";
 import ConfirmModal from "../components/ConfirmModal";
 import Toast from "react-native-root-toast";
 import SongInfoContainer from "../components/SongInfoContainer";
+import { addSongToFavorites } from "../services/UserService";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -70,6 +71,11 @@ const SongScreen = () => {
     Toast.show("Song deleted!", {
       position: 60,
     });
+  };
+
+  const handleAddSong = async () => {
+    console.log("add song");
+    await addSongToFavorites("VJmM5Y8tB7Us2QKbdTqB", state.selectedSong);
   };
 
   const styles = StyleSheet.create({
@@ -146,7 +152,7 @@ const SongScreen = () => {
         <Spacer width={10} />
         <Pressable
           style={[styles.songInfoContainer, styles.shadowProp]}
-          onPress={() => console.log("adf")}
+          onPress={() => handleAddSong()}
         >
           <Icon name="add" type="ionicons" color={colors.red} />
         </Pressable>
