@@ -5,7 +5,7 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { HeaderText, NormalText, SmallText } from "../theme/theme";
+import { SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { version } from "../../package.json";
@@ -46,9 +46,15 @@ const HomeScreen = ({ navigation }) => {
           }}
         >
           <SmallText>Hello {state.user.userDisplayName ?? ""}!</SmallText>
-          <Pressable onPress={() => handleSignout()}>
-            <Icon name="logout" type="ant-design" size={30} color="black" />
-          </Pressable>
+          {state.user.userDisplayName === "Guest" ? (
+            <Pressable onPress={() => setShowLoginModal(true)}>
+              <Icon name="login" type="material" size={30} color="black" />
+            </Pressable>
+          ) : (
+            <Pressable onPress={() => handleSignout()}>
+              <Icon name="logout" type="material" size={30} color="black" />
+            </Pressable>
+          )}
         </View>
 
         <Image
@@ -77,8 +83,10 @@ const HomeScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   logo: {
-    marginTop: 100,
+    marginTop: 20,
     alignSelf: "center",
+    height: 300,
+    resizeMode: "contain",
   },
 });
 
