@@ -208,7 +208,7 @@ const SongScreen = () => {
           <Icon name="edit-2" type="feather" color={colors.red} />
         </Pressable>
       </View>
-      <Spacer height={20} />
+      <Spacer height={30} />
       <View>
         <Pressable
           onPress={() => {
@@ -220,9 +220,14 @@ const SongScreen = () => {
           }}
           onPressIn={() => setChangeButtonColor(true)}
           onPressOut={() => setChangeButtonColor(false)}
-          style={[styles.playButton, styles.shadowProp]}
+          style={[]}
         >
-          <NormalText color="white">Play Song</NormalText>
+          <Icon
+            name="play-circle"
+            type="feather"
+            size={100}
+            color={!changeButtonColor ? colors.green : colors.black}
+          />
         </Pressable>
       </View>
       {showSongInfo && (
