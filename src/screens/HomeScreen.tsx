@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { StyleSheet, View, Image, Pressable } from "react-native";
+import { StyleSheet, View, Image, Pressable, FlatList } from "react-native";
 import { Icon } from "@rneui/themed";
 import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { NormalText, SmallText } from "../theme/theme";
+import {  NormalText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { version } from "../../package.json";
@@ -57,13 +57,17 @@ const HomeScreen = ({ navigation }) => {
           <Spacer />
           <NormalText>Hello {state.user.userDisplayName ?? ""}!</NormalText>
         </View>
+        <View style={{ alignItems: "center" }}>
+          <NormalText>Saved Songs</NormalText>
+        </View>
 
         <SmallText style={styles.versionText}>v{version}</SmallText>
-        <LoginModal
-          showModal={showLoginModal}
-          hideModal={() => setShowLoginModal(false)}
-        />
       </View>
+
+      <LoginModal
+        showModal={showLoginModal}
+        hideModal={() => setShowLoginModal(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -76,7 +80,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   versionText: {
-    top: 290,
+    top: 200,
     left: 10,
   },
   loginIconContainer: {

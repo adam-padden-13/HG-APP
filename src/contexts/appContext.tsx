@@ -1,11 +1,9 @@
 import React, { createContext, useReducer } from "react";
 import { Song } from "../models/Song";
+import { HGUser } from "../models/HGUser";
 
 export interface AppState {
-  user: {
-    userDisplayName: string;
-    userEmail: string;
-  };
+  user: HGUser;
   selectedSong: Song;
   loadedSong: Song;
   songs: Song[];
@@ -13,7 +11,7 @@ export interface AppState {
 }
 
 export interface AppActionPayloads {
-  User: { userDisplayName: string; userEmail: string };
+  User: HGUser;
   SelectedSong: Song;
   LoadedSong: Song;
   Songs: Song[];
