@@ -1,12 +1,5 @@
 import { View, StyleSheet, Pressable, Linking } from "react-native";
-import {
-  BoldText,
-  HeaderText,
-  LinkText,
-  NormalText,
-  SmallText,
-  colors,
-} from "../theme/theme";
+import { BoldText, HeaderText, colors } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import { useContext, useEffect, useState } from "react";
@@ -20,6 +13,8 @@ import { deleteObject, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../../firebaseConfig";
 import ConfirmModal from "../components/ConfirmModal";
 import Toast from "react-native-root-toast";
+import SongInfoContainer from "../components/SongInfoContainer";
+import { addSongToFavorites } from "../services/UserService";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -78,6 +73,11 @@ const SongScreen = () => {
     });
   };
 
+  const handleAddSong = async () => {
+    console.log("add song");
+    await addSongToFavorites(state.user.userEmail, state.selectedSong);
+  };
+
   const styles = StyleSheet.create({
     container: {
       justifyContent: "center",
@@ -131,65 +131,7 @@ const SongScreen = () => {
         {state.selectedSong.title && state.selectedSong.title}
       </HeaderText>
       <Spacer />
-      <View style={[styles.songInfoContainer, styles.shadowProp]}>
-        <View style={styles.songInfoRow}>
-          <BoldText>Recorded Date: </BoldText>
-          <NormalText>
-            {state.selectedSong.recordedDate
-              ? state.selectedSong.recordedDate
-              : "N/A"}
-          </NormalText>
-        </View>
-        <View style={styles.songInfoRow}>
-          <BoldText>Category: </BoldText>
-          <NormalText>{state.selectedSong.category}</NormalText>
-        </View>
-        {songURL && (
-          <Pressable
-            style={[styles.songInfoRow, { flexDirection: "column" }]}
-            onPress={() => openSongURL()}
-          >
-            <BoldText>Link to audio source: </BoldText>
-            <LinkText size={12}>{state.selectedSong.audioFileName}</LinkText>
-          </Pressable>
-        )}
-
-        <View style={styles.songInfoRow}>
-          <BoldText>Notes: </BoldText>
-        </View>
-        <View style={styles.notesContainer}>
-          <SmallText>
-            {state.selectedSong.notes
-              ? state.selectedSong.notes
-              : "Add notes here you bitch."}
-          </SmallText>
-        </View>
-        <View
-          style={{
-            width: 290,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-          }}
-        >
-          <View>
-            {state.selectedSong.uploadedBy && (
-              <SmallText size={10}>
-                Uploaded by {state.selectedSong.uploadedBy}
-              </SmallText>
-            )}
-            {state.selectedSong.lastModifiedBy &&
-            state.selectedSong.lastModifiedDate ? (
-              <SmallText size={10}>
-                Last modified by {state.selectedSong.lastModifiedBy} on{" "}
-                {state.selectedSong.lastModifiedDate}
-              </SmallText>
-            ) : (
-              <SmallText size={10}> </SmallText>
-            )}
-          </View>
-        </View>
-      </View>
+      <SongInfoContainer songURL={songURL} openSongURL={() => openSongURL()} />
       <Spacer height={20} />
       <View style={{ flexDirection: "row" }}>
         <Pressable
@@ -206,6 +148,13 @@ const SongScreen = () => {
           onPress={() => setShowSongInfo(true)}
         >
           <Icon name="edit-2" type="feather" color={colors.red} />
+        </Pressable>
+        <Spacer width={10} />
+        <Pressable
+          style={[styles.songInfoContainer, styles.shadowProp]}
+          onPress={() => handleAddSong()}
+        >
+          <Icon name="add" type="ionicons" color={colors.red} />
         </Pressable>
       </View>
       <Spacer height={30} />

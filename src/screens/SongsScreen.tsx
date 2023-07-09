@@ -7,23 +7,37 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Song } from "../models/Song";
 import { BoldText, HeaderText, SmallText, colors } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import { AppContext } from "../contexts/appContext";
 import { getSongs } from "../services/SongService";
 import { Icon } from "@rneui/base";
 import AddSongModal from "../components/AddSongModal";
+import SongListItem from "../components/SongListItem";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/SongsStackNavigator";
 
-const SongsScreen = ({ navigation }) => {
+type Props = NativeStackScreenProps<RootStackParamList, "SongsScreen">;
+
+const SongsScreen = ({ route, navigation }: Props) => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [refreshing, setRefreshing] = useState(true);
   const [showAddSong, setShowAddSong] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
+  const { songToNavigateTo } = route.params;
+
   useEffect(() => {
     loadSongs();
   }, []);
+
+  useEffect(() => {
+    if (songToNavigateTo) {
+      navigation.navigate("SongScreen", {
+        song: songToNavigateTo,
+      });
+    }
+  }, [songToNavigateTo]);
 
   const loadSongs = () => {
     getSongs().then((response) => {
@@ -43,48 +57,6 @@ const SongsScreen = ({ navigation }) => {
         alert("error loading songs");
       }
     });
-  };
-
-  const renderSong = (song: Song, id: number) => {
-    return (
-      <View key={id}>
-        <Pressable
-          style={[
-            styles.songContainer,
-            {
-              borderColor: state.loadedSong
-                ? song.title === state.loadedSong.title
-                  ? colors.green
-                  : colors.black
-                : colors.black,
-              borderWidth: state.loadedSong
-                ? song.title === state.loadedSong.title
-                  ? 3
-                  : 1
-                : 1,
-            },
-          ]}
-          onPress={() => {
-            navigation.navigate("SongScreen", {
-              song: song,
-            });
-            dispatch({
-              type: "SelectedSong",
-              payload: song,
-            });
-          }}
-        >
-          <View style={styles.songInfo}>
-            <View style={{ width: 180 }}>
-              <SmallText>{song.title}</SmallText>
-            </View>
-
-            <SmallText>{song.category}</SmallText>
-          </View>
-        </Pressable>
-        <View style={{ marginBottom: 12 }} />
-      </View>
-    );
   };
 
   const styles = StyleSheet.create({
@@ -168,7 +140,13 @@ const SongsScreen = ({ navigation }) => {
           </>
         }
         data={state.songs}
-        renderItem={(song) => renderSong(song.item, song.item.id)}
+        renderItem={(song) => (
+          <SongListItem
+            song={song.item}
+            id={song.item.id}
+            currentScreen="songs"
+          />
+        )}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={loadSongs} />
         }

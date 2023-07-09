@@ -1,5 +1,6 @@
 import { createTheme, Text } from "@rneui/themed";
 import { ReactNode } from "react";
+import { TextStyle } from "react-native";
 
 export const usetheme = createTheme({
   lightColors: {
@@ -15,6 +16,7 @@ interface TextProps {
   children: ReactNode;
   color?: string;
   size?: number;
+  style?: TextStyle
 }
 
 export const colors = {
@@ -41,11 +43,11 @@ export const HeaderText = ({ ...props }: TextProps) => (
 
 export const SmallText = ({ ...props }: TextProps) => (
   <Text
-    style={{
+    style={[{
       fontFamily: "CourierRegular",
       color: props.color ? props.color : "black",
       fontSize: props.size ? props.size : 14,
-    }}
+    }, props.style]}
   >
     {props.children}
   </Text>

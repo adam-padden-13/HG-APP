@@ -4,7 +4,7 @@ import SongsScreen from "../screens/SongsScreen";
 import { Song } from "../models/Song";
 
 export type RootStackParamList = {
-  SongsScreen: undefined;
+  SongsScreen: { songToNavigateTo: Song | undefined };
   SongScreen: { song: Song };
 };
 
