@@ -25,12 +25,19 @@ const SongsScreen = ({ route, navigation }: Props) => {
   const [showAddSong, setShowAddSong] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
-  const { navigateTo } = route.params;
+  const { songToNavigateTo } = route.params;
 
   useEffect(() => {
     loadSongs();
   }, []);
 
+  useEffect(() => {
+    if (songToNavigateTo) {
+      navigation.navigate("SongScreen", {
+        song: songToNavigateTo,
+      });
+    }
+  }, [songToNavigateTo]);
 
   const loadSongs = () => {
     getSongs().then((response) => {

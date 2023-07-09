@@ -16,6 +16,28 @@ const SongListItem = ({ song, id, currentScreen }: SongListItemProps) => {
   const { state, dispatch } = useContext(AppContext);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
+  const handleNavigation = () => {
+    if (currentScreen === "songs") {
+      navigation.navigate("SongScreen", {
+        song: song,
+      });
+    }
+
+    if (currentScreen === "home") {
+      navigation.navigate("SongsTab", {
+        screen: "SongsScreen",
+        params: {
+          songToNavigateTo: song,
+        },
+      });
+    }
+
+    dispatch({
+      type: "SelectedSong",
+      payload: song,
+    });
+  };
+
   const styles = StyleSheet.create({
     songContainer: {
       height: 42,
@@ -55,22 +77,7 @@ const SongListItem = ({ song, id, currentScreen }: SongListItemProps) => {
               : 1,
           },
         ]}
-        onPress={() => {
-          if (currentScreen === "songs") {
-            navigation.navigate("SongScreen", {
-              song: song,
-            });
-          }
-
-          if (currentScreen === "home") {
-            navigation.navigate("SongsTab");
-          }
-
-          dispatch({
-            type: "SelectedSong",
-            payload: song,
-          });
-        }}
+        onPress={() => handleNavigation()}
       >
         <View style={styles.songInfo}>
           <View style={{ width: 180 }}>
