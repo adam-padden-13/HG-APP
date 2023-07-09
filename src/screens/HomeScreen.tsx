@@ -77,27 +77,30 @@ const HomeScreen = ({ navigation }) => {
           />
           <Spacer height={30} />
         </View>
-        {state.savedSongs && state.savedSongs.length > 0 ? (
-          <View style={{ alignItems: "center", flex: 1 }}>
-            <BoldText size={20}>
-              {state.user.userDisplayName}'s Saved Songs
-            </BoldText>
-            <Spacer height={10} />
-            <FlatList
-              data={state.savedSongs}
-              renderItem={(song) => (
-                <SongListItem
-                  song={song.item}
-                  id={song.item.id}
-                  currentScreen="home"
-                  reloadSavedSongs={() => handleGetUserInfo()}
-                />
-              )}
-            />
-          </View>
-        ) : (
-          <SmallText>No songs added to your favorites list.</SmallText>
-        )}
+        <View style={{ alignItems: "center", flex: 1 }}>
+          <BoldText size={20}>
+            {state.user.userDisplayName}'s Saved Songs
+          </BoldText>
+          {state.savedSongs && state.savedSongs.length > 0 ? (
+            <View style={{ alignItems: "center" }}>
+              <Spacer height={10} />
+              <FlatList
+                data={state.savedSongs}
+                renderItem={(song) => (
+                  <SongListItem
+                    song={song.item}
+                    id={song.item.id}
+                    currentScreen="home"
+                    reloadSavedSongs={() => handleGetUserInfo()}
+                  />
+                )}
+              />
+            </View>
+          ) : (
+            <SmallText>No songs added to your favorites list.</SmallText>
+          )}
+        </View>
+
         <SmallText style={styles.versionText}>v{version}</SmallText>
       </View>
       <LoginModal
