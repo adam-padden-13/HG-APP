@@ -14,16 +14,23 @@ import { getSongs } from "../services/SongService";
 import { Icon } from "@rneui/base";
 import AddSongModal from "../components/AddSongModal";
 import SongListItem from "../components/SongListItem";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/SongsStackNavigator";
 
-const SongsScreen = ({ navigation }) => {
+type Props = NativeStackScreenProps<RootStackParamList, "SongsScreen">;
+
+const SongsScreen = ({ route, navigation }: Props) => {
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [refreshing, setRefreshing] = useState(true);
   const [showAddSong, setShowAddSong] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
+  const { navigateTo } = route.params;
+
   useEffect(() => {
     loadSongs();
   }, []);
+
 
   const loadSongs = () => {
     getSongs().then((response) => {
@@ -127,7 +134,11 @@ const SongsScreen = ({ navigation }) => {
         }
         data={state.songs}
         renderItem={(song) => (
-          <SongListItem song={song.item} id={song.item.id} currentScreen="songs" />
+          <SongListItem
+            song={song.item}
+            id={song.item.id}
+            currentScreen="songs"
+          />
         )}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={loadSongs} />
