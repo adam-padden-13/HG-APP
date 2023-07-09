@@ -27,6 +27,7 @@ const SongsScreen = ({ route, navigation }: Props) => {
 
   const { songToNavigateTo } = route.params;
 
+
   useEffect(() => {
     loadSongs();
   }, []);

@@ -5,32 +5,40 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { BoldText, HeaderText, NormalText, SmallText } from "../theme/theme";
+import { BoldText, NormalText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
 import { version } from "../../package.json";
 import Spacer from "../components/Spacer";
 import { getUserInfo } from "../services/UserService";
 import SongListItem from "../components/SongListItem";
+import { useIsFocused } from "@react-navigation/native";
 
 const HomeScreen = ({ navigation }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { state, dispatch } = useContext(AppContext);
 
+  const isFocused = useIsFocused();
+
+  const handleGetUserInfo = async () => {
+    await getUserInfo(state.user.userEmail).then((res) => {
+      if (res.savedSongs) {
+        dispatch({
+          ...state,
+          type: "SavedSongs",
+          payload: res.savedSongs,
+        });
+      }
+    });
+  };
+
   useEffect(() => {
     if (state.user.userDisplayName === "Guest") {
       setShowLoginModal(true);
     } else {
-      getUserInfo(state.user.userEmail).then((res) => {
-        if (res.savedSongs.length > 0) {
-          dispatch({
-            type: "SavedSongs",
-            payload: res.savedSongs,
-          });
-        }
-      });
+      handleGetUserInfo();
     }
-  }, [showLoginModal]);
+  }, [showLoginModal, isFocused]);
 
   const handleSignout = () => {
     signOut(auth)
@@ -67,16 +75,14 @@ const HomeScreen = ({ navigation }) => {
             source={require("../../assets/hg_triangle.png")}
             style={styles.logo}
           />
-          <Spacer />
-          <NormalText>Hello {state.user.userDisplayName ?? ""}!</NormalText>
-          <Spacer height={40} />
+          <Spacer height={30} />
         </View>
-        <View style={{ alignItems: "center" }}>
-          <BoldText size={20}>
-            {state.user.userDisplayName}'s Saved Songs
-          </BoldText>
-          <Spacer height={10} />
-          {state.savedSongs && state.savedSongs.length > 0 && (
+        {state.savedSongs && state.savedSongs.length > 0 ? (
+          <View style={{ alignItems: "center", flex: 1 }}>
+            <BoldText size={20}>
+              {state.user.userDisplayName}'s Saved Songs
+            </BoldText>
+            <Spacer height={10} />
             <FlatList
               data={state.savedSongs}
               renderItem={(song) => (
@@ -84,15 +90,16 @@ const HomeScreen = ({ navigation }) => {
                   song={song.item}
                   id={song.item.id}
                   currentScreen="home"
+                  reloadSavedSongs={() => handleGetUserInfo()}
                 />
               )}
             />
-          )}
-        </View>
-
+          </View>
+        ) : (
+          <SmallText>No songs added to your favorites list.</SmallText>
+        )}
         <SmallText style={styles.versionText}>v{version}</SmallText>
       </View>
-
       <LoginModal
         showModal={showLoginModal}
         hideModal={() => setShowLoginModal(false)}
@@ -103,14 +110,15 @@ const HomeScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   logo: {
-    marginTop: 20,
+    marginTop: 0,
     alignSelf: "center",
     height: 280,
     resizeMode: "contain",
   },
   versionText: {
-    top: 200,
+    bottom: -30,
     left: 10,
+    position: "absolute",
   },
   loginIconContainer: {
     flexDirection: "row",

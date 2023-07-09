@@ -6,6 +6,7 @@ import {
   getDoc,
   updateDoc,
   setDoc,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { HGUser } from "../models/HGUser";
@@ -32,5 +33,11 @@ export const getUserInfo = async (userEmail: string) => {
 export const addSongToFavorites = async (userId: string, song: Song) => {
   await updateDoc(doc(db, "users", userId), {
     savedSongs: arrayUnion(song),
+  });
+};
+
+export const removeSongFromFavorites = async (userId: string, song: Song) => {
+  await updateDoc(doc(db, "users", userId), {
+    savedSongs: arrayRemove(song),
   });
 };
