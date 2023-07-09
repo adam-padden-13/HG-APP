@@ -5,10 +5,10 @@ import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import { BoldText, NormalText, SmallText } from "../theme/theme";
+import { BoldText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
 import Toast from "react-native-root-toast";
-import { version } from "../../package.json";
+import { expo } from "../../app.json";
 import Spacer from "../components/Spacer";
 import { getUserInfo } from "../services/UserService";
 import SongListItem from "../components/SongListItem";
@@ -101,7 +101,7 @@ const HomeScreen = ({ navigation }) => {
           )}
         </View>
 
-        <SmallText style={styles.versionText}>v{version}</SmallText>
+        <SmallText style={styles.versionText}>v{expo.version}</SmallText>
       </View>
       <LoginModal
         showModal={showLoginModal}
