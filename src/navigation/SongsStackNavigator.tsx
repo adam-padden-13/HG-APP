@@ -4,7 +4,7 @@ import SongsScreen from "../screens/SongsScreen";
 import { Song } from "../models/Song";
 
 export type RootStackParamList = {
-  SongsScreen: { songToNavigateTo: Song | undefined };
+  SongsScreen: { songToNavigateTo?: Song | undefined };
   SongScreen: { song: Song };
 };
 
@@ -16,6 +16,7 @@ const SongsStackNavigator = () => {
       <Stack.Screen
         name="SongsScreen"
         component={SongsScreen}
+        initialParams={{}}
         options={{ title: "Songs", headerShown: false }}
       />
       <Stack.Screen

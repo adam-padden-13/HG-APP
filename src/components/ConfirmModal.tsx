@@ -6,7 +6,7 @@ import { useState } from "react";
 interface ConfirmModalProps {
   showModal: boolean;
   hideModal: () => void;
-  type: string;
+  message: string;
   button1Action?: () => void;
   button2Action?: () => void;
 }
@@ -14,6 +14,7 @@ interface ConfirmModalProps {
 const ConfirmModal = ({
   showModal,
   hideModal,
+  message,
   button1Action,
   button2Action,
 }: ConfirmModalProps) => {
@@ -24,7 +25,7 @@ const ConfirmModal = ({
     centeredView: {
       flex: 1,
       alignItems: "center",
-      marginTop: 100,
+      marginTop: "60%",
     },
     modalView: {
       margin: 20,
@@ -66,13 +67,17 @@ const ConfirmModal = ({
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <NormalText>Are you sure you want to delete this song?</NormalText>
+          <NormalText>{message} </NormalText>
           <Spacer />
           <View style={styles.buttonContainer}>
             <Pressable
               style={[
                 styles.button,
-                { backgroundColor: changeButtonColor1 ? colors.green : colors.white },
+                {
+                  backgroundColor: changeButtonColor1
+                    ? colors.green
+                    : colors.white,
+                },
               ]}
               onPressIn={() => setChangeButton1Color(true)}
               onPressOut={() => setChangeButton1Color(false)}

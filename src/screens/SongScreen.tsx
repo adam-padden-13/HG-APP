@@ -74,8 +74,10 @@ const SongScreen = () => {
   };
 
   const handleAddSong = async () => {
-    console.log("add song");
     await addSongToFavorites(state.user.userEmail, state.selectedSong);
+    Toast.show("Song was added!", {
+      position: 0,
+    });
   };
 
   const styles = StyleSheet.create({
@@ -127,7 +129,7 @@ const SongScreen = () => {
       <BoldText color={colors.red} size={20}>
         Song Info:
       </BoldText>
-      <HeaderText>
+      <HeaderText size={28}>
         {state.selectedSong.title && state.selectedSong.title}
       </HeaderText>
       <Spacer />
@@ -158,7 +160,7 @@ const SongScreen = () => {
         </Pressable>
       </View>
       <Spacer height={30} />
-      <View>
+      <View style={{ flexDirection: "row" }}>
         <Pressable
           onPress={() => {
             dispatch({
@@ -174,7 +176,7 @@ const SongScreen = () => {
           <Icon
             name="play-circle"
             type="feather"
-            size={100}
+            size={80}
             color={!changeButtonColor ? colors.green : colors.black}
           />
         </Pressable>
@@ -188,8 +190,8 @@ const SongScreen = () => {
       )}
       {showDeleteModal && (
         <ConfirmModal
-          type={"delete"}
           showModal={showDeleteModal}
+          message={"Are you sure you want to delete this song?"}
           hideModal={() => setShowDeleteModal(false)}
           button1Action={() => handleDelete()}
         />

@@ -16,7 +16,7 @@ interface TextProps {
   children: ReactNode;
   color?: string;
   size?: number;
-  style?: TextStyle
+  style?: TextStyle;
 }
 
 export const colors = {
@@ -33,7 +33,7 @@ export const HeaderText = ({ ...props }: TextProps) => (
     style={{
       fontFamily: "CourierRegular",
       color: props.color ? props.color : "black",
-      fontSize: 32,
+      fontSize: props.size ? props.size : 32,
       textAlign: "center",
     }}
   >
@@ -43,11 +43,14 @@ export const HeaderText = ({ ...props }: TextProps) => (
 
 export const SmallText = ({ ...props }: TextProps) => (
   <Text
-    style={[{
-      fontFamily: "CourierRegular",
-      color: props.color ? props.color : "black",
-      fontSize: props.size ? props.size : 14,
-    }, props.style]}
+    style={[
+      {
+        fontFamily: "CourierRegular",
+        color: props.color ? props.color : "black",
+        fontSize: props.size ? props.size : 14,
+      },
+      props.style,
+    ]}
   >
     {props.children}
   </Text>
