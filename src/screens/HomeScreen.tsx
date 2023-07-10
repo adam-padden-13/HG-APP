@@ -3,7 +3,7 @@ import { StyleSheet, View, Image, Pressable, FlatList } from "react-native";
 import { Icon } from "@rneui/themed";
 import LoginModal from "../components/LoginModal";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { auth } from "../../firebaseConfig";
+import { auth, devEnv } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
 import { BoldText, SmallText } from "../theme/theme";
 import { AppContext } from "../contexts/appContext";
@@ -56,6 +56,8 @@ const HomeScreen = ({ navigation }) => {
       });
   };
 
+  console.log(state.user.userDisplayName)
+
   return (
     <SafeAreaView>
       <View style={{ height: "100%" }}>
@@ -100,8 +102,10 @@ const HomeScreen = ({ navigation }) => {
             <SmallText>No songs added to your favorites list.</SmallText>
           )}
         </View>
-
-        <SmallText style={styles.versionText}>v{expo.version}</SmallText>
+        <View style={styles.versionText}>
+          <SmallText>v{expo.version}</SmallText>
+          <SmallText>{devEnv ? "Dev" : "Prod"}</SmallText>
+        </View>
       </View>
       <LoginModal
         showModal={showLoginModal}
