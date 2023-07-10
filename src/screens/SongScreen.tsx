@@ -10,7 +10,7 @@ import { deleteSongData, getSongs } from "../services/SongService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { deleteObject, getDownloadURL, ref } from "firebase/storage";
-import { storage } from "../../firebaseConfig";
+import { audioStorageFolder, storage } from "../../firebaseConfig";
 import ConfirmModal from "../components/ConfirmModal";
 import Toast from "react-native-root-toast";
 import SongInfoContainer from "../components/SongInfoContainer";
@@ -27,7 +27,7 @@ const SongScreen = () => {
 
   const audioFileTitle: string = state.selectedSong.audioFileName ?? "";
 
-  const audioRef = ref(storage, "audio");
+  const audioRef = ref(storage, `${audioStorageFolder}`);
   const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
 
   const getSongUrl = async () => {

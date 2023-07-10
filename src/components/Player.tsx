@@ -1,6 +1,6 @@
 import { View, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { Audio } from "expo-av";
-import { storage } from "../../firebaseConfig";
+import { audioStorageFolder, storage } from "../../firebaseConfig";
 import { Icon } from "@rneui/themed";
 import Spacer from "./Spacer";
 import { NormalText, colors } from "../theme/theme";
@@ -24,7 +24,7 @@ const Player = () => {
     state.loadedSong && state.loadedSong.audioFileName
       ? state.loadedSong.audioFileName
       : "";
-  const audioRef = ref(storage, "audio");
+  const audioRef = ref(storage, `${audioStorageFolder}`);
   const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
 
   const getSong = async () => {
