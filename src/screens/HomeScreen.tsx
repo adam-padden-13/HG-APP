@@ -56,7 +56,6 @@ const HomeScreen = ({ navigation }) => {
       });
   };
 
-  console.log(state.user.userDisplayName)
 
   return (
     <SafeAreaView>
