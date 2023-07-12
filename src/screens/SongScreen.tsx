@@ -1,5 +1,11 @@
-import { View, StyleSheet, Pressable, Linking } from "react-native";
-import { BoldText, HeaderText, colors } from "../theme/theme";
+import { View, StyleSheet, Pressable, Linking, FlatList } from "react-native";
+import {
+  BoldText,
+  HeaderText,
+  NormalText,
+  SmallText,
+  colors,
+} from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import { useContext, useEffect, useState } from "react";
@@ -15,6 +21,9 @@ import ConfirmModal from "../components/ConfirmModal";
 import Toast from "react-native-root-toast";
 import SongInfoContainer from "../components/SongInfoContainer";
 import { addSongToFavorites } from "../services/UserService";
+import { SongComment } from "../models/Song";
+import moment from "moment";
+import CommentListItem from "../components/CommentListItem";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -29,6 +38,7 @@ const SongScreen = () => {
 
   const audioRef = ref(storage, `${audioStorageFolder}`);
   const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
+  const today = moment().format("MM-DD-YYYY, hh:mm a");
 
   const getSongUrl = async () => {
     await getDownloadURL(songRef).then((convertedURL) => {
@@ -39,6 +49,18 @@ const SongScreen = () => {
   useEffect(() => {
     getSongUrl();
   }, []);
+
+  const sampleComments: SongComment[] = [
+    {
+      author: "adam",
+      date: today,
+      comment: "This is a sweet song!  Let's try it at next practice",
+    },
+    { author: "Jesse", date: today, comment: "TESTETSETEST" },
+    { author: "Nick", date: today, comment: "TESTETSETEST" },
+    { author: "Andrsdfsdfsdfew", date: today, comment: "TESTETSETEST" },
+    { author: "Will", date: today, comment: "TESTETSETEST" },
+  ];
 
   const reloadSongs = async () => {
     getSongs().then((response) => {
@@ -120,6 +142,17 @@ const SongScreen = () => {
       backgroundColor: changeButtonColor ? colors.red : colors.blue,
       marginHorizontal: 8,
     },
+    flatlistContainer: {
+      width: "90%",
+      marginTop: 20,
+      flex: 1,
+    },
+    flatlistHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: 20,
+      alignItems: "center",
+    },
   });
 
   return (
@@ -156,12 +189,11 @@ const SongScreen = () => {
           style={[styles.songInfoContainer, styles.shadowProp]}
           onPress={() => handleAddSong()}
         >
-          <Icon name="add" type="ionicons" color={colors.red} />
+          <Icon name="heart" type="feather" color={colors.red} />
         </Pressable>
-      </View>
-      <Spacer height={30} />
-      <View style={{ flexDirection: "row" }}>
+        <Spacer width={10} />
         <Pressable
+          style={[styles.songInfoContainer, styles.shadowProp]}
           onPress={() => {
             dispatch({
               type: "LoadedSong",
@@ -171,16 +203,41 @@ const SongScreen = () => {
           }}
           onPressIn={() => setChangeButtonColor(true)}
           onPressOut={() => setChangeButtonColor(false)}
-          style={[]}
         >
           <Icon
             name="play-circle"
             type="feather"
-            size={80}
             color={!changeButtonColor ? colors.green : colors.black}
           />
         </Pressable>
       </View>
+      <Spacer height={30} />
+
+      <View style={styles.flatlistContainer}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={sampleComments}
+          ListHeaderComponent={() => {
+            return (
+              <View style={styles.flatlistHeader}>
+                <HeaderText size={24}>Comments</HeaderText>
+                <Pressable>
+                  <Icon
+                    name="add-comment"
+                    type="material"
+                    color={colors.red}
+                    size={30}
+                  />
+                </Pressable>
+              </View>
+            );
+          }}
+          renderItem={(item) => (
+            <CommentListItem comment={item.item} id={item.index} />
+          )}
+        />
+      </View>
+
       {showSongInfo && (
         <SongInfoModal
           showModal={showSongInfo}

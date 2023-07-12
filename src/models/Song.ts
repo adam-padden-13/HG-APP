@@ -10,4 +10,11 @@ export interface Song {
   lastModifiedBy?: string;
   lastModifiedDate?: string;
   uploadedBy?: string;
+  comments?: SongComment[];
+}
+
+export interface SongComment {
+  author: string;
+  date: string;
+  comment: string;
 }
