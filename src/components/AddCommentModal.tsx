@@ -60,6 +60,11 @@ const AddCommentModal = ({
     buttonContainer: {
       flexDirection: "row",
     },
+    inputContainerStyle: {
+      borderWidth: 1,
+      paddingHorizontal: 8,
+      marginTop: 4,
+    },
   });
 
   const handleAddComment = async () => {
@@ -87,7 +92,7 @@ const AddCommentModal = ({
           <Input
             multiline
             label={"Add New Comment"}
-            // inputContainerStyle={[styles.inputContainerStyle]}
+            inputContainerStyle={[styles.inputContainerStyle]}
             value={comment}
             onChangeText={(value) => {
               setComment(value);

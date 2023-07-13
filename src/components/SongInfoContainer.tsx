@@ -17,7 +17,8 @@ const SongInfoContainer = ({
   const styles = StyleSheet.create({
     songInfoContainer: {
       borderWidth: 1,
-      padding: 16,
+      paddingHorizontal: 16,
+      paddingBottom: 8,
       borderRadius: 10,
       alignItems: "center",
       backgroundColor: "white",

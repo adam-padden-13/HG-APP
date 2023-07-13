@@ -211,7 +211,7 @@ const SongScreen = () => {
           />
         </Pressable>
       </View>
-      <Spacer height={30} />
+      <Spacer height={10} />
 
       <View style={styles.flatlistContainer}>
         <FlatList
