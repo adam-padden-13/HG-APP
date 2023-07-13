@@ -1,4 +1,5 @@
 import {
+  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
@@ -53,3 +54,9 @@ export const addComment = async (
     comments: arrayUnion(comment),
   });
 };
+
+export const deleteComment = async (song: Song, comment: SongComment) => {
+ await updateDoc(doc(db,`${songCollection}`, song.documentId), {
+  comments: arrayRemove(comment)
+ })
+}

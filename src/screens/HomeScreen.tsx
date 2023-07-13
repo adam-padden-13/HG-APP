@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation }) => {
 
   const handleGetUserInfo = async () => {
     await getUserInfo(state.user.userEmail).then((res) => {
-      if (res.savedSongs) {
+      if (res && res.savedSongs) {
         dispatch({
           ...state,
           type: "SavedSongs",
@@ -55,7 +55,6 @@ const HomeScreen = ({ navigation }) => {
         alert(error);
       });
   };
-
 
   return (
     <SafeAreaView>

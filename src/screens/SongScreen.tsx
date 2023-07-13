@@ -230,7 +230,14 @@ const SongScreen = () => {
             showsVerticalScrollIndicator={false}
             data={comments}
             renderItem={(item) => (
-              <CommentListItem comment={item.item} id={item.index} />
+              <CommentListItem
+                comment={item.item}
+                id={item.index}
+                reloadComments={() => {
+                  reloadSongs();
+                  updateComments();
+                }}
+              />
             )}
           />
         </View>

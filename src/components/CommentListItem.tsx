@@ -4,15 +4,32 @@ import { SongComment } from "../models/Song";
 import { Icon } from "@rneui/base";
 import ConfirmModal from "./ConfirmModal";
 import Toast from "react-native-root-toast";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { deleteComment } from "../services/SongService";
+import { AppContext } from "../contexts/appContext";
 
 interface CommentListItemProps {
   comment: SongComment;
   id: number;
+  reloadComments: () => void;
 }
 
-const CommentListItem = ({ comment, id }: CommentListItemProps) => {
+const CommentListItem = ({
+  comment,
+  id,
+  reloadComments,
+}: CommentListItemProps) => {
+  const { state } = useContext(AppContext);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleDeleteComment = async () => {
+    await deleteComment(state.selectedSong, comment);
+    Toast.show("Comment was deleted!", {
+      position: 0,
+    });
+    setShowDeleteModal(false);
+    reloadComments();
+  };
 
   const styles = StyleSheet.create({
     commentContainer: {
@@ -46,17 +63,20 @@ const CommentListItem = ({ comment, id }: CommentListItemProps) => {
   });
   return (
     <View key={id}>
-      <Pressable
-        onPress={() => setShowDeleteModal(true)}
-        style={styles.iconContainer}
-      >
-        <Icon
-          size={16}
-          name="close"
-          type="material-community"
-          color={colors.red}
-        />
-      </Pressable>
+      {comment.author === state.user.userDisplayName && (
+        <Pressable
+          onPress={() => setShowDeleteModal(true)}
+          style={styles.iconContainer}
+        >
+          <Icon
+            size={16}
+            name="close"
+            type="material-community"
+            color={colors.red}
+          />
+        </Pressable>
+      )}
+
       <Pressable style={[styles.commentContainer]}>
         <View style={styles.commentInfo}>
           <View style={{ flexDirection: "row", marginBottom: 4 }}>
@@ -72,6 +92,7 @@ const CommentListItem = ({ comment, id }: CommentListItemProps) => {
           message={"Are you sure you want to delete this comment?"}
           showModal={showDeleteModal}
           hideModal={() => setShowDeleteModal(false)}
+          button1Action={() => handleDeleteComment()}
         />
       )}
     </View>
