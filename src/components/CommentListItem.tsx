@@ -1,11 +1,10 @@
 import { Pressable, View, StyleSheet } from "react-native";
 import { BoldText, NormalText, SmallText, colors } from "../theme/theme";
-import { Song, SongComment } from "../models/Song";
-import { useContext, useState } from "react";
-import { AppContext } from "../contexts/appContext";
+import { SongComment } from "../models/Song";
 import { Icon } from "@rneui/base";
 import ConfirmModal from "./ConfirmModal";
 import Toast from "react-native-root-toast";
+import { useState } from "react";
 
 interface CommentListItemProps {
   comment: SongComment;
@@ -13,13 +12,12 @@ interface CommentListItemProps {
 }
 
 const CommentListItem = ({ comment, id }: CommentListItemProps) => {
-  const { state, dispatch } = useContext(AppContext);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const styles = StyleSheet.create({
     commentContainer: {
       flex: 1,
-      borderWidth: .5,
+      borderWidth: 0.5,
       justifyContent: "center",
       paddingHorizontal: 10,
       borderRadius: 8,

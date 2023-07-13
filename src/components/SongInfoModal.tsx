@@ -43,6 +43,7 @@ const SongInfoModal = ({
     documentId: selectedSong.documentId,
     lastModifiedBy: state.user.userDisplayName,
     lastModifiedDate: today,
+    comments: selectedSong.comments,
   });
   const [changeButtonColor, setChangeButtonColor] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -129,6 +130,7 @@ const SongInfoModal = ({
             uploadedBy: state.selectedSong.uploadedBy
               ? state.selectedSong.uploadedBy
               : "",
+            comments: state.selectedSong.comments,
           }
         )
           .then(() => {

@@ -1,18 +1,12 @@
 import { View, StyleSheet, Pressable, Linking, FlatList } from "react-native";
-import {
-  BoldText,
-  HeaderText,
-  NormalText,
-  SmallText,
-  colors,
-} from "../theme/theme";
+import { BoldText, HeaderText, colors } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import { useContext, useEffect, useState } from "react";
 import { Icon } from "@rneui/base";
 import SongInfoModal from "../components/SongInfoModal";
 import { AppContext } from "../contexts/appContext";
-import { deleteSongData, getSongs } from "../services/SongService";
+import { deleteSongData, getSong, getSongs } from "../services/SongService";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { deleteObject, getDownloadURL, ref } from "firebase/storage";
@@ -21,9 +15,11 @@ import ConfirmModal from "../components/ConfirmModal";
 import Toast from "react-native-root-toast";
 import SongInfoContainer from "../components/SongInfoContainer";
 import { addSongToFavorites } from "../services/UserService";
+import CommentListItem from "../components/CommentListItem";
+import AddCommentModal from "../components/AddCommentModal";
 import { SongComment } from "../models/Song";
 import moment from "moment";
-import CommentListItem from "../components/CommentListItem";
+import { sortDates } from "../utilities/dateUtilities";
 
 const SongScreen = () => {
   const navigation = useNavigation();
@@ -33,12 +29,12 @@ const SongScreen = () => {
   const [showSongInfo, setShowSongInfo] = useState(false);
   const [songURL, setSongURL] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const [showAddCommentModal, setShowAddCommentModal] = useState(false);
+  const [comments, setComments] = useState<SongComment[]>([]);
   const audioFileTitle: string = state.selectedSong.audioFileName ?? "";
 
   const audioRef = ref(storage, `${audioStorageFolder}`);
   const songRef = ref(audioRef, `/${audioFileTitle ? audioFileTitle : ""}`);
-  const today = moment().format("MM-DD-YYYY, hh:mm a");
 
   const getSongUrl = async () => {
     await getDownloadURL(songRef).then((convertedURL) => {
@@ -48,19 +44,12 @@ const SongScreen = () => {
 
   useEffect(() => {
     getSongUrl();
-  }, []);
+    if (state.selectedSong.comments && state.selectedSong.comments.length > 0) {
+      const sortedComments = sortDates(state.selectedSong.comments);
 
-  const sampleComments: SongComment[] = [
-    {
-      author: "adam",
-      date: today,
-      comment: "This is a sweet song!  Let's try it at next practice",
-    },
-    { author: "Jesse", date: today, comment: "TESTETSETEST" },
-    { author: "Nick", date: today, comment: "TESTETSETEST" },
-    { author: "Andrsdfsdfsdfew", date: today, comment: "TESTETSETEST" },
-    { author: "Will", date: today, comment: "TESTETSETEST" },
-  ];
+      setComments(sortedComments);
+    }
+  }, []);
 
   const reloadSongs = async () => {
     getSongs().then((response) => {
@@ -77,6 +66,17 @@ const SongScreen = () => {
       } else {
         alert("error loading songs");
       }
+    });
+  };
+
+  const updateComments = async () => {
+    await getSong(state.selectedSong.documentId).then((res) => {
+      const sortedComments = sortDates(res.comments);
+      setComments(sortedComments);
+      dispatch({
+        type: "SelectedSong",
+        payload: res,
+      });
     });
   };
 
@@ -216,12 +216,12 @@ const SongScreen = () => {
       <View style={styles.flatlistContainer}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={sampleComments}
+          data={comments}
           ListHeaderComponent={() => {
             return (
               <View style={styles.flatlistHeader}>
                 <HeaderText size={24}>Comments</HeaderText>
-                <Pressable>
+                <Pressable onPress={() => setShowAddCommentModal(true)}>
                   <Icon
                     name="add-comment"
                     type="material"
@@ -237,7 +237,16 @@ const SongScreen = () => {
           )}
         />
       </View>
-
+      {showAddCommentModal && (
+        <AddCommentModal
+          showModal={showAddCommentModal}
+          hideModal={() => setShowAddCommentModal(false)}
+          reloadData={() => {
+            reloadSongs();
+            updateComments();
+          }}
+        />
+      )}
       {showSongInfo && (
         <SongInfoModal
           showModal={showSongInfo}
