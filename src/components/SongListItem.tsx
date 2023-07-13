@@ -9,9 +9,11 @@ import { Icon } from "@rneui/base";
 import { removeSongFromFavorites } from "../services/UserService";
 import ConfirmModal from "./ConfirmModal";
 import Toast from "react-native-root-toast";
+import { SavedSong } from "../models/HGUser";
 
 interface SongListItemProps {
-  song: Song;
+  song?: Song;
+  savedSong?: SavedSong;
   id: number;
   currentScreen: string;
   reloadSavedSongs?: () => void;
@@ -19,6 +21,7 @@ interface SongListItemProps {
 
 const SongListItem = ({
   song,
+  savedSong,
   id,
   currentScreen,
   reloadSavedSongs,
@@ -50,7 +53,7 @@ const SongListItem = ({
   };
 
   const handleRemoveSong = async () => {
-    await removeSongFromFavorites(state.user.userEmail, song);
+    await removeSongFromFavorites(state.user.userEmail, savedSong);
     Toast.show("Song was removed!", {
       position: 0,
     });
@@ -108,7 +111,9 @@ const SongListItem = ({
       >
         <View style={styles.songInfo}>
           <View style={{ width: 180 }}>
-            <SmallText>{song.title}</SmallText>
+            <SmallText>
+              {currentScreen === "songs" ? song.title : savedSong.title}
+            </SmallText>
           </View>
           {currentScreen === "songs" && <SmallText>{song.category}</SmallText>}
 

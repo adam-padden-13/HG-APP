@@ -89,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
                 data={state.savedSongs}
                 renderItem={(song) => (
                   <SongListItem
-                    song={song.item}
+                    savedSong={song.item}
                     id={song.item.id}
                     currentScreen="home"
                     reloadSavedSongs={() => handleGetUserInfo()}
