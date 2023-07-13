@@ -10,6 +10,7 @@ import { removeSongFromFavorites } from "../services/UserService";
 import ConfirmModal from "./ConfirmModal";
 import Toast from "react-native-root-toast";
 import { SavedSong } from "../models/HGUser";
+import { getSong } from "../services/SongService";
 
 interface SongListItemProps {
   song?: Song;
@@ -30,26 +31,32 @@ const SongListItem = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const handleNavigation = () => {
+  const handleNavigation = async () => {
     if (currentScreen === "songs") {
+      dispatch({
+        type: "SelectedSong",
+        payload: song,
+      });
       navigation.navigate("SongScreen", {
         song: song,
       });
     }
 
     if (currentScreen === "home") {
-      navigation.navigate("SongsTab", {
-        screen: "SongsScreen",
-        params: {
-          songToNavigateTo: song,
-        },
+      // Reload song to make sure it has updated info
+      await getSong(savedSong.documentId).then((res) => {
+        dispatch({
+          type: "SelectedSong",
+          payload: res,
+        });
+        navigation.navigate("SongsTab", {
+          screen: "SongsScreen",
+          params: {
+            songToNavigateTo: res,
+          },
+        });
       });
     }
-
-    dispatch({
-      type: "SelectedSong",
-      payload: song,
-    });
   };
 
   const handleRemoveSong = async () => {

@@ -27,7 +27,7 @@ const CommentListItem = ({ comment, id }: CommentListItemProps) => {
     commentInfo: {
       justifyContent: "space-between",
       marginHorizontal: 4,
-      alignItems: "center",
+      alignItems: "flex-start",
     },
     shadowProp: {
       shadowColor: "#171717",

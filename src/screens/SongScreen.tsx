@@ -95,7 +95,7 @@ const SongScreen = () => {
     });
   };
 
-  const handleAddSong = async () => {
+  const handleAddSongToFav = async () => {
     await addSongToFavorites(state.user.userEmail, state.selectedSong);
     Toast.show("Song was added!", {
       position: 0,
@@ -188,7 +188,7 @@ const SongScreen = () => {
         <Spacer width={10} />
         <Pressable
           style={[styles.songInfoContainer, styles.shadowProp]}
-          onPress={() => handleAddSong()}
+          onPress={() => handleAddSongToFav()}
         >
           <Icon name="heart" type="feather" color={colors.red} />
         </Pressable>
