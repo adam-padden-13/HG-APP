@@ -102,12 +102,12 @@ const SongListItem = ({
         style={[
           styles.songContainer,
           {
-            borderColor: state.loadedSong
+            borderColor: state.loadedSong && song 
               ? song.title === state.loadedSong.title
                 ? colors.green
                 : colors.black
               : colors.black,
-            borderWidth: state.loadedSong
+            borderWidth: state.loadedSong && song
               ? song.title === state.loadedSong.title
                 ? 3
                 : 1
