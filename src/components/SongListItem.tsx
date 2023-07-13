@@ -9,9 +9,12 @@ import { Icon } from "@rneui/base";
 import { removeSongFromFavorites } from "../services/UserService";
 import ConfirmModal from "./ConfirmModal";
 import Toast from "react-native-root-toast";
+import { SavedSong } from "../models/HGUser";
+import { getSong } from "../services/SongService";
 
 interface SongListItemProps {
-  song: Song;
+  song?: Song;
+  savedSong?: SavedSong;
   id: number;
   currentScreen: string;
   reloadSavedSongs?: () => void;
@@ -19,6 +22,7 @@ interface SongListItemProps {
 
 const SongListItem = ({
   song,
+  savedSong,
   id,
   currentScreen,
   reloadSavedSongs,
@@ -27,30 +31,36 @@ const SongListItem = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const handleNavigation = () => {
+  const handleNavigation = async () => {
     if (currentScreen === "songs") {
+      dispatch({
+        type: "SelectedSong",
+        payload: song,
+      });
       navigation.navigate("SongScreen", {
         song: song,
       });
     }
 
     if (currentScreen === "home") {
-      navigation.navigate("SongsTab", {
-        screen: "SongsScreen",
-        params: {
-          songToNavigateTo: song,
-        },
+      // Reload song to make sure it has updated info
+      await getSong(savedSong.documentId).then((res) => {
+        dispatch({
+          type: "SelectedSong",
+          payload: res,
+        });
+        navigation.navigate("SongsTab", {
+          screen: "SongsScreen",
+          params: {
+            songToNavigateTo: res,
+          },
+        });
       });
     }
-
-    dispatch({
-      type: "SelectedSong",
-      payload: song,
-    });
   };
 
   const handleRemoveSong = async () => {
-    await removeSongFromFavorites(state.user.userEmail, song);
+    await removeSongFromFavorites(state.user.userEmail, savedSong);
     Toast.show("Song was removed!", {
       position: 0,
     });
@@ -108,7 +118,9 @@ const SongListItem = ({
       >
         <View style={styles.songInfo}>
           <View style={{ width: 180 }}>
-            <SmallText>{song.title}</SmallText>
+            <SmallText>
+              {currentScreen === "songs" ? song.title : savedSong.title}
+            </SmallText>
           </View>
           {currentScreen === "songs" && <SmallText>{song.category}</SmallText>}
 

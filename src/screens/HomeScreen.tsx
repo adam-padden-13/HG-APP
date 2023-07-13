@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation }) => {
 
   const handleGetUserInfo = async () => {
     await getUserInfo(state.user.userEmail).then((res) => {
-      if (res.savedSongs) {
+      if (res && res.savedSongs) {
         dispatch({
           ...state,
           type: "SavedSongs",
@@ -56,8 +56,6 @@ const HomeScreen = ({ navigation }) => {
       });
   };
 
-  console.log(state.user.userDisplayName)
-
   return (
     <SafeAreaView>
       <View style={{ height: "100%" }}>
@@ -90,7 +88,7 @@ const HomeScreen = ({ navigation }) => {
                 data={state.savedSongs}
                 renderItem={(song) => (
                   <SongListItem
-                    song={song.item}
+                    savedSong={song.item}
                     id={song.item.id}
                     currentScreen="home"
                     reloadSavedSongs={() => handleGetUserInfo()}

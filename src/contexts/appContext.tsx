@@ -1,13 +1,13 @@
 import React, { createContext, useReducer } from "react";
 import { Song } from "../models/Song";
-import { HGUser } from "../models/HGUser";
+import { HGUser, SavedSong } from "../models/HGUser";
 
 export interface AppState {
   user: HGUser;
   selectedSong: Song;
   loadedSong: Song;
   songs: Song[];
-  savedSongs: Song[];
+  savedSongs: SavedSong[];
   playLoadedSong: boolean;
 }
 
@@ -16,7 +16,7 @@ export interface AppActionPayloads {
   SelectedSong: Song;
   LoadedSong: Song;
   Songs: Song[];
-  SavedSongs: Song[];
+  SavedSongs: SavedSong[];
   PlayLoadedSong: boolean;
 }
 
