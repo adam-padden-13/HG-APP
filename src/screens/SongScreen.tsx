@@ -1,5 +1,5 @@
 import { View, StyleSheet, Pressable, Linking, FlatList } from "react-native";
-import { BoldText, HeaderText, colors } from "../theme/theme";
+import { BoldText, HeaderText, NormalText, colors } from "../theme/theme";
 import Spacer from "../components/Spacer";
 import GoBack from "../components/GoBack";
 import { useContext, useEffect, useState } from "react";
@@ -144,11 +144,12 @@ const SongScreen = () => {
     },
     flatlistContainer: {
       width: "90%",
-      marginTop: 20,
       flex: 1,
     },
     flatlistHeader: {
+      marginTop: 10,
       flexDirection: "row",
+      width: "90%",
       justifyContent: "space-between",
       marginBottom: 20,
       alignItems: "center",
@@ -212,31 +213,31 @@ const SongScreen = () => {
         </Pressable>
       </View>
       <Spacer height={10} />
-
-      <View style={styles.flatlistContainer}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={comments}
-          ListHeaderComponent={() => {
-            return (
-              <View style={styles.flatlistHeader}>
-                <HeaderText size={24}>Comments</HeaderText>
-                <Pressable onPress={() => setShowAddCommentModal(true)}>
-                  <Icon
-                    name="add-comment"
-                    type="material"
-                    color={colors.red}
-                    size={30}
-                  />
-                </Pressable>
-              </View>
-            );
-          }}
-          renderItem={(item) => (
-            <CommentListItem comment={item.item} id={item.index} />
-          )}
-        />
+      <View style={styles.flatlistHeader}>
+        <HeaderText size={24}>Comments</HeaderText>
+        <Pressable onPress={() => setShowAddCommentModal(true)}>
+          <Icon
+            name="add-comment"
+            type="material"
+            color={colors.red}
+            size={30}
+          />
+        </Pressable>
       </View>
+      {comments && comments.length > 0 ? (
+        <View style={styles.flatlistContainer}>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={comments}
+            renderItem={(item) => (
+              <CommentListItem comment={item.item} id={item.index} />
+            )}
+          />
+        </View>
+      ) : (
+        <NormalText>No comments have been added yet.</NormalText>
+      )}
+
       {showAddCommentModal && (
         <AddCommentModal
           showModal={showAddCommentModal}
